@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: memory.h,v 1.2 2005/01/14 14:09:31 olsonse Exp $
+// $Id: memory.h,v 1.3 2005/01/26 01:25:00 olsonse Exp $
 /*
  * Copyright 1998-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: memory.h,v $
+ * Revision 1.3  2005/01/26 01:25:00  olsonse
+ * Fixed possible scope issues with double use of 'i' in freetoheap(...).
+ *
  * Revision 1.2  2005/01/14 14:09:31  olsonse
  * Fixed documentation on memory.h, msh.h, options.h.
  * Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
@@ -80,12 +83,13 @@
 	}/* else */ \
     } /* class::operator delete() */ \
  \
-  static void freetoheap( int i = -1 );  /* frees freelist back to heap  \
-                                          * i is to reset freelistlimit \
-					  * If i==-1, then memlimit \
-					  * (below) is used. \
-					  */ \
- \
+  /** frees freelist back to heap.  \
+   * @param new_memlimit \
+   *     Set freelistlimit (if ==-1, then memlimit \
+   *     (below) is used). \
+   */ \
+  static void freetoheap( int new_memlimit = -1 ); \
+  \
 private: \
   static class *freelist; /* free-store for stuff already allocated */ \
   static int freelistsz; /* will store the size of the freelist */ \
@@ -114,7 +118,7 @@ template int class::freelistlimit = memlimit; /* limit number of instances */ \
  * the list of unused preallocated memory. \
 */ \
  \
-template void class::freetoheap( int i /* = -1 */) { \
+template void class::freetoheap( int new_memlimit /* = -1 */) { \
   /* cerr<< #class <<"::freetoheap: This was called\n"; */ \
   if(freelist) { \
     for(int i = 0;i<freelistsz;i++) { \
@@ -123,7 +127,7 @@ template void class::freetoheap( int i /* = -1 */) { \
     } \
     freelistsz = 0; \
   } \
-  freelistlimit = ( i < 0 ) ? memlimit : i; \
+  freelistlimit = ( new_memlimit < 0 ) ? memlimit : new_memlimit; \
 } /* freetoheap */
 
 
