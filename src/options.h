@@ -1,11 +1,15 @@
 // -*- c++ -*-
-// $Id: options.h,v 1.1 2005/01/08 04:27:24 olsonse Exp $
+// $Id: options.h,v 1.2 2005/01/14 14:09:31 olsonse Exp $
 /*
  * Copyright 2000-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: options.h,v $
- * Revision 1.1  2005/01/08 04:27:24  olsonse
- * Initial revision
+ * Revision 1.2  2005/01/14 14:09:31  olsonse
+ * Fixed documentation on memory.h, msh.h, options.h.
+ * Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:24  olsonse
+ * Initial import
  *
  * Revision 1.3  2004/04/09 12:29:00  olsonse
  * many smaller improvements.
@@ -115,10 +119,13 @@ class OptionHandler {
              *     name of standard option.
              * @param m
              *     (void *):  pointer to memory for saving option value.
+             * @param t
+             *     Option type.
              * @param u
              *     Description of units when appropriate.
              * @param h
              *     Lengthier description of option.
+             * @see enum OPTION_TYPE.
              * */
             standard_option(std::string n = "",
                              void * m = 0x0,

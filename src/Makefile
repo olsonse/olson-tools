@@ -1,10 +1,12 @@
 # Copyright 2004 Spencer Olson
 include ../Makeconf
+CFLAGS:=$(CFLAGS) -DBUILD_TOOLS
 
 OBJ=options.o logger.o rk.o power.o \
 	random/random.o \
 	random/randomf.o \
-        3j.o bfield.o
+        3j.o bfield.o \
+        Distribution.o
 
 LIBNAME=libolson-tools$(EXT)
 

@@ -1,11 +1,15 @@
 // -*- c++ -*-
-// $Id: memory.h,v 1.1 2005/01/08 04:27:24 olsonse Exp $
+// $Id: memory.h,v 1.2 2005/01/14 14:09:31 olsonse Exp $
 /*
  * Copyright 1998-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: memory.h,v $
- * Revision 1.1  2005/01/08 04:27:24  olsonse
- * Initial revision
+ * Revision 1.2  2005/01/14 14:09:31  olsonse
+ * Fixed documentation on memory.h, msh.h, options.h.
+ * Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:24  olsonse
+ * Initial import
  *
  */
 
@@ -95,6 +99,7 @@ private: \
  * deleted classes to the heap.
  * This macro must be used ouside of the class declaration.
  *
+ * @param template Any template declarations that are needed for the class.
  * @param class should be a class name.
  * @param memlimit is a default limit on the number of objects
  * of this class type to store on the heap.

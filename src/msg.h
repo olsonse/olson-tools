@@ -83,6 +83,10 @@ class IPCMessage {
      *     allocate a buffer if none is passed in (the user is responsible for
      *     freeing this memory.)
      *
+     * @param msgflag
+     *     IPC msgflg parameter for msgrcv (see man page for msgrcv)
+     *     [Default IPC_NOWAIT].
+     *
      * @returns NULL if no message of requested type is available, else
      *     returns a pointer to an IPCMessage.
      *
@@ -111,6 +115,9 @@ class IPCMessage {
      * @param msgtype
      *     Specify the type of message that is to be returned; This defaults
      *     to returning the next message of any type from the message queue.
+     *
+     * @param msgflag
+     *     IPC msgflg parameter for msgrcv (see man page for msgrcv) [Default 0].
      *
      * @returns NULL if no message of requested type is available, else
      *     returns a pointer to an IPCMessage.
@@ -149,6 +156,9 @@ class IPCMessage {
     /** Send this IPCMessage to the message queue.
      * @param msqid
      *     The message queue ID as returned by getMsgQID().
+     *
+     * @param msgflag
+     *     IPC msgflg parameter for msgsnd (see man page for msgsnd) [Default 0].
      *
      * @throws std::runtime_error with what() set to strerror(errno) if.
      * */
