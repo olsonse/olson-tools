@@ -1,4 +1,5 @@
 all:
+	cd invertdistro; make;
 	cd fit; make;
 	cd fast_pow; make;
 	cd memory; make;
@@ -7,6 +8,7 @@ all:
 	cd rk; make;
 
 clean:
+	cd invertdistro; make clean;
 	cd fit; make clean;
 	cd fast_pow; make clean;
 	cd memory; make clean;
