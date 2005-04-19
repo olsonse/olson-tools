@@ -1,11 +1,14 @@
 // -*- c++ -*-
-// $Id: random.C,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: random.C,v 1.2 2005/04/19 17:23:39 olsonse Exp $
 /*
  * Copyright 1997-2004 Spencer Olson
  *
  * $Log: random.C,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * Revision 1.2  2005/04/19 17:23:39  olsonse
+ * Various other fixes for new compilers.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.2  2004/04/13 15:54:15  labrat
  * Simplified and cleaned up gauss_deviate which is used to create the input
@@ -43,16 +46,18 @@ MTRand __my_rand = MTRand();
 
 typedef unsigned long uint32;
 
+void function_to_shut_compiler_up();
+
 extern "C" {
-    /* static */ double gauss_deviate( double * sigma);
+    /* static */ double gauss_deviate( const double sigma[]);
     /* static */ double MTRNGrand();				/* real number in [0,1] */
-    /* static */ double MTRNGrandV( const double * n );	/* real number in [0,n] */
+    /* static */ double MTRNGrandV( const double n[] );	/* real number in [0,n] */
     /* static */ double MTRNGrandExc();			/* real number in [0,1) */
-    /* static */ double MTRNGrandExcV( const double * n );	/* real number in [0,n) */
+    /* static */ double MTRNGrandExcV( const double n[] );	/* real number in [0,n) */
     /* static */ double MTRNGrandDblExc();			/* real number in (0,1) */
-    /* static */ double MTRNGrandDblExcV( const double * n );	/* real number in (0,n) */
+    /* static */ double MTRNGrandDblExcV( const double n[] );	/* real number in (0,n) */
     /* static */ uint32 MTRNGrandInt();			/* integer in [0,2^32-1] */
-    /* static */ uint32 MTRNGrandIntV( const uint32 * n );	/* integer in [0,n] for n < 2^32 */
+    /* static */ uint32 MTRNGrandIntV( const uint32 n[] );	/* integer in [0,n] for n < 2^32 */
 	
     // Re-seeding functions with same behavior as initializers
     /* static */ void   MTRNGseedV1( uint32 * oneSeed );
@@ -68,7 +73,7 @@ extern "C" {
     return __my_rand();
 }
 
-/* static */ double MTRNGrandV( const double * n ) {	/* real number in [0,n] */
+/* static */ double MTRNGrandV( const double n[] ) {	/* real number in [0,n] */
     return __my_rand.rand(*n);
 }
 
@@ -76,7 +81,7 @@ extern "C" {
     return __my_rand.randExc();
 }
 
-/* static */ double MTRNGrandExcV( const double * n ){	/* real number in [0,n) */
+/* static */ double MTRNGrandExcV( const double n[] ){	/* real number in [0,n) */
     return __my_rand.randExc(*n);
 }
 
@@ -84,7 +89,7 @@ extern "C" {
     return __my_rand.randDblExc();
 }
 
-/* static */ double MTRNGrandDblExcV( const double * n ) {	/* real number in (0,n) */
+/* static */ double MTRNGrandDblExcV( const double n[] ) {	/* real number in (0,n) */
     return __my_rand.randDblExc(*n);
 }
 
@@ -92,7 +97,7 @@ extern "C" {
     return __my_rand.randInt();
 }
 
-/* static */ uint32 MTRNGrandIntV( const uint32 * n ) {	/* integer in [0,n] for n < 2^32 */
+/* static */ uint32 MTRNGrandIntV( const uint32 n[] ) {	/* integer in [0,n] for n < 2^32 */
     return __my_rand.randInt(*n);
 }
 	
@@ -125,7 +130,7 @@ extern "C" {
  * mean and arbitrary variance, using ????? as the source of uniform deviates.
  *@memo Random Gaussian Deviate
 */
-/* static */ double gauss_deviate( double * sigma) {
+/* static */ double gauss_deviate( const double sigma[]) {
   static int iset = 0;
   static double gset, csigma = 0;
 

@@ -1,11 +1,14 @@
 // -*- c++ -*-
-// $Id: random.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: random.h,v 1.2 2005/04/19 17:23:39 olsonse Exp $
 /*
  * Copyright 1997-2004 Spencer Olson
  *
  * $Log: random.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * Revision 1.2  2005/04/19 17:23:39  olsonse
+ * Various other fixes for new compilers.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.2  2004/04/13 15:54:15  labrat
  * Simplified and cleaned up gauss_deviate which is used to create the input
@@ -70,7 +73,7 @@ extern "C" {
      * @see Numerical recipes for a description of a Box-Mueller
      *    transformation.
      * */
-    double gauss_deviate( double * sigma);
+    double gauss_deviate( const double sigma[]);
 
 #  ifndef DOXYGEN_SKIP
 #   define ran2 ran2_
@@ -107,14 +110,14 @@ extern "C" {
      * it appears that the C version is linked to.
      * @see MTRand::rand( const double& n ).
      */
-    inline double MTRNGrandV( const double * n ) {	/* real number in [0,n] */
+    inline double MTRNGrandV( const double n[] ) {	/* real number in [0,n] */
         return __my_rand.rand(*n);
     }
 #else
     /** Real number in [0,n].
      * @see MTRand::rand( const double& n ).
      */
-    double MTRNGrandV( const double * n );	/* real number in [0,n] */
+    double MTRNGrandV( const double n[] );	/* real number in [0,n] */
 #endif
 
 #  ifndef DOXYGEN_SKIP
@@ -145,14 +148,14 @@ extern "C" {
      * it appears that the C version is linked to.
      * @see MTRand::randExc( const double& n).
      */
-    inline double MTRNGrandExcV( const double * n ) {	/* real number in [0,n) */
+    inline double MTRNGrandExcV( const double n[] ) {	/* real number in [0,n) */
         return __my_rand.randExc(*n);
     }
 #else
     /** Real number in [0,n).
      * @see MTRand::randExc( const double& n).
      */
-    double MTRNGrandExcV( const double * n );	/* real number in [0,n) */
+    double MTRNGrandExcV( const double n[] );	/* real number in [0,n) */
 #endif
 
 #  ifndef DOXYGEN_SKIP
@@ -183,14 +186,14 @@ extern "C" {
      * it appears that the C version is linked to.
      * @see MTRand::randDblExc( const double& n ).
      */
-    inline double MTRNGrandDblExcV( const double * n ) {	/* real number in (0,n) */
+    inline double MTRNGrandDblExcV( const double n[] ) {	/* real number in (0,n) */
         return __my_rand.randDblExc(*n);
     }
 #else
     /** Real number in (0,n).
      * @see MTRand::randDblExc( const double& n ).
      */
-    double MTRNGrandDblExcV( const double * n );	/* real number in (0,n) */
+    double MTRNGrandDblExcV( const double n[] );	/* real number in (0,n) */
 #endif
 
 #  ifndef DOXYGEN_SKIP
@@ -221,14 +224,14 @@ extern "C" {
      * it appears that the C version is linked to.
      * @see MTRand::randInt( const uint32& n ).
      */
-    inline uint32 MTRNGrandIntV( const uint32 * n ) {	/* integer in [0,n] for n < 2^32 */
+    inline uint32 MTRNGrandIntV( const uint32 n[] ) {	/* integer in [0,n] for n < 2^32 */
         return __my_rand.randInt(*n);
     }
 #else
     /** Integer in [0,n] for \f$ n < 2^{32} \f$.
      * @see MTRand::randInt( const uint32& n ).
      */
-    uint32 MTRNGrandIntV( const uint32 * n );	/* integer in [0,n] for n < 2^32 */
+    uint32 MTRNGrandIntV( const uint32 n[] );	/* integer in [0,n] for n < 2^32 */
 #endif
 	
 #  ifndef DOXYGEN_SKIP
