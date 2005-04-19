@@ -19,7 +19,7 @@
 								\
     return x^y;							\
     */								\
-    asm volatile (						\
+    asm (         						\
       /* first test for y == 0 */				\
       "fxam			# st(0) == 0 ? \n\t"		\
       "fnstsw %%ax		# mov ax, fpu status word\n\t"	\
@@ -67,6 +67,7 @@
       /*"jmp 3f			# jmp finished \n\t" */		\
 "3:				# finished \n\t"		\
       : "=t" (value) : "f" ((derefd_x)), "0" ((derefd_y))	\
+      : "eax"                                                   \
     );								\
 								\
     return value;						\

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <ostream>
+#include <math.h>
 #include "physical.h"
 
 #ifndef X
@@ -43,6 +44,24 @@
 #endif
 
 namespace BField {
+
+    template <class T>
+    inline T DOTP(const T a[3],const T b[3]) {
+        return a[X]*b[X] + a[Y]*b[Y] + a[Z]*b[Z];
+    }
+
+    template <class T>
+    inline void CROSSP(T result[3], const T a[3], const T b[3]) {
+        result[X] = a[Y] * b[Z]  -  a[Z] * b[Y];
+        result[Y] = a[Z] * b[X]  -  a[X] * b[Z];
+        result[Z] = a[X] * b[Y]  -  a[Y] * b[X];
+    }
+
+    template <class T>
+    inline T SQR(const T & x) {
+        return x*x;
+    }
+
     class  ThinCurrentElement {
       public:
         /** Beginning of current element. */
@@ -130,7 +149,6 @@ namespace BField {
     } __attribute__((packed));
 
     void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], void * f);
-    double potential(double r[3], Args * f);
     void thgetb(double Bfield[4], const double r[3], const Args * f);
 
     inline void getGradB(double GradB[3], const double r[3], const Args * f ) {
@@ -151,8 +169,9 @@ namespace BField {
         }/* for */
     }
 
+    static const double mu = (-0.5) * (-1) * physical::constant::mu_B;
+
     inline void accel(double a[3], const double r[3], const Args * f) {
-        static const double mu = (-0.5) * (-1) * physical::constant::mu_B;
         getGradB(a, r, f);
 
         /* evaluating rkf(PX) and rkf(PY) are easy */
@@ -161,6 +180,34 @@ namespace BField {
         a[Z] = -mu * a[Z]/f->mass + f->gravity[Z];
     }
 
-}; /* namespace */
+    /** Calculate the potential of ^{87}Rb |f=1,mF=-1>.
+     * Note that gF = -1/2
+     * and that V = \mu . B
+     * where \mu  == gF * mF * mu_B
+     */
+    inline double potential(const double r[3], Args * f) {
+        double B[Z+1];
+
+        thgetb(B, r, f);
+
+        return mu*sqrt( BField::DOTP(B,B) ) - f->mass*BField::DOTP(f->gravity,r);
+    }
+
+    /** Calculate the potential of ^{87}Rb |f=1,mF=-1> ignoring the
+     * gravitational component.
+     * Note that gF = -1/2
+     * and that V = \mu . B
+     * where \mu  == gF * mF * mu_B
+     */
+    inline double potentialNoG(const double r[3], Args * f) {
+        double B[Z+1];
+
+        thgetb(B, r, f);
+
+        return mu*sqrt( BField::DOTP(B,B) );
+    }
+
+
+} /* namespace */
 
 #endif // BFIELD_H

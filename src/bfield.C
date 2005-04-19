@@ -1,15 +1,6 @@
 #include "bfield.h"
 #include <math.h>
 
-#define DOTP(a,b)       ( (((a)[X])*((b)[X])) + (((a)[Y])*((b)[Y])) + (((a)[Z])*((b)[Z])) )
-
-#define CROSSP(result,a,b) \
-        (result)[X] = (a)[Y] * (b)[Z]  -  (a)[Z] * (b)[Y]; \
-        (result)[Y] = (a)[Z] * (b)[X]  -  (a)[X] * (b)[Z]; \
-        (result)[Z] = (a)[X] * (b)[Y]  -  (a)[Y] * (b)[X];
-
-#define SQR(x)  ((x)*(x))
-
 namespace BField {
 
 /* this must currently be a time independent force/macroatomic mass
@@ -21,28 +12,6 @@ void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], void * 
     rkf[Y]  = p[VY];
     rkf[Z]  = p[VZ];
     accel(rkf+VX, p, (const Args*)f);
-}
-
-double potential(double r[3], Args * f) {
-    static const double mu = (-0.5) * (-1) * physical::constant::mu_B;
-    double B[Z+1];
-
-    thgetb(B, r, f);
-
-#if 1
-    B[X] *= -mu;
-    B[X] +=  f->gravity[X];
-    B[Y] *= -mu;
-    B[Y] +=  f->gravity[Y];
-    B[Z] *= -mu;
-    B[Z] +=  f->gravity[Z];
-    return sqrt( DOTP(B,B) );
-#else
-    B[X] += f->bg[X];
-    B[Y] += f->bg[Y];
-    B[Z] += f->bg[Z];
-    return mu * sqrt( DOTP(B,B) );
-#endif
 }
 
 /*
@@ -130,4 +99,4 @@ void thgetb(double Bfield[4], const double r[3], const Args * f) {
     Bfield[Z+1] = sqrt( DOTP(Bfield,Bfield) );
 }
 
-}; /* namespace */
+} /* namespace */

@@ -1,11 +1,24 @@
 #ifdef DUMMY_IFDEF_FOR_FORTRAN
-// $Id: rk.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: rk.h,v 1.2 2005/04/19 17:23:21 olsonse Exp $
 /*
  * Copyright 2002-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: rk.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * Revision 1.2  2005/04/19 17:23:21  olsonse
+ * Added new RKIntegrator wrapper class to allow for generic integration
+ * templates.
+ *
+ * Also added trapfe library to help with trapping floating point exceptions.
+ *
+ * Fixed Distribution inverter finally (hopefull).  It no longer truncates the
+ * distribution or reads from bogus memory.
+ *
+ * Added rk2 integrator (modified Euler) to rk.F.
+ *
+ * Various other fixes.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.1  2004/04/09 12:29:00  olsonse
  * many smaller improvements.
@@ -121,6 +134,38 @@ extern "C" {
      *     specified getderivs function.
      */
     void rk4step        (double * p,
+			 const int * n,
+                         const double * t,
+    			 const double * dt,
+			 const derivativesFunction getderivs,
+			 const void * fargs);
+
+#ifndef DOXYGEN_SKIP
+    /* Macro to allow use with fortran code.
+     * @see rk2step
+     */
+#    define rk2step rk2step_
+#endif // DOXYGEN_SKIP
+
+    /** Simple 2nd order runge-kutta.
+     * An improved Euler routine.
+     * @param p
+     *     A pointer to the Particle who's position and velocity will be
+     *     integrated.
+     * @param n
+     *     Number of elements in p.
+     * @param t
+     *     Absolute time of beginning of integration (unchanged on output).
+     * @param dt
+     *     The integration time (unchanged on output).
+     * @param getderivs
+     *     The function that computes the derivatives of each of the
+     *     respective position/velocity parameters; see derivativesFunction.
+     * @param fargs
+     *     A pointer to optional arguments that will be passed through to the
+     *     specified getderivs function.
+     */
+    void rk2step        (double * p,
 			 const int * n,
                          const double * t,
     			 const double * dt,

@@ -1,9 +1,22 @@
 // -*- c++ -*-
-// $Id: readData.h,v 1.1 2005/01/14 14:09:31 olsonse Exp $
+// $Id: readData.h,v 1.2 2005/04/19 17:23:21 olsonse Exp $
 /*
  * Copyright 2004 Spencer Olson
  *
  * $Log: readData.h,v $
+ * Revision 1.2  2005/04/19 17:23:21  olsonse
+ * Added new RKIntegrator wrapper class to allow for generic integration
+ * templates.
+ *
+ * Also added trapfe library to help with trapping floating point exceptions.
+ *
+ * Fixed Distribution inverter finally (hopefull).  It no longer truncates the
+ * distribution or reads from bogus memory.
+ *
+ * Added rk2 integrator (modified Euler) to rk.F.
+ *
+ * Various other fixes.
+ *
  * Revision 1.1  2005/01/14 14:09:31  olsonse
  * Fixed documentation on memory.h, msh.h, options.h.
  * Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
@@ -80,6 +93,18 @@ _Data * readData(std::istream & input, std::vector<_Data*> * ViP = NULL) {
 
     _Data * last = NULL;
     for (typename std::vector<_Data*>::iterator i = V.begin(); i < V.end(); i++) {
+        if ( (*i) == NULL ) {
+            /* for some reason, my new gcc (3.3.4) on suse 9.2 comes here
+             * with a bad element in the V array. */
+            if ( (V.end() - i) != 1 ) {
+                std::cout << "element is null!!!!" << '\n'
+                          << "V.end() - i : " << (V.end()-i) << '\n'
+                          << "i - V.begin() : " << (i-V.begin()) << '\n'
+                          << "V.size : " << V.size() << '\n'
+                          << std::flush;
+            }
+            continue;
+        }
         _Data & f = *(*i);
         f.next = last;
         last = &f;

@@ -1,9 +1,22 @@
 // -*- c++ -*-
-// $Id: Distribution.h,v 1.1 2005/01/14 14:09:31 olsonse Exp $
+// $Id: Distribution.h,v 1.2 2005/04/19 17:23:21 olsonse Exp $
 /*
  * Copyright 2004 Spencer Olson
  *
  * $Log: Distribution.h,v $
+ * Revision 1.2  2005/04/19 17:23:21  olsonse
+ * Added new RKIntegrator wrapper class to allow for generic integration
+ * templates.
+ *
+ * Also added trapfe library to help with trapping floating point exceptions.
+ *
+ * Fixed Distribution inverter finally (hopefull).  It no longer truncates the
+ * distribution or reads from bogus memory.
+ *
+ * Added rk2 integrator (modified Euler) to rk.F.
+ *
+ * Various other fixes.
+ *
  * Revision 1.1  2005/01/14 14:09:31  olsonse
  * Fixed documentation on memory.h, msh.h, options.h.
  * Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
@@ -25,6 +38,7 @@
 
 
 #include <stdexcept>
+#include <math.h>
 #if defined (BUILD_TOOLS)
 #  include "random/random.h"
 #else
@@ -77,40 +91,49 @@ class Distribution {
 
         double dx = (max-min) / (L-1.0);
 
-        double * qtmp = new double[L];
+        double * ptmp = new double[L];
 
-        qtmp[0] = distro.distrib(min);
+        ptmp[0] = distro.distrib(min);
         int i = 1;
         for (double x = min+dx; i < L; x+=dx, i++) {
-            qtmp[i] = distro.distrib(x) + qtmp[i-1];
+            ptmp[i] = distro.distrib(x) + ptmp[i-1];
         }
 
         {   /* normalize the sum. */
-            register double qmax = qtmp[L-1];
-            for (i = 0; i < L; qtmp[i++] /= qmax);
+            register double qmax = ptmp[L-1];
+            for (i = 0; i < L; ptmp[i++] /= qmax);
         }
 
-        q = new double[L];
+        q = new double[L+1];
+        /* just set q[0] to minimum. hopefully q[L] == max */
+        q[0] = min;
+        /* just set q[L] to maximum. hopefully q[L] == max */
+        q[L] = max;
+        double dprob = (ptmp[L-1] - ptmp[0]) / L;
 
-        for (i = 0; i < L; i++) {
+        for (i = 0; i <= L; i++) {
             /* the ith probability: */
-            double prob = double(i)/L;
+            double prob = i*dprob + ptmp[0];
 
             /* find the probability location above this one. */
-            int j = 0;
-            while (qtmp[j] < prob) j++;
+            int j = 1;
+            while (j < (L-1) && ptmp[j] < prob) j++;
 
             /* now we use linear interpolation to determine the input value at
-             * this probability.
+             * this probability.  Because j starts at 1 above, this should
+             * also take care of extrapolation towards the zero probability
+             * too.  The j < (L-1) takes care of extrapolation towards 1
+             * (although not the best, since it is extrapolated from the L-2
+             * point.  oh well).
              */
 
-            q[i] = (min+(j-1)*dx) + ( (min+j*dx) - (min+(j-1)*dx) )
-                                    * (prob    - qtmp[j-1])
-                                    / (qtmp[j] - qtmp[j-1]);
+            q[i] = (min+(j-1)*dx) +   dx 
+                                    * (prob    - ptmp[j-1])
+                                    / (ptmp[j] - ptmp[j-1]);
         }
 
         /* cleanup */
-        delete[] qtmp;
+        delete[] ptmp;
     }
 
     ~Distribution();
@@ -126,14 +149,14 @@ class Distribution {
 
     /** Get a random number from this distribution. */
     inline double lever() const {
-        double ti = MTRNGrand() * (L - 1);
-        register int til = int(ti);
-        return q[til] + (q[til+1] - q[til]) * (ti - til);
+        double r = MTRNGrand() * L;
+        register int ri = int(r);
+        return q[ri] + (q[ri+1] - q[ri]) * (r - ri);
     }
 
   private:
     int L;
-    double * q;
+    double * q; /* length L + 1 */
 };
 
 /** A 3D thermal distribution for use.

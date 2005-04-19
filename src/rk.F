@@ -67,6 +67,36 @@ subroutine rk4step (x, n, t, dt, derivs, derivsArgs)
     end do
 end subroutine
 
+subroutine rk2step (x, n, t, dt, derivs, derivsArgs)
+    implicit none
+    integer             n
+    double precision    x(1:n)
+    double precision    t, dt
+    ! NOTE that this code does NOT work with f95 (NAGWare) IF you compile with
+    ! -C=array or -C=call as this does not allow passing arbitrarily sized
+    ! vectors through derivsArgs
+    double precision    derivsArgs(1:1)
+    double precision    x_tmp(1:n)
+    double precision    D1(1:n), D2(1:n)
+    integer             i
+    external            derivs
+    ! DO NOT TOUCH derivsArgs contents here because it could result in SEGV
+
+    ! find D1
+    call derivs(x, t, D1, derivsArgs)
+
+    ! find D2
+    do i=1,n
+        x_tmp(i)    = x(i)    + dt * D1(i)
+    end do
+    call derivs(x_tmp, t+dt, D2, derivsArgs)
+
+    ! now weight the sum
+    do i=1,n
+        x(i) = x(i) + 0.5d0 * dt * ( D1(i) + D2(i) )
+    end do
+end subroutine
+
 subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
     IMPLICIT NONE
     integer             n
@@ -85,7 +115,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
 
     ! ensure that dt and dt_step have the same sign
     dt_step = sign(dt_step,dt)
-    dir = sign(1,dt)
+    dir = sign(1d0,dt)
     dt_step_next = dt_step
     truncated_step = 0
     t = ti

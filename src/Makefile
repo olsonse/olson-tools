@@ -13,7 +13,8 @@ LIBNAME=libolson-tools$(EXT)
 LIBS=-lstdc++ $(FLIBS) -lm
 
 all:  ${LIBNAME}.a \
-      #${LIBNAME}.so 
+      $(LIBTRAPFE) \
+      #${LIBNAME}.so \
 
 ${LIBNAME}.so: ${OBJ}
 	rm -f $(LIBNAME).so;
@@ -23,5 +24,9 @@ ${LIBNAME}.a: ${OBJ}
 	rm -f $(LIBNAME).a;
 	${AR} -rs ${LIBNAME}.a ${OBJ}
 
+
+$(LIBTRAPFE) : trapfe.c
+	$(CC) $(CFLAGS) -o $@  -c $<
+
 clean:
-	rm -f ${OBJ} ${LIBNAME}.so ${LIBNAME}.a
+	rm -f ${OBJ} ${LIBNAME}.so ${LIBNAME}.a $(LIBTRAPFE)
