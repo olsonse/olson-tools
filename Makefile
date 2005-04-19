@@ -15,6 +15,7 @@ libs:
 	mkdir -p lib;
 	rm -f lib/libolson-tools$(EXT).a;
 	install -m "ugo=r" src/libolson-tools$(EXT).a lib/;
+	install -m "ugo=r" src/libtrapfe$(EXT).a lib/;
 	#install -m "u=rx,go=rx" src/libolson-tools*.so lib/;
 
 doc:

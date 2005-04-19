@@ -2,10 +2,36 @@
 
 MAINDIR=/afs/umich.edu/user/o/l/olsonse/src/olson-tools
 
-CC=gcc
-CXX=g++
-#F77=f95
-F77=g77
+PROCESSOR=$(shell uname -p)
+OS=$(shell uname)
+
+EXT_Linux=-Linux
+EXT_SunOS=-SunOS
+EXT_Darwin=-Darwin
+EXT=$(EXT_$(OS))-$(PROCESSOR)
+
+CC_SunOS=gcc
+CXX_SunOS=g++
+F77_SunOS=g77
+#F77_SunOS=f95
+
+CC_Darwin=gcc
+CXX_Darwin=g++
+F77_Darwin=g77
+#F77_Darwin=f95
+
+CC_Linux=gcc
+CXX_Linux=g++
+F77_Linux=g77
+#F77_Linux=f95
+#CC_Linux=icc
+#CXX_Linux=icpc
+#F77_Linux=ifort
+
+# and set the actual compiler used
+CC=$(CC_$(OS))
+CXX=$(CXX_$(OS))
+F77=$(F77_$(OS))
 
 ifeq ($(DEBUG),)
     DEBUG_CC=$(OPTIM_CC) $(PROFILE)
@@ -17,22 +43,33 @@ endif
 
 OPTIM_gcc_athlon=-O3 -mcpu=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
 OPTIM_gcc_i686=-O3 -mcpu=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
-OPTIM_gcc_x86_64=-O3 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+OPTIM_gcc_x86_64=-O3 -m64 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+
 OPTIM_gcc_powerpc= -O3 -funroll-loops -fstrict-aliasing -fsched-interblock \
            -falign-loops=16 -falign-jumps=16 -falign-functions=16 \
-           -malign-power \
            -ffast-math -mpowerpc-gpopt -mpowerpc-gfxopt -force_cpusubtype_ALL \
            -mtune=powerpc -mcpu=powerpc
+#           -malign-power \
+
+OPTIM_gcc-3.4.3_powerpc=$(OPTIM_gcc_powerpc)
+OPTIM_gcc_sparc=-O3 -m64
+
 OPTIM_g77_athlon=$(OPTIM_gcc_athlon)
 OPTIM_g77_i686=$(OPTIM_gcc_i686)
 OPTIM_g77_x86_64=$(OPTIM_gcc_x86_64)
 OPTIM_g77_powerpc=$(OPTIM_gcc_powerpc)
+OPTIM_g77-3.4.3_powerpc=$(OPTIM_gcc_powerpc)
+OPTIM_g77_sparc=$(OPTIM_gcc_sparc)
+
+OPTIM_icc_x86_64=-xW -ipo -O3
+OPTIM_ifort_x86_64=$(OPTIM_icc_x86_64)
+
 OPTIM_f95_athlon=-O3 -Wc,-mcpu=athlon-xp,-march=athlon-xp,-malign-double,-mmmx,-m3dnow,-msse,-maccumulate-outgoing-args
 OPTIM_f95_i686=-O3 -Wc,-mcpu=pentium4,-march=pentium4,-malign-double,-mmmx,-msse,-msse2
-OPTIM_f95_x86_64=-O3 -Wc,-mcpu=k8,-march=k8,-mmmx,-msse,-msse2,-m3dnow
+OPTIM_f95_x86_64=-O3 -Wc,-m64,-mcpu=k8,-march=k8,-mmmx,-msse,-msse2,-m3dnow
 OPTIM_f95_powerpc=-O3 -Wc,-fast
+OPTIM_f95_sparc=-O3 -Wc,-fast
 
-PROCESSOR=$(shell uname -p)
 OPTIM_CC=$(OPTIM_$(CC)_$(PROCESSOR))
 OPTIM_F77=$(OPTIM_$(F77)_$(PROCESSOR))
 
@@ -41,30 +78,32 @@ POW_i686=$(POW_athlon)
 POW_x86_64=$(POW_athlon)
 POW_powerpc=
 
-CFLAGS=${DEBUG_CC} -Wall -fpic -DF77COMP_$(F77)=1 \
+LIBTRAPFE=libtrapfe$(EXT).a
+
+ifeq ($(TRAPFE),1)
+    INCTRAPFE=-ltrapfe$(EXT)
+endif
+
+
+CFLAGS=${DEBUG_CC} -Wall -fpic -DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1 \
 	$(POW_$(PROCESSOR)) $(INCLUDES)
 
 FFLAGS_g77=-ffree-form -ff90 -Wall 
+FFLAGS_g77-3.4.3=-ffree-form -ff90 -Wall 
 FFLAGS_f95=-free -C=none -w=x77
+FFLAGS_ifort=-free -warn all
 
-FLIBS_g77=-lg2c
+FLIBS_g77=-L/opt/local/lib/ -lg2c
 FLIBS_f95=/usr/local/NAG/asli/lib/NAGWare/quickfit.o -L/usr/local/NAG/asli/lib -lf96
 
 FMACROSFILE=fmacros.h
 
 FFLAGS=$(FFLAGS_$(F77)) ${DEBUG_F77} \
-	-DLANGUAGE_FORTRAN__=1 -DF77COMP_$(F77)=1 \
+	-DLANGUAGE_FORTRAN__=1 -DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1 \
 	$(POW_$(PROCESSOR)) $(INCLUDES)
 FLIBS=$(FLIBS_$(F77))
 
-OS=$(shell uname)
-
-EXT_Linux=-Linux
-EXT_SunOS=-SunOS
-EXT_Darwin=-Darwin
-EXT=$(EXT_$(OS))-$(PROCESSOR)
-
-LIBS=-lstdc++ $(FLIBS) -lm
+LIBS=$(INCTRAPFE) -lstdc++ $(FLIBS) -lm
 
 #now for a few simple rules
 %.o:%.C %.h
