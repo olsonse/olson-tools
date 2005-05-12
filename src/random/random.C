@@ -1,9 +1,15 @@
 // -*- c++ -*-
-// $Id: random.C,v 1.2 2005/04/19 17:23:39 olsonse Exp $
+// $Id: random.C,v 1.3 2005/05/12 04:27:50 olsonse Exp $
 /*
  * Copyright 1997-2004 Spencer Olson
  *
  * $Log: random.C,v $
+ * Revision 1.3  2005/05/12 04:27:50  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
  * Revision 1.2  2005/04/19 17:23:39  olsonse
  * Various other fixes for new compilers.
  *
@@ -27,7 +33,6 @@
 #include <math.h>
 
 
-#define gauss_deviate gauss_deviate__
 #define MTRNGrand mtrngrand_
 #define MTRNGrandV mtrngrandv_
 #define MTRNGrandExc mtrngrandexc_

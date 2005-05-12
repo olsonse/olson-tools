@@ -1,9 +1,15 @@
 // -*- c++ -*-
-// $Id: random.h,v 1.2 2005/04/19 17:23:39 olsonse Exp $
+// $Id: random.h,v 1.3 2005/05/12 04:27:51 olsonse Exp $
 /*
  * Copyright 1997-2004 Spencer Olson
  *
  * $Log: random.h,v $
+ * Revision 1.3  2005/05/12 04:27:51  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
  * Revision 1.2  2005/04/19 17:23:39  olsonse
  * Various other fixes for new compilers.
  *
@@ -59,9 +65,6 @@ extern MTRand __my_rand;
 extern "C" {
 #  else
 #  endif
-#  ifndef DOXYGEN_SKIP
-#   define gauss_deviate gauss_deviate__
-#  endif // DOXYGEN_SKIP
     /** Generate a Gaussian deviate.
      * The random gaussian distribution is created using a Box-Mueller
      * transformation from a uniform distribution.
@@ -73,13 +76,12 @@ extern "C" {
      * @see Numerical recipes for a description of a Box-Mueller
      *    transformation.
      * */
-    double gauss_deviate( const double sigma[]);
+    double gauss_deviate(const double sigma[]);
+    double gauss_deviate__(const double sigma[]) __attribute__ (( alias ("gauss_deviate") ));
 
-#  ifndef DOXYGEN_SKIP
-#   define ran2 ran2_
-#  endif // DOXYGEN_SKIP
     /** RAN2 from numerical recipes. */
-    double ran2(int * idum);			/* numerical recip. ran2 */
+    double ran2(int * idum) __attribute__ (( alias ("ran2_") ));
+    double ran2_(int * idum);
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrand mtrngrand_
