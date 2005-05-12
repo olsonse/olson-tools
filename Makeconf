@@ -20,13 +20,13 @@ CXX_Darwin=g++
 F77_Darwin=g77
 #F77_Darwin=f95
 
-CC_Linux=gcc
-CXX_Linux=g++
-F77_Linux=g77
+#CC_Linux=gcc
+#CXX_Linux=g++
+#F77_Linux=g77
 #F77_Linux=f95
-#CC_Linux=icc
-#CXX_Linux=icpc
-#F77_Linux=ifort
+CC_Linux=icc
+CXX_Linux=icpc
+F77_Linux=ifort
 
 # and set the actual compiler used
 CC=$(CC_$(OS))
@@ -52,7 +52,7 @@ OPTIM_gcc_powerpc= -O3 -funroll-loops -fstrict-aliasing -fsched-interblock \
 #           -malign-power \
 
 OPTIM_gcc-3.4.3_powerpc=$(OPTIM_gcc_powerpc)
-OPTIM_gcc_sparc=-O3 -m64
+OPTIM_gcc_sparc=-O3 -mcpu=v9 -mtune=v9
 
 OPTIM_g77_athlon=$(OPTIM_gcc_athlon)
 OPTIM_g77_i686=$(OPTIM_gcc_i686)
@@ -61,7 +61,7 @@ OPTIM_g77_powerpc=$(OPTIM_gcc_powerpc)
 OPTIM_g77-3.4.3_powerpc=$(OPTIM_gcc_powerpc)
 OPTIM_g77_sparc=$(OPTIM_gcc_sparc)
 
-OPTIM_icc_x86_64=-xW -ipo -O3
+OPTIM_icc_x86_64=-xW -ip -O3
 OPTIM_ifort_x86_64=$(OPTIM_icc_x86_64)
 
 OPTIM_f95_athlon=-O3 -Wc,-mcpu=athlon-xp,-march=athlon-xp,-malign-double,-mmmx,-m3dnow,-msse,-maccumulate-outgoing-args
@@ -95,6 +95,7 @@ FFLAGS_ifort=-free -warn all
 
 FLIBS_g77=-L/opt/local/lib/ -lg2c
 FLIBS_f95=/usr/local/NAG/asli/lib/NAGWare/quickfit.o -L/usr/local/NAG/asli/lib -lf96
+FLIBS_ifort=-lifport -lifcore -limf
 
 FMACROSFILE=fmacros.h
 
