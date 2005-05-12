@@ -1,3 +1,5 @@
+#include "fmacros.h"
+
 ! Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
 double precision function getMachineEPS ()
     implicit none
@@ -97,7 +99,7 @@ subroutine rk2step (x, n, t, dt, derivs, derivsArgs)
     end do
 end subroutine
 
-subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
+subroutine FFUNC_(rk_adapt_driver)(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
     IMPLICIT NONE
     integer             n
     double precision    x(1:n), x_cal(1:n), dxdt(1:n)

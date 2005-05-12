@@ -16,10 +16,10 @@ void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], void * 
 
 /*
 ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-! Calculate the Bfield for a bunch of thin current elements
+! Calculate the B Field for a bunch of thin current elements
 ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
-void thgetb(double Bfield[4], const double r[3], const Args * f) {
+void thgetb(double B[4], const double r[3], const Args * f) {
       
     double x1,x2,rho,dB,rl,h1;
 
@@ -29,7 +29,7 @@ void thgetb(double Bfield[4], const double r[3], const Args * f) {
     if (rcut < 1e-10) rcut = 1e-10;
 
     /* set field vector to zero */
-    for (int i = Z+1; i >= X; Bfield[i--]=0 );
+    memset(B, 0, 4*sizeof(double));
         
     /*
     ! integrate over the fields produced by the discrete
@@ -79,24 +79,24 @@ void thgetb(double Bfield[4], const double r[3], const Args * f) {
         /* h1 = sqrt(z * z) */
         h1=sqrt( DOTP(z,z) );
  
-        /* Increment the field vector Bfield(3) by the field produced
+        /* Increment the field vector B(3) by the field produced
          * by the presently considered current element.         
          */
         if (h1 > 0) {
             for (int j = X; j <= Z; j++) {
-                Bfield[j] += dB * (z[j]/h1);
+                B[j] += dB * (z[j]/h1);
             }
         }
 
     }/* for */
 
     /* add in a background */
-    Bfield[X] += f->bg[X];
-    Bfield[Y] += f->bg[Y];
-    Bfield[Z] += f->bg[Z];
+    B[X] += f->bg[X];
+    B[Y] += f->bg[Y];
+    B[Z] += f->bg[Z];
 
     /* Get the magnitude of B. */
-    Bfield[Z+1] = sqrt( DOTP(Bfield,Bfield) );
+    B[Z+1] = sqrt( DOTP(B,B) );
 }
 
 } /* namespace */

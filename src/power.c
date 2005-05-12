@@ -79,11 +79,6 @@ double fast_pow__( double *x, double *y ) {
     FAST_POW_CODE(*x,*y);
 }
 
-/* for (NAG f95) fortran we need to have pointer arguments as well as derefencing */
-double fast_pow_( double *x, double *y ) {
-    FAST_POW_CODE(*x,*y);
-}
-
 double fast_pow( double x, double y ) {
     FAST_POW_CODE(x,y);
 }

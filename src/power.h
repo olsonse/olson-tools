@@ -1,11 +1,19 @@
 // -*- c -*-
-// $Id: power.h,v 1.1 2005/01/08 04:27:24 olsonse Exp $
+// $Id: power.h,v 1.2 2005/05/12 04:27:34 olsonse Exp $
 /*
  * Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: power.h,v $
- * Revision 1.1  2005/01/08 04:27:24  olsonse
- * Initial revision
+ * Revision 1.2  2005/05/12 04:27:34  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ * Found (using intel compiler) and fixed an array overflow in BField::potential.
+ * Didn't find it earlier because the array is on the stack for the function.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:24  olsonse
+ * Initial import
  *
  */
 
@@ -63,7 +71,7 @@ double fast_pow__(double*,double*);
 
 /** This one is primarily for use from (NAG f95) fortran code.
  * It has only 2 additional mov instructions. */
-double fast_pow_(double*,double*);
+double fast_pow_(double*,double*) __attribute__ (( alias ("fast_pow__") )) ;
 
 #endif // USE_SPENCERS_FAST_POW
 

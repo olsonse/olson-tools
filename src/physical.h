@@ -80,6 +80,7 @@ namespace physical {
         const double mm = millimeter;
         const double micron = meter/1000000.0;
         const double microns = micron;
+        const double um = micron;
         const double nanometer = meter/1000000000.0;
         const double nanometers = nanometer;
         const double nm = nanometer;

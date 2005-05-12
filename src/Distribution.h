@@ -1,9 +1,17 @@
 // -*- c++ -*-
-// $Id: Distribution.h,v 1.2 2005/04/19 17:23:21 olsonse Exp $
+// $Id: Distribution.h,v 1.3 2005/05/12 04:27:29 olsonse Exp $
 /*
  * Copyright 2004 Spencer Olson
  *
  * $Log: Distribution.h,v $
+ * Revision 1.3  2005/05/12 04:27:29  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ * Found (using intel compiler) and fixed an array overflow in BField::potential.
+ * Didn't find it earlier because the array is on the stack for the function.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
  * Revision 1.2  2005/04/19 17:23:21  olsonse
  * Added new RKIntegrator wrapper class to allow for generic integration
  * templates.
@@ -93,6 +101,7 @@ class Distribution {
 
         double * ptmp = new double[L];
 
+        /* integrate the distribution */
         ptmp[0] = distro.distrib(min);
         int i = 1;
         for (double x = min+dx; i < L; x+=dx, i++) {
@@ -104,11 +113,8 @@ class Distribution {
             for (i = 0; i < L; ptmp[i++] /= qmax);
         }
 
+        /* now we invert the distribution by using the integral. */
         q = new double[L+1];
-        /* just set q[0] to minimum. hopefully q[L] == max */
-        q[0] = min;
-        /* just set q[L] to maximum. hopefully q[L] == max */
-        q[L] = max;
         double dprob = (ptmp[L-1] - ptmp[0]) / L;
 
         for (i = 0; i <= L; i++) {
@@ -127,9 +133,9 @@ class Distribution {
              * point.  oh well).
              */
 
-            q[i] = (min+(j-1)*dx) +   dx 
-                                    * (prob    - ptmp[j-1])
-                                    / (ptmp[j] - ptmp[j-1]);
+            q[i] = (min+(j-1)*dx)
+                 + (dx / (ptmp[j] - ptmp[j-1]))
+                   * (prob    - ptmp[j-1]);
         }
 
         /* cleanup */
@@ -143,7 +149,7 @@ class Distribution {
      * @see lever().
      */
     inline double operator() (void) const {
-        //return q[(int) rint(MTRNGrand() * L) ];
+        //return q[(int) rint(MTRNGrand() * (L+0.999999)) ];
         return lever();
     }
 

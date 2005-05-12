@@ -24,9 +24,12 @@ ${LIBNAME}.a: ${OBJ}
 	rm -f $(LIBNAME).a;
 	${AR} -rs ${LIBNAME}.a ${OBJ}
 
+TRAPFE_FLAGS_SunOS_sparc=-D__EXTENSIONS__ -I/opt/SUNWspro/WS6U2/include/cc
+
+TRAPFE_FLAGS=$(TRAPFE_FLAGS_$(OS)_$(PROCESSOR))
 
 $(LIBTRAPFE) : trapfe.c
-	$(CC) $(CFLAGS) -o $@  -c $<
+	$(CC) $(CFLAGS) $(TRAPFE_FLAGS) -o $@  -c $<
 
 clean:
 	rm -f ${OBJ} ${LIBNAME}.so ${LIBNAME}.a $(LIBTRAPFE)

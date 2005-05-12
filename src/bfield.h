@@ -136,6 +136,7 @@ namespace BField {
             gravity[X] = 0;
             gravity[Y] = 0;
             gravity[Z] = 0;
+            mass = 0; /* whoah! a massless particle! */
         }
         double delta;
         std::vector<ThinCurrentElement> currents;
@@ -149,7 +150,21 @@ namespace BField {
     } __attribute__((packed));
 
     void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], void * f);
-    void thgetb(double Bfield[4], const double r[3], const Args * f);
+
+    /** Calculate the magnetic field for a bunch of thin current elements.
+     * @param B
+     *     Output variable contains the magnetic field at r.
+     * @param r
+     *     Location of interest to calculate the field.
+     * @param f
+     *     BField::Args which describe the thin current elements and some
+     *     calculation parameters.
+     * @returns
+     *     The magnetic field (in B) at r for given thin current elements.
+     *
+     * @see BField::Args
+     */
+    void thgetb(double B[4], const double r[3], const Args * f);
 
     inline void getGradB(double GradB[3], const double r[3], const Args * f ) {
         double B1[4], B2[4];
@@ -182,15 +197,18 @@ namespace BField {
 
     /** Calculate the potential of ^{87}Rb |f=1,mF=-1>.
      * Note that gF = -1/2
-     * and that V = \mu . B
+     * and that V = \mu . B + m(g . r)
      * where \mu  == gF * mF * mu_B
+     * and gravitational energy is referenced to (0,0,0).
+     *
+     * @see potentialNoG(const double r[3], Args * f).
      */
     inline double potential(const double r[3], Args * f) {
-        double B[Z+1];
+        double B[4];
 
         thgetb(B, r, f);
 
-        return mu*sqrt( BField::DOTP(B,B) ) - f->mass*BField::DOTP(f->gravity,r);
+        return BField::mu*B[3] - f->mass*BField::DOTP(f->gravity,r);
     }
 
     /** Calculate the potential of ^{87}Rb |f=1,mF=-1> ignoring the
@@ -198,13 +216,15 @@ namespace BField {
      * Note that gF = -1/2
      * and that V = \mu . B
      * where \mu  == gF * mF * mu_B
+     *
+     * @see potential(const double r[3], Args * f).
      */
     inline double potentialNoG(const double r[3], Args * f) {
-        double B[Z+1];
+        double B[4];
 
         thgetb(B, r, f);
 
-        return mu*sqrt( BField::DOTP(B,B) );
+        return BField::mu*B[3];
     }
 
 

@@ -1,9 +1,17 @@
 #ifdef DUMMY_IFDEF_FOR_FORTRAN
-// $Id: rk.h,v 1.2 2005/04/19 17:23:21 olsonse Exp $
+// $Id: rk.h,v 1.3 2005/05/12 04:27:35 olsonse Exp $
 /*
  * Copyright 2002-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: rk.h,v $
+ * Revision 1.3  2005/05/12 04:27:35  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ * Found (using intel compiler) and fixed an array overflow in BField::potential.
+ * Didn't find it earlier because the array is on the stack for the function.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
  * Revision 1.2  2005/04/19 17:23:21  olsonse
  * Added new RKIntegrator wrapper class to allow for generic integration
  * templates.
@@ -37,13 +45,6 @@
 
 #  if LANGUAGE_FORTRAN__ != 1
 
-#    if F77COMP_f95==1
-   /* f95 from NAG doesn't put the extra _ at the end of the symbol when _
-    * occurs in the un-altered name.
-    */
-#      define rk_adapt_driver__ rk_adapt_driver_
-#    endif
-
 /** Type of function needed for Runge-Kutta.
  * @param p
  *     The Particle that is being moved in Runge-Kutta; this is an array of
@@ -63,13 +64,6 @@ typedef void (*derivativesFunction)(const double *p, const double * t, double *F
 #    ifdef __cplusplus
 extern "C" {
 #    endif
-
-#ifndef DOXYGEN_SKIP
-    /* Macro to allow use with fortran code.
-     * @see rk_adapt_driver
-     */
-#    define rk_adapt_driver rk_adapt_driver__
-#endif // DOXYGEN_SKIP
 
     /** Adaptive 5th order runge-kutta.
      * This is using the Cash-Karp parameters for doing 5th order accuracy
@@ -105,14 +99,27 @@ extern "C" {
     			 double * dt_step,
 			 const derivativesFunction getderivs,
 			 const void * fargs,
-			 const double * errmax);
+			 const double * errmax)
+                         __attribute__ (( alias ("rk_adapt_driver__") ));
 
-#ifndef DOXYGEN_SKIP
-    /* Macro to allow use with fortran code.
-     * @see rk4step
-     */
-#    define rk4step rk4step_
-#endif // DOXYGEN_SKIP
+    void rk_adapt_driver_(double * p,
+			 const int * n,
+                         const double * t,
+    			 const double * dt,
+    			 double * dt_step,
+			 const derivativesFunction getderivs,
+			 const void * fargs,
+			 const double * errmax)
+                         __attribute__ (( alias ("rk_adapt_driver__") ));
+
+    void rk_adapt_driver__(double * p,
+			 const int * n,
+                         const double * t,
+    			 const double * dt,
+    			 double * dt_step,
+			 const derivativesFunction getderivs,
+			 const void * fargs,
+			 const double * errmax);
 
     /** Simple 4th order runge-kutta.
      * Sometime I'll get a few more details as to which implementation of
@@ -138,14 +145,15 @@ extern "C" {
                          const double * t,
     			 const double * dt,
 			 const derivativesFunction getderivs,
-			 const void * fargs);
+			 const void * fargs)
+                         __attribute__ (( alias ("rk4step_") ));
 
-#ifndef DOXYGEN_SKIP
-    /* Macro to allow use with fortran code.
-     * @see rk2step
-     */
-#    define rk2step rk2step_
-#endif // DOXYGEN_SKIP
+    void rk4step_       (double * p,
+			 const int * n,
+                         const double * t,
+    			 const double * dt,
+			 const derivativesFunction getderivs,
+			 const void * fargs);
 
     /** Simple 2nd order runge-kutta.
      * An improved Euler routine.
@@ -166,6 +174,14 @@ extern "C" {
      *     specified getderivs function.
      */
     void rk2step        (double * p,
+			 const int * n,
+                         const double * t,
+    			 const double * dt,
+			 const derivativesFunction getderivs,
+			 const void * fargs)
+                         __attribute__ (( alias ("rk2step_") ));
+
+    void rk2step_       (double * p,
 			 const int * n,
                          const double * t,
     			 const double * dt,

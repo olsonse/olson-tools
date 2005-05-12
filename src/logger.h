@@ -1,11 +1,19 @@
 // -*- c -*-
-// $Id: logger.h,v 1.1 2005/01/08 04:27:24 olsonse Exp $
+// $Id: logger.h,v 1.2 2005/05/12 04:27:32 olsonse Exp $
 /*
  * Copyright 2000-2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * $Log: logger.h,v $
- * Revision 1.1  2005/01/08 04:27:24  olsonse
- * Initial revision
+ * Revision 1.2  2005/05/12 04:27:32  olsonse
+ * Fixed to for Intel 8.1 compilers.
+ * Found (using intel compiler) and fixed an array overflow in BField::potential.
+ * Didn't find it earlier because the array is on the stack for the function.
+ *
+ * Added fmacros.h file to simplify mixing fortran code with others.
+ * Added alias function names for Fortran interoperability.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:24  olsonse
+ * Initial import
  *
  */
 
@@ -21,7 +29,7 @@
 extern "C" {
 #endif 
 
-#define logger_h_rcsid "$Id: logger.h,v 1.1 2005/01/08 04:27:24 olsonse Exp $"
+#define logger_h_rcsid "$Id: logger.h,v 1.2 2005/05/12 04:27:32 olsonse Exp $"
 
 #include <stdio.h>
 
@@ -70,10 +78,6 @@ LogLevel_t;
  * @see LogLevel_t
  * */
 void log_error(LogLevel_t level, int err, const char *fmt, ...);
-#if F77COMP_f95==1
-#  define log_severe__ log_severe_
-#endif
-#define log_severe log_severe__
 
 /** Log a severe message.
  * @param fmt A printf type format.
@@ -81,6 +85,8 @@ void log_error(LogLevel_t level, int err, const char *fmt, ...);
  * @see LogLevel_t
  * */
 void log_severe(const char *fmt, ...);
+void log_severe_ (const char *fmt, ...) __attribute__ (( alias ("log_severe") )) ;
+void log_severe__ (const char *fmt, ...) __attribute__ (( alias ("log_severe") )) ;
 
 /** Log a warning message.
  * @param fmt A printf type format.
