@@ -3,6 +3,7 @@
 #include <olson-tools/physical.h>
 #include <olson-tools/random.h>
 #include <iostream>
+#include <fstream>
 #include <olson-tools/Distribution.h>
 
 using namespace physical::constants;
@@ -32,24 +33,24 @@ void nextvel(double p[3]) {
     p[2] = ww;
 }
 
-struct ThermalDistrib3d {
+struct{
     double distrib (const double & v) const {
         return v*v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
     }
-};
+} ThermalDistrib3d ;
 
-struct ThermalDistrib2d {
+struct {
     double distrib (const double & v) const {
         return v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
     }
-};
+} ThermalDistrib2d;
 
 void nextvelb(double p[3]) {
     /* get the speed from a maxwellian distribution. */
     static double sigma_v = sqrt(3.0 * K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(&sigma_v));
 
-    static Distribution distro = Distribution(struct ThermalDistrib3d(), 0.0, 6*sigma_v, 1000);
+    static Distribution distro = Distribution(ThermalDistrib3d, 0.0, 6*sigma_v, 1000);
     double speed = distro();
     /* now get the direction:  cosine distribution in \theta and
      * uniform in \phi */
@@ -85,7 +86,7 @@ void nextveld(double p[3]) {
     static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(&sigma_v));
 
-    static Distribution distro = Distribution(struct ThermalDistrib2d(), 0.0, 6*sigma_v_xyz, 10000);
+    static Distribution distro = Distribution(ThermalDistrib2d, 0.0, 6*sigma_v_xyz, 100);
     p[2] = gauss_deviate(&sigma_v_xyz);
     p[1] = gauss_deviate(&sigma_v_xyz);
     p[0] = -distro();
@@ -93,31 +94,32 @@ void nextveld(double p[3]) {
 
 /** A flat distribution for use.
 */
-struct FlatDistribution {
+struct {
     /** Return 0.5.
      */
     inline double distrib (const double & x) const {
         return 0.5;
     }
-};
+} FlatDistribution;
 
 void nextvele(double p[3]) {
     /* get the speed from a maxwellian distribution. */
     static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(&sigma_v));
 
-    static Distribution distro = Distribution(struct FlatDistribution(), 0.0, 1, 1000);
+    static Distribution distro = Distribution(FlatDistribution,-0.001, 0.0, 1000);
     p[2] = gauss_deviate(&sigma_v_xyz);
     p[1] = gauss_deviate(&sigma_v_xyz);
     p[0] = distro();
 }
 
 int main() {
+    std::ofstream outf("/tmp/tmpdist.dat");
     for (int i = 0; i < 100000; i++) {
         double p[3];
         nextveld(p);
 
-        std::cout << p[0] << '\t'
+        outf      << p[0] << '\t'
                   << p[1] << '\t'
                   << p[2] << std::endl;
     }

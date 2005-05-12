@@ -15,7 +15,7 @@ REDEF_NEW_DEL_C(bob,cache_lim);
 inline void borrow (struct timeval & ti, struct timeval & tf){
     if (tf.tv_usec < ti.tv_usec) {
 	tf.tv_sec--;
-	tf.tv_usec + 1000000;
+	tf.tv_usec += 1000000;
     }
 }
 

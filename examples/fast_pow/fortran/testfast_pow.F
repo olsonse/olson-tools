@@ -3,12 +3,17 @@ program bob
      use f90_unix
      TYPE(TMS) :: BUFFER
 #  define clock times(buffer)
+#elif defined(__INTEL_COMPILER)
+#  define clock mclock()
+     integer mclock
 #else
+     integer(KIND=2) mclock8
 #  define clock mclock8()
 #endif
      double precision a,b, fast_pow
      double precision val, mi, ma, su
      double precision start, finish
+     double precision stdpow
      external fast_pow, stdpow
 
      mi = -100000.0
