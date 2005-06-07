@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: io.C,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: io.C,v 1.2 2005/06/07 20:38:12 olsonse Exp $
 /*
  * $Log: io.C,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * Revision 1.2  2005/06/07 20:38:12  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.2  2000/06/15 19:31:00  olsons
  * Made debug_level act more like levels rather than codes.
@@ -34,18 +37,7 @@
 
 // The following will function for now as our virtual io
 
-_IO_istream_withassign gain;
-_IO_ostream_withassign gaout;
-_IO_ostream_withassign gaerr;
-_IO_ostream_withassign galog;
-
-static int init_io() {
-  gain = cin;
-  gaout = cout;
-  gaerr = cerr;
-  galog = clog;
-  return 0;
-}
-
-static int init_io_var = init_io();
-
+std::istream gain(std::cin.rdbuf());
+std::ostream gaout(std::cout.rdbuf());
+std::ostream gaerr(std::cerr.rdbuf());
+std::ostream galog(std::clog.rdbuf());

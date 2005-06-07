@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: io.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: io.h,v 1.2 2005/06/07 20:38:12 olsonse Exp $
 /*
  * $Log: io.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * Revision 1.2  2005/06/07 20:38:12  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.1  2000/05/06 20:37:18  olsons
  * Reorganized libfit: made it self-containing and use new definition of alleles.
@@ -30,11 +33,11 @@
 #ifndef IO_H
 #define IO_H
 
-#include <iostream.h>
+#include <iostream>
 
-extern _IO_istream_withassign gain;
+extern std::istream gain;
 
-extern _IO_ostream_withassign gaout, gaerr, galog;
+extern std::ostream gaout, gaerr, galog;
 
 #endif // IO_H
 

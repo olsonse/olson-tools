@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: gene.C,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: Gene.C,v 1.1 2005/06/07 20:38:10 olsonse Exp $
 /*
- * $Log: gene.C,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: Gene.C,v $
+ * Revision 1.1  2005/06/07 20:38:10  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.7  2000/06/15 19:31:00  olsons
  * Made debug_level act more like levels rather than codes.
@@ -51,8 +54,12 @@
  *
  */
 
-#include "gene.h"
-#include "random.h"
+#include "Gene.h"
+#if defined (BUILD_TOOLS)
+#  include "../random/random.h"
+#else
+#  include "random.h"
+#endif
 #include "io.h" // in and output
 #include "error.h"
 #include <stdlib.h>
@@ -98,7 +105,7 @@ void crossover(Chromosome& c1, Chromosome& c2){
     unsigned short int mask=0;
     // This may need to be changed in the future because we might
     // use doubles in gene
-    int bit = random()&15;  // there are only eight possible bits
+    int bit = int(15.99*MTRNGrand());  // there are only eight possible bits
     for(int j=bit; j<16; j++)
       mask = mask | (1<<j);
     if (CROSSOVER==CREAL){
@@ -107,7 +114,7 @@ void crossover(Chromosome& c1, Chromosome& c2){
     // choice here for the hybrids would be to have different
     // random weights for each child
       // in the following, we should have w compatiblly typed with Alleles
-      Allele_t w= range_rand(0,1);//get random # between 0 and 1
+      Allele_t w= MTRNGrand();//get random # between 0 and 1
       t1[gloc].val = w * c1[gloc].val + (1-w) * c2[gloc].val;
       t2[gloc].val = (1-w) * c1[gloc].val + w * c2[gloc].val;
     }
@@ -152,10 +159,10 @@ void Chromosome::mutate(){
     int gloc = randgene();//gene random gene index
 #if CROSSOVER==CBIT
     // Now find a random bit in the gene
-    int bit = random()&15;  // there are only eight possible bits
+    int bit = int(15.99*MTRNGrand());  // there are only eight possible bits
     (*this)[gloc].val ^= 1<<bit;
 #elif CROSSOVER==CREAL
-    (*this)[gloc].val = range_rand( (*this)[gloc].min, (*this)[gloc].max );
+    (*this)[gloc].val = __my_rand.rand((*this)[gloc].max - (*this)[gloc].min) + (*this)[gloc].min;
 #else
 #error "CROSSOVER has unrecognized value"
 #endif
@@ -172,17 +179,17 @@ void Chromosome::mutate(){
   } // while not valid
 } // Chromosome::mutate
 
-ostream& operator<<(ostream &output, const Gene & gene) {
+std::ostream& operator<<(std::ostream &output, const Gene & gene) {
     output<<'\t';
     int nalleles=gene.Numalleles();
     for(int i=0;i<nalleles;i++)
       output << gene[i].val <<"  ";
-    output<<endl;
+    output<<std::endl;
     return output;
 } // operator<<  Gene
 
 
-Gene::Gene( int nalleles = 0, Allele_struct alls[] = 0 ):
+Gene::Gene( int nalleles /* = 0 */, Allele_struct alls[] /* = 0 */ ):
   numalleles(0), alleles(NULL) {
 
   /* Allocate and assign alleles */
@@ -220,7 +227,7 @@ void Gene::randinit() {
   // init gene randomly
   for(int i=0; i<numalleles; i++){
     if( TESTALLELETYPE( alleles[i].allele_type, ALLELE_DYNAMIC ) )
-      alleles[i].val=range_rand( alleles[i].min, alleles[i].max );
+      alleles[i].val = __my_rand.rand(alleles[i].max - alleles[i].min) + alleles[i].min;
   } // for i
 } // Gene::randinit
 
@@ -242,15 +249,15 @@ int Gene::randgene() const {
   // We will just get a random number between 0 and numalleles, 
   // and just circulate
   // through the alleles until we find an allele that can be modified.
-  int rint = (int) range_rand( 0, numalleles-1 );
+  int rgint = int((numalleles-0.001)*MTRNGrand());
   int i=0;
   while( i < numalleles ){ // no need to circulate more than once
     // if beyond range, start at the first allele
-    if( rint >= numalleles) rint=0;
-    if( TESTALLELETYPE( alleles[rint].allele_type, ALLELE_DYNAMIC ) )
-        return rint;
+    if( rgint >= numalleles) rgint=0;
+    if( TESTALLELETYPE( alleles[rgint].allele_type, ALLELE_DYNAMIC ) )
+        return rgint;
     i++;// increment iteration number
-    rint++;
+    rgint++;
   }
   throw
     libfitError( GENE_RANDGENE_NO_DYNAMIC_ALLELES );
@@ -362,7 +369,7 @@ const Gene & Gene::operator=(const Gene & g2) {
 } // operator= Gene
 
 void Gene::copy_alleles_from_Gene( const Gene & g2,
-                                   int a = 0, int b = 65355 ) {
+                                   int a /* = 0 */, int b /* = 65355 */ ) {
   if( b >= g2.numalleles ) b = g2.numalleles -1;
   if( a > b || a < 0 ) return;
   // gene partial copy function

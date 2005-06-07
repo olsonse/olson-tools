@@ -1,8 +1,11 @@
-// $Id: geneticalg.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: GeneticAlg.h,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
- * $Log: geneticalg.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: GeneticAlg.h,v $
+ * Revision 1.1  2005/06/07 20:38:11  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.8  2000/07/20 00:10:58  olsons
  * Changed debug scheme and default debug level to 0.
@@ -42,8 +45,8 @@
 #define GENETICALG_H
 
 #include <string>
-#include "generation.h"
-#include "gene.h"
+#include "Generation.h"
+#include "Gene.h"
 
 ///The args for GeneticAlg class.
 class GeneticAlgArgs {
@@ -54,7 +57,6 @@ class GeneticAlgArgs {
                      local_fit_tolerance(1e-3),
                      local_fit_max_iteration(100), crossprob(0.85),
                      mutprob(0.35), maxgeneration(200),
-                     randseed(0), randsize(256), generateseed(true),
                      createind(create_Individual), meritfnc(NULL),
                      exterior_pointer( NULL )
                      {}
@@ -62,7 +64,7 @@ class GeneticAlgArgs {
     GeneticAlgArgs(const GeneticAlgArgs & that) { *this = that; }
     ~GeneticAlgArgs() {}
 
-    void setParam (const string & name, double & var);
+    void setParam (const std::string & name, double & var);
     /**The actual variable arguments for the Genetic Algorithm.
     */
     //@{
@@ -76,9 +78,6 @@ class GeneticAlgArgs {
     float    crossprob;
     float    mutprob;
     int      maxgeneration;
-    unsigned randseed;
-    int      randsize;
-    bool     generateseed;
     CREATE_IND_FUNC   createind;
     void *   meritfnc;
     void *   exterior_pointer;
@@ -94,9 +93,9 @@ class GeneticAlg {
     ///
     ~GeneticAlg() {}
     ///
-    merit_t fit( ostream * output = NULL, float tolerance = 0, merit_t maxmerit = -1e60 );
+    merit_t fit( std::ostream * output = NULL, float tolerance = 0, merit_t maxmerit = -1e60 );
     ///
-    friend ostream & operator<<(ostream &,const GeneticAlg &);
+    friend std::ostream & operator<<(std::ostream &,const GeneticAlg &);
   private:
     ///The arguments
     GeneticAlgArgs args;
@@ -116,7 +115,7 @@ class GeneticAlg {
 };
 
 ///The GeneticAlg print function.
-ostream & operator<<(ostream &, const GeneticAlg &);
+std::ostream & operator<<(std::ostream &, const GeneticAlg &);
 
 #endif //  GENETICALG_H
 

@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: gene.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: Gene.h,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
- * $Log: gene.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: Gene.h,v $
+ * Revision 1.1  2005/06/07 20:38:11  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.6  2000/06/15 19:31:00  olsons
  * Made debug_level act more like levels rather than codes.
@@ -50,8 +53,8 @@
 #include "error.h" // libfitError definition
 #include "io.h" // in and output
 
-/// Alleles are stored in memory as datatype Allele_t; currently as float.
-#define Allele_t float
+/// Alleles are stored in memory as datatype Allele_t; currently as double.
+#define Allele_t double
 
 /**@name Allele types
  * Allele types are catagorized as follows:
@@ -64,7 +67,7 @@
 const unsigned char ALLELE_ALL = 0;
 ///
 const unsigned char ALLELE_DYNAMIC = 1;
-// Those which are dynamic and can be used as parameter space coordinates.
+// Those which are dynamic and continuous can be used as parameter space coordinates.
 const unsigned char ALLELE_CONTINUOUS = 4;
 ///
 const unsigned char ALLELE_STATIC = ~ALLELE_DYNAMIC;
@@ -82,6 +85,9 @@ typedef struct Allele_struct {
   unsigned char allele_type;
   Allele_struct( Allele_t i = 0, unsigned char at = ALLELE_STATIC ):
     min(i), val(i), max(i), allele_type(at) {}
+
+  Allele_struct( Allele_t i, Allele_t j, Allele_t k, unsigned char at = ALLELE_STATIC ):
+    min(i), val(j), max(k), allele_type(at) {}
 };
 //@}
 
@@ -179,7 +185,7 @@ public:
 }; // Chromosome
 
 ///
-ostream & operator<<(ostream &, const Gene &);
+std::ostream & operator<<(std::ostream &, const Gene &);
 
 
 ///Chromosome crossover machine.

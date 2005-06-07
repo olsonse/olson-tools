@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: individual.C,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: Individual.C,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
- * $Log: individual.C,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: Individual.C,v $
+ * Revision 1.1  2005/06/07 20:38:11  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.6  2000/05/06 20:37:18  olsons
  * Reorganized libfit: made it self-containing and use new definition of alleles.
@@ -43,8 +46,8 @@
  *
 */
 
-#include "individual.h"
-#include "gene.h"
+#include "Individual.h"
+#include "Gene.h"
 #include "debug.h"
 
 ///
@@ -95,8 +98,9 @@ Individual::Individual(const Individual & ind):
   merit( ind.merit ), exterior_pointer( ind.exterior_pointer ) {
 } // Individual copy constructor
 
-Individual::Individual( const Gene & gene , void * meritfptr = NULL,
-                        void * obj_ptr = NULL ):
+Individual::Individual( const Gene & gene ,
+                        void * meritfptr /* = NULL */,
+                        void * obj_ptr /* = NULL */ ):
   meritfnc( (MERIT_FUNCTION) meritfptr ), DNA( gene ),
   updatemerit( true ), exterior_pointer( obj_ptr ) {
 } // Individual constructor
@@ -110,7 +114,7 @@ Individual::~Individual(){
  * violation does not occur.
 */
 merit_t Individual::test_Merit( Allele_t test_alleles[],
-                                unsigned char alleletype = 0 ){
+                                unsigned char alleletype /* = 0 */ ){
   int i,j, N;
   Allele_struct * a;
   Allele_t * tmp_alleles = new Allele_t[ N = DNA.Numalleles() ];
@@ -182,7 +186,7 @@ void Individual::mutate(){
   updatemerit = true;
 }//Individual::mutate
 
-ostream & operator<<(ostream &output, const Individual & ind) {
+std::ostream & operator<<(std::ostream &output, const Individual & ind) {
   output<<"DNA:"
         << ind.DNA
         <<"Individual Merit: "<<ind.merit;
@@ -190,8 +194,8 @@ ostream & operator<<(ostream &output, const Individual & ind) {
 } // operator << Individual
 
 Individual * create_Individual( const Gene & gn,
-                                void * meritfnc = NULL,
-                                void * obj_ptr = NULL ) {
+                                void * meritfnc /* = NULL */,
+                                void * obj_ptr /* = NULL */ ) {
   return new Individual( gn, meritfnc, obj_ptr );
 }
 

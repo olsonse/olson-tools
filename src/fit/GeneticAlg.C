@@ -1,8 +1,11 @@
-// $Id: geneticalg.C,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: GeneticAlg.C,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
- * $Log: geneticalg.C,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: GeneticAlg.C,v $
+ * Revision 1.1  2005/06/07 20:38:11  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.9  2000/10/25 18:15:54  olsons
  * Small fixes
@@ -41,10 +44,16 @@
  */
 
 #include "io.h"
-#include "generation.h"
+#include "Generation.h"
 #include <math.h>
-#include "geneticalg.h"
-#include "random.h"
+#include "GeneticAlg.h"
+
+#include "Gene.h"
+#if defined (BUILD_TOOLS)
+#  include "../random/random.h"
+#else
+#  include "random.h"
+#endif
 #include <signal.h> // This is so we can issue ^C to stop the ga in its tracks
 #include <assert.h>
 
@@ -67,10 +76,13 @@ GeneticAlg::GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args ):
 
 } // GeneticAlg constructor
 
-merit_t GeneticAlg::fit( ostream * output = NULL, float tolerance = 0, merit_t maxmerit = -1e60 ) {
+merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
+                         float tolerance /* = 0 */, 
+                         merit_t maxmerit /* = -1e60 */) {
   if( output ) {
     assert(output);
-    gaout = gaerr = *output;
+    gaout.tie(output);
+    gaerr.tie(output);
   }
   if( ! tolerance ) {
     tolerance = args.tolerance;
@@ -83,7 +95,6 @@ merit_t GeneticAlg::fit( ostream * output = NULL, float tolerance = 0, merit_t m
    * will be quicker.
    */
   Individual::freetoheap( args.population + 2 );
-  initrand(args.randseed,args.randsize,args.generateseed);
 
   merit_t merit(0),lmerit(0);
 
@@ -110,9 +121,9 @@ merit_t GeneticAlg::fit( ostream * output = NULL, float tolerance = 0, merit_t m
       lmerit=merit;
       merit=parents.merit();
       if(output) {
-       (*output)<<"Generation "<<generation_iter++<<endl;
-       (*output)<<parents;
-       (*output)<<"Average Merit of Top Four="<<merit<<endl<<endl;
+       (*output) << "Generation " << generation_iter++ << std::endl;
+       (*output) << parents;
+       (*output) << "Average Merit of Top Four=" << merit << std::endl << std::endl;
       }//if
     } // while merit has decreased
 
@@ -124,18 +135,20 @@ merit_t GeneticAlg::fit( ostream * output = NULL, float tolerance = 0, merit_t m
 
   if(parents.stop)
     if(output) {
-      (*output)<<"I was asked to stop; you only get what is best so far"<<endl;
+      (*output) << "I was asked to stop; you only get what is best so far"
+                << std::endl;
     }//if
 
   }//try
   catch ( libfitError g ) {
     if(output) {
-      (*output)<<"GenticAlg exception caught:\n"<< g.errcode <<endl;
+      (*output) << "GenticAlg exception caught:\n"
+                << g.errcode << std::endl;
     }//if
   }
   catch (...) {
     if(output) {
-      (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" <<endl;
+      (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" << std::endl;
     }//if
   }
 
@@ -155,7 +168,7 @@ merit_t GeneticAlg::fit( ostream * output = NULL, float tolerance = 0, merit_t m
   return merit;
 } // ga
 
-void GeneticAlgArgs::setParam (const string & name, double & var) {
+void GeneticAlgArgs::setParam (const std::string & name, double & var) {
 	if (name == "population")
 		population = (int)var;
 	else if (name == "tolerance")
@@ -176,18 +189,12 @@ void GeneticAlgArgs::setParam (const string & name, double & var) {
 		mutprob = var;
 	else if (name == "maxgeneration")
 		maxgeneration = (int)var;
-	else if (name == "randseed")
-		randseed = (unsigned int)var;
-	else if (name == "randsize")
-		randsize = (int)var;
-	else if (name == "generateseed")
-		generateseed = (bool)var;	
 }
 
-ostream & operator<<(ostream & output,const GeneticAlg & ga){
+std::ostream & operator<<(std::ostream & output,const GeneticAlg & ga){
   output<<"Genetic Algorithm output:\n"
-        <<"Generation "<<ga.generation_iter<<endl
-        <<ga.parents<<endl;
+        <<"Generation "<<ga.generation_iter<< std::endl
+        <<ga.parents<< std::endl;
   return output;
 } // operator<< GeneticAlg
 

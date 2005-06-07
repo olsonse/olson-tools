@@ -1,9 +1,12 @@
 // -*- c++ -*-
-// $Id: individual.h,v 1.1 2005/01/08 04:27:25 olsonse Exp $
+// $Id: Individual.h,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
- * $Log: individual.h,v $
- * Revision 1.1  2005/01/08 04:27:25  olsonse
- * Initial revision
+ * $Log: Individual.h,v $
+ * Revision 1.1  2005/06/07 20:38:11  olsonse
+ * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+ *
+ * Revision 1.1.1.1  2005/01/08 04:27:25  olsonse
+ * Initial import
  *
  * Revision 1.5  2000/05/06 20:37:18  olsons
  * Reorganized libfit: made it self-containing and use new definition of alleles.
@@ -43,8 +46,12 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
-#include "gene.h"
-#include "memory"
+#include "Gene.h"
+#if defined (BUILD_TOOLS)
+#  include "../memory.h"
+#else
+#  include "memory.h"
+#endif
 #include "io.h"
 #include "merit_def.h"
 
@@ -100,7 +107,7 @@ public:
   ///
   friend void crossover(Individual *i1, Individual *i2);
   ///
-  friend ostream & operator<<(ostream &, const Individual &);
+  friend std::ostream & operator<<(std::ostream &, const Individual &);
   ///
   Chromosome DNA;
 protected:
@@ -156,7 +163,7 @@ Individual * create_Individual( const Gene & gn,
 #endif
 
 ///The Individual print function.
-ostream & operator<<(ostream &, const Individual &);
+std::ostream & operator<<(std::ostream &, const Individual &);
 
 #endif //INDIVIDUAL_H
 
