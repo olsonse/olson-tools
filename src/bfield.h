@@ -195,10 +195,10 @@ namespace BField {
         a[Z] = -mu * a[Z]/f->mass + f->gravity[Z];
     }
 
-    /** Calculate the potential of ^{87}Rb |f=1,mF=-1>.
+    /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1>.
      * Note that gF = -1/2
-     * and that V = \mu . B + m(g . r)
-     * where \mu  == gF * mF * mu_B
+     * and that V = \f$\mu\f$ . B + m(g . r)
+     * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
      * and gravitational energy is referenced to (0,0,0).
      *
      * @see potentialNoG(const double r[3], Args * f).
@@ -211,11 +211,11 @@ namespace BField {
         return BField::mu*B[3] - f->mass*BField::DOTP(f->gravity,r);
     }
 
-    /** Calculate the potential of ^{87}Rb |f=1,mF=-1> ignoring the
+    /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1> ignoring the
      * gravitational component.
      * Note that gF = -1/2
-     * and that V = \mu . B
-     * where \mu  == gF * mF * mu_B
+     * and that V = \f$\mu\f$ . B
+     * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
      *
      * @see potential(const double r[3], Args * f).
      */
