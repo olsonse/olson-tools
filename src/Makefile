@@ -5,8 +5,16 @@ CFLAGS:=$(CFLAGS) -DBUILD_TOOLS
 OBJ=options.o logger.o rk.o power.o \
 	random/random.o \
 	random/randomf.o \
-        3j.o bfield.o \
-        Distribution.o
+        3j.o \
+        bfield.o \
+        Distribution.o \
+        fit/debug.o \
+        fit/error.o \
+        fit/Gene.o \
+        fit/Generation.o \
+        fit/GeneticAlg.o \
+        fit/Individual.o \
+        fit/io.o
 
 LIBNAME=libolson-tools$(EXT)
 
