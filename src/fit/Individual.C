@@ -1,7 +1,10 @@
 // -*- c++ -*-
-// $Id: Individual.C,v 1.1 2005/06/07 20:38:11 olsonse Exp $
+// $Id: Individual.C,v 1.2 2005/06/09 08:50:44 olsonse Exp $
 /*
  * $Log: Individual.C,v $
+ * Revision 1.2  2005/06/09 08:50:44  olsonse
+ * Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.
+ *
  * Revision 1.1  2005/06/07 20:38:11  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
  *
@@ -177,9 +180,9 @@ void Individual::randinit(){
   updatemerit = true;
 }// randinit -- inititialize things randomly
 
-void Individual::remerit(merit_t mf){
-  merit *= mf;
-}// Individual::remerit
+void Individual::multMerit(merit_t mf){
+  merit = Merit() * mf;
+}// Individual::multMerit
 
 void Individual::mutate(){
   DNA.mutate();

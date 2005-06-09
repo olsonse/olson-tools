@@ -1,6 +1,9 @@
-// $Id: GeneticAlg.C,v 1.1 2005/06/07 20:38:11 olsonse Exp $
+// $Id: GeneticAlg.C,v 1.2 2005/06/09 08:50:42 olsonse Exp $
 /*
  * $Log: GeneticAlg.C,v $
+ * Revision 1.2  2005/06/09 08:50:42  olsonse
+ * Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.
+ *
  * Revision 1.1  2005/06/07 20:38:11  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
  *
@@ -73,6 +76,7 @@ GeneticAlg::GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args ):
   parents.local_fit_tolerance = args.local_fit_tolerance;
   parents.crossprob = args.crossprob;
   parents.mutprob = args.mutprob;
+  parents.do_resource_competition = args.encourage_diversity;
 
 } // GeneticAlg constructor
 
@@ -106,7 +110,11 @@ merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
     parents.randinit(); // init with random population
     parents.sort();
     merit=parents.merit();
-    lmerit=maxmerit;
+
+    /* start with the running average of merit at the current merit -
+     * (arbitrarily) 10*tolerance. */
+    lmerit=merit-10.0*tolerance;
+
     if(output) {
       (*output)<<"Generation 1\n";
       (*output)<<parents;
@@ -114,16 +122,23 @@ merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
     generation_iter=2;
     // Loop until merit function can be improved no further (less than tolerable)
     // or until the desired merit is reached
-    while( ( fabs(merit-lmerit) >= tolerance ) && !parents.stop
-          && ( merit<maxmerit ) && ( generation_iter < args.maxgeneration ) ){
+    while(   ( fabs(merit-lmerit) >= tolerance )
+          && !parents.stop
+          && ( merit <= maxmerit )
+          && ( generation_iter < args.maxgeneration ) ){
       parents.tournament(); // provide darwinism and create new generation
       parents.sort();
-      lmerit=merit;
+
+      /* record the new exponential average of merit */
+      lmerit *= 0.75;
+      lmerit += 0.25 * merit;
+
       merit=parents.merit();
       if(output) {
-       (*output) << "Generation " << generation_iter++ << std::endl;
-       (*output) << parents;
-       (*output) << "Average Merit of Top Four=" << merit << std::endl << std::endl;
+       (*output) << "Generation " << generation_iter++ << std::endl
+                 << parents 
+                 << "Average Merit of Top Four =" << merit << std::endl << std::endl 
+                 << "Generation Merit Increase =" << (merit-lmerit) << std::endl << std::endl;
       }//if
     } // while merit has decreased
 
@@ -167,29 +182,6 @@ merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
 
   return merit;
 } // ga
-
-void GeneticAlgArgs::setParam (const std::string & name, double & var) {
-	if (name == "population")
-		population = (int)var;
-	else if (name == "tolerance")
-		tolerance = var;
-	else if (name == "max_merit")
-		max_merit = var;
-	else if (name == "replace")
-		replace = var;
-	else if (name == "local_fit_max_individuals_prctage")
-		local_fit_max_individuals_prctage = var;
-	else if (name == "local_fit_tolerance")
-		local_fit_tolerance = var;
-	else if (name == "local_fit_max_iteration")
-		local_fit_max_iteration = (int)var;
-	else if (name == "crossprob")
-		crossprob = var;
-	else if (name == "mutprob")
-		mutprob = var;
-	else if (name == "maxgeneration")
-		maxgeneration = (int)var;
-}
 
 std::ostream & operator<<(std::ostream & output,const GeneticAlg & ga){
   output<<"Genetic Algorithm output:\n"
