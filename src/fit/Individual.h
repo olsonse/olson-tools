@@ -1,7 +1,10 @@
 // -*- c++ -*-
-// $Id: Individual.h,v 1.1 2005/06/07 20:38:11 olsonse Exp $
+// $Id: Individual.h,v 1.2 2005/06/09 09:12:08 olsonse Exp $
 /*
  * $Log: Individual.h,v $
+ * Revision 1.2  2005/06/09 09:12:08  olsonse
+ * Style changes.
+ *
  * Revision 1.1  2005/06/07 20:38:11  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
  *
@@ -84,8 +87,9 @@ public:
   /// update DNA
   void regene(Allele_t thick[],int alleletype);
 
-  ///make mf the new merit of this individual
-  void remerit(merit_t mf);
+  /** Multiply the merit of this individual by mf to create a new merit.
+   */
+  void multMerit(merit_t mf);
 
   /**@return Returns Merit unless genes have been updated;
    * in that case merit is set equal to the new meritfunction.
