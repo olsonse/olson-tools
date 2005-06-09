@@ -12,6 +12,7 @@ OBJ=options.o logger.o rk.o power.o \
         fit/error.o \
         fit/Gene.o \
         fit/Generation.o \
+        fit/Histogram.o \
         fit/GeneticAlg.o \
         fit/Individual.o \
         fit/io.o
