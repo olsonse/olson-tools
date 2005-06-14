@@ -20,13 +20,13 @@ CXX_Darwin=g++
 F77_Darwin=g77
 #F77_Darwin=f95
 
-#CC_Linux=gcc
-#CXX_Linux=g++
-#F77_Linux=g77
+CC_Linux=gcc
+CXX_Linux=g++
+F77_Linux=g77
 #F77_Linux=f95
-CC_Linux=icc
-CXX_Linux=icpc
-F77_Linux=ifort
+#CC_Linux=icc
+#CXX_Linux=icpc
+#F77_Linux=ifort
 
 # and set the actual compiler used
 CC=$(CC_$(OS))
