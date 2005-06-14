@@ -1,6 +1,9 @@
-// $Id: GeneticAlg.C,v 1.2 2005/06/09 08:50:42 olsonse Exp $
+// $Id: GeneticAlg.C,v 1.3 2005/06/14 02:28:19 olsonse Exp $
 /*
  * $Log: GeneticAlg.C,v $
+ * Revision 1.3  2005/06/14 02:28:19  olsonse
+ * Split out some files and renamed to be more consistent with olson-tools.
+ *
  * Revision 1.2  2005/06/09 08:50:42  olsonse
  * Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.
  *
@@ -68,16 +71,18 @@ GeneticAlg::GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args ):
            ga_args.createind,
            ga_args.meritfnc,
            ga_args.exterior_pointer ),
-  fitgene(&gene) {
+           fitgene(&gene) {
 
-  parents.replace = args.replace;
-  parents.local_fit_max_individuals_prctage =
-      args.local_fit_max_individuals_prctage;
-  parents.local_fit_tolerance = args.local_fit_tolerance;
-  parents.crossprob = args.crossprob;
-  parents.mutprob = args.mutprob;
-  parents.do_resource_competition = args.encourage_diversity;
+    parents.replace = args.replace;
+    parents.local_fit_max_individuals_prctage =
+        args.local_fit_max_individuals_prctage;
+    parents.local_fit_tolerance = args.local_fit_tolerance;
+    parents.crossprob = args.crossprob;
+    parents.mutprob = args.mutprob;
 
+    /* histogram stuff */
+    parents.do_resource_competition = args.encourage_diversity;
+    parents.hist_cont_grid_cols = args.diversity_grid_cols;
 } // GeneticAlg constructor
 
 merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
