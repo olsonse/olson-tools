@@ -81,12 +81,12 @@ void nextvelc(double p[3]) {
     p[2] =  gauss_deviate(&sigma_v);
 }
 
-void nextveld(double p[3]) {
     /* get the speed from a maxwellian distribution. */
     static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(&sigma_v));
 
     static Distribution distro = Distribution(ThermalDistrib2d, 0.0, 6*sigma_v_xyz, 100);
+void nextveld(double p[3]) {
     p[2] = gauss_deviate(&sigma_v_xyz);
     p[1] = gauss_deviate(&sigma_v_xyz);
     p[0] = -distro();
@@ -123,6 +123,19 @@ int main() {
                   << p[1] << '\t'
                   << p[2] << std::endl;
     }
+
+#if 0
+    std::ofstream qfile("qvals.dat");
+    for(int i = 0; i <= distro.L; i++) {
+        qfile << i << '\t' << distro.q[i] << '\n';
+    }
+
+    std::ofstream pfile("pvals.dat");
+    for(int i = 0; i < distro.L; i++) {
+        pfile << i << '\t' << distro.ptmp[i] << '\n';
+    }
+#endif
+
     return 0;
 }
 

@@ -1,8 +1,11 @@
-# $Id: Makefile,v 1.1 2005/04/19 17:20:42 olsonse Exp $
+# $Id: Makefile,v 1.1 2005/06/22 09:23:05 olsonse Exp $
 #
 # Copyright 1997-2004 Spencer Olson
 #
 # $Log: Makefile,v $
+# Revision 1.1  2005/06/22 09:23:05  olsonse
+# moved to subdirectory for 1D example.
+#
 # Revision 1.1  2005/04/19 17:20:42  olsonse
 # Added example for using distribution inverter.
 #
@@ -11,7 +14,7 @@
 #
 #
 
-include ../../Makeconf
+include ../../../Makeconf
 
 OBJ=testdist.o
 
