@@ -1,0 +1,18 @@
+Testing instructions for libtrapfe$(EXT).a:
+
+1.  do 'make' and you will get a program that does cause a floating point
+exception.  The problem is that gcc, by default, disables the trapping of
+these floating point exceptions.
+
+2.  do 'make TRAPFE=1' and you will still get a bad program that doesn't trap
+the exceptions.
+
+2.  do 'make DEBUG=-g TRAPFE=1' and you will get a program that not only causes a
+floating point error, but also traps it.  The program will emit an error and
+go into an infinite loop, waiting for you to investigate its cause.
+
+
+These DEBUG= and TRAPFE= make flags are are available and automatically
+applied to all code that uses my olson-tools Makeconf.  By 'uses', I mean that
+you Makefile must not only include it, but also use the CFLAGS, LDFLAGS, LIBS,
+etc when compiling.
