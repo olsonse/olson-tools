@@ -13,8 +13,10 @@ OBJ=options.o logger.o rk.o power.o \
         fit/Generation.o \
         fit/Histogram.o \
         fit/GeneticAlg.o \
+        fit/GeneticAlgArgs.o \
         fit/Individual.o \
-        fit/io.o
+        fit/io.o \
+        util.o
 
 LIBNAME=libolson-tools$(EXT)
 

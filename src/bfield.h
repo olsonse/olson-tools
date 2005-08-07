@@ -71,11 +71,6 @@ namespace BField {
         result[Z] = a[X] * b[Y]  -  a[Y] * b[X];
     }
 
-    template <class T>
-    inline T SQR(const T & x) {
-        return x*x;
-    }
-
     class  ThinCurrentElement {
       public:
         /** Beginning of current element. */
@@ -153,6 +148,22 @@ namespace BField {
             mass = 0; /* whoah! a massless particle! */
             mu = (-0.5) * (-1) * physical::constant::mu_B;
         }
+
+        inline Args(const Args & that) {
+            *this = that;
+        }
+
+        inline const Args & operator=(const Args & that) {
+            delta = that.delta;
+            currents = that.currents;
+            rcut = that.rcut;
+            memcpy(bg,that.bg,sizeof(bg));
+            memcpy(gravity,that.gravity,sizeof(gravity));
+            mass = that.mass;
+            mu = that.mu;
+            return *this;
+        }
+
         double delta;
         std::vector<ThinCurrentElement> currents;
         double rcut;

@@ -33,7 +33,7 @@
 
 /** A simple define to help make it easier and cleaner to initialize
  * 3-Vectors. */
-#define V3(a,b,c)       (*(const Vector<double,3>*)((const double[3]){(a),(b),(c)}))
+#define V3(a,b,c)       (*(const Vector<double,3>*)((const double[3]){double((a)),double((b)),double((c))}))
 
 /** Another simple define to help casting static 3-element arrays to
  * 3-Vectors.
@@ -50,6 +50,12 @@ class Vector {
     inline Vector (const Vector & that) {*this = that;}
 
     inline Vector (const T that[L]) {*this = that;}
+
+    inline Vector (const T that) {*this = that;}
+
+    inline void zero () {
+        memset (&this->val[0], 0, sizeof(T)*L);
+    }
 
     inline T & operator[](const int & i) { return val[i]; }
     inline const T & operator[](const int & i) const { return val[i]; }

@@ -41,6 +41,17 @@ else
     DEBUG_F77=$(DEBUG) $(PROFILE)
 endif
 
+CFLAGS_gcc_athlon=-Wall -fpic 
+CFLAGS_gcc_i686=-Wall -fpic 
+CFLAGS_gcc_x86_64=-Wall -fpic 
+CFLAGS_gcc_powerpc=-Wall -fPIC 
+CFLAGS_gcc-3.4.3_powerpc=-Wall -fPIC 
+CFLAGS_gcc_sparc=-Wall -fpic 
+
+CFLAGS_icc_athlon=-w1 -fpic 
+CFLAGS_icc_i686=-w1 -fpic 
+CFLAGS_icc_x86_64=-w1 -fpic 
+
 OPTIM_gcc_athlon=-O3 -mcpu=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
 OPTIM_gcc_i686=-O3 -mcpu=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
 OPTIM_gcc_x86_64=-O3 -m64 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
@@ -88,7 +99,7 @@ ifeq ($(TRAPFE),1)
 endif
 
 
-CFLAGS=${DEBUG_CC} -Wall -fpic -DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1 \
+CFLAGS=${DEBUG_CC} $(CFLAGS_$(CC)_$(PROCESSOR)) -DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1 \
 	$(POW_$(PROCESSOR)) $(INCLUDES)
 
 FFLAGS_g77=-ffree-form -ff90 -Wall 
@@ -109,28 +120,34 @@ FLIBS=$(FLIBS_$(F77))
 
 LIBS=$(INCTRAPFE) -lstdc++ $(FLIBS) -lm
 
+# to make it easier to change the command run to compile, though the compiler
+# doesn't change:  i.e. for compiles such as with MPI.
+CXX_effective=$(CXX)
+CC_effective=$(CC)
+F77_effective=$(F77)
+
 #now for a few simple rules
 %.o:%.C %.h
-	$(CXX) $(CFLAGS) -o $@ -c $<
+	$(CXX_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.C
-	$(CXX) $(CFLAGS) -o $@ -c $<
+	$(CXX_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.cpp %.h
-	$(CXX) $(CFLAGS) -o $@ -c $<
+	$(CXX_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.cpp
-	$(CXX) $(CFLAGS) -o $@ -c $<
+	$(CXX_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.c %.h
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC_effective) $(CFLAGS) -o $@ -c $<
 
 %.o:%.f
-	$(F77) $(FFLAGS) -o $@ -c $<
+	$(F77_effective) $(FFLAGS) -o $@ -c $<
 
 %.o:%.F
-	$(F77) $(FFLAGS) -o $@ -c $<
+	$(F77_effective) $(FFLAGS) -o $@ -c $<
 

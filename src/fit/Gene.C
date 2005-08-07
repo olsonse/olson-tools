@@ -64,22 +64,13 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdexcept>
+#include <algorithm>
 
 /* All of the following needs to be changed where we
    use Allele definitions, so that, if ALLELE_STATIC
    is used, then all of the static alleles are referenced
    and the same with ALLELE_DYNAMIC and with ALLELE_ALL
 */
-
-inline Allele_t min(Allele_t i,Allele_t j) {
-  if(i<j) return i;
-  return j;
-}//min
-
-inline Allele_t max(Allele_t i,Allele_t j) {
-  if(i>j) return i;
-  return j;
-}//min
 
 Chromosome::Chromosome(const Gene& cgene): Gene(cgene) {
 } // create chromosome with this gene make-up
@@ -271,8 +262,9 @@ void Gene::regene(const Allele_t newalleles[], const unsigned char alleletype){
   for ( int i=0, ith=0; i<numalleles; i++ ) {
     if( TESTALLELETYPE( alleles[i].allele_type, alleletype ) ) {
       // make sure that we keep the alleles in proper boundaries
-      alleles[i].val = min( alleles[i].max, 
-                            max(alleles[i].min, newalleles[ith++]));
+      alleles[i].val = std::min( alleles[i].max, 
+                                 std::max(alleles[i].min, newalleles[ith++])
+                               );
     }
   }
 }//Gene::regene

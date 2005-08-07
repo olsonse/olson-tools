@@ -9,6 +9,7 @@
 
 #include "bfield.h"
 #include <math.h>
+#include "power.h"
 
 namespace BField {
 

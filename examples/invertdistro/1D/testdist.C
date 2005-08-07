@@ -61,7 +61,7 @@ void nextvelb(double p[3]) {
     double cosphi;
     double sinphi;
 
-#if (__amd64__ == 1 || __i386__ == 1)
+#if (__x86_64__ == 1 || __amd64__ == 1 || __i386__ == 1)
     asm ("fsincos" : "=t" (cosphi), "=u" (sinphi) : "0" (phi));
 #else
     cosphi = cos(phi);

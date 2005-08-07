@@ -35,4 +35,7 @@ void GeneticAlgArgs::setParam (const std::string & name, double & var) {
 
 	else if (name == "diversity_grid_cols")
 		diversity_grid_cols = (int)var;
+
+	else if (name == "seed_fraction")
+		seed_fraction = (int)var;
 }

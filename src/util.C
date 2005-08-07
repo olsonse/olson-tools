@@ -54,6 +54,7 @@
 
 using namespace std;
 
+#define GNU_READLINE
 #ifdef GNU_READLINE
 
 extern "C" {

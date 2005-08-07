@@ -21,6 +21,8 @@
 #ifndef SIMFIT_H
 #define SIMFIT_H
 
+#include <unistd.h>
+
 /** An internal class for storing the simplex. */
 template <typename T = double, typename fitT = double>
 class Simplex{
@@ -54,21 +56,30 @@ class Fit{
     Fit(T par[], unsigned nParams);
     ///
     virtual ~Fit();
-    ///
-    void setParTol(fitT tolerance); /// reset tolerance to constant fraction
-    void setParVal(T parstep[]); // set length scales by value for
-				    // each parameter
-    /// returns number of minimum value of minfunc after simplex minimization
+
+    /** Reset tolerance to constant fraction. */
+    void setParTol(fitT tolerance);
+
+    /** Set length scales by value for each parameter. */
+    void setParVal(T parstep[]);
+
+    /** returns number of minimum value of minfunc after simplex minimization. */
     virtual fitT simplex(fitT ftol, unsigned MaxIterations = 2000);
+
     ///
     virtual fitT simplex(T min, T max, fitT tol, 
                            unsigned MaxIterations = 2000);
+
     ///
     virtual fitT simplex(T min[], T max[], fitT tol,
                            unsigned MaxIterations = 2000);
-    // The following function needs to be defined by classes doing this
-    /// minimization.  It should either return the value of the fuction c
+
+    /** Function that is to be minimized.
+     * The following function needs to be defined by classes doing this
+     * minimization.
+     */
     virtual fitT minfunc(T p[])=0;
+
     ///
     inline int iterations() const {return iter;}
   private:
@@ -158,6 +169,14 @@ fitT LsqFit<T,fitT>::minfunc(T p[]){
 template <typename T, typename fitT>
 fitT Fit<T,fitT>::simplex(T min, T max, fitT tol,
                     unsigned MaxIterations){
+
+  if (minval) {
+      /* clean up from previous. */
+      delete[] minval;
+      delete[] maxval;
+  }
+  minval=new T[ndim];
+  maxval=new T[ndim];
   for(unsigned int i=0;i<ndim;i++){
     minval[i] = min;
     maxval[i] = max;
@@ -169,6 +188,13 @@ template <typename T, typename fitT>
 fitT Fit<T,fitT>::simplex(T min[],
                                   T max[], fitT tol,
                     unsigned MaxIterations){
+  if (minval) {
+      /* clean up from previous. */
+      delete[] minval;
+      delete[] maxval;
+  }
+  minval=new T[ndim];
+  maxval=new T[ndim];
   for(unsigned int i=0;i<ndim;i++){
     minval[i] = min[i];
     maxval[i] = max[i];
@@ -178,6 +204,15 @@ fitT Fit<T,fitT>::simplex(T min[],
 
 template <typename T, typename fitT>
 fitT Fit<T,fitT>::simplex(fitT tol, unsigned MaxIterations){
+  if (minval) {
+      /* clean up from previous. */
+      delete[] minval;
+      delete[] maxval;
+
+      /* we won't use min/maxval here. */
+      minval = maxval = NULL;
+  }
+
   ftol = tol;
   itLimit=MaxIterations;
   // Initialize simplex
@@ -196,13 +231,8 @@ Fit<T,fitT>::Fit(T params[], unsigned nParams) : smplx(nParams),
   pr=new T[nParams];
   prr=new T[nParams];
   pbar=new fitT[nParams];
-  minval=new T[nParams];
-  maxval=new T[nParams];
-  //setting some arbitrary (maybe good) defaults
-  for(unsigned int i=0;i<ndim;i++){
-    minval[i] = 0;
-    maxval[i] = 1000;
-  }//for
+  minval = NULL;
+  maxval = NULL;
   setParTol(0.2); // set default tolerance to 0.2 (sets partol)
   itLimit=10;  // safe default
   iter=0;
@@ -221,8 +251,10 @@ Fit<T,fitT>::~Fit(){
   delete[] pr;
   delete[] prr;
   delete[] pbar;
-  delete[] minval;
-  delete[] maxval;
+  if (minval) {
+    delete[] minval;
+    delete[] maxval;
+  }
 }
 
 ///
@@ -306,7 +338,7 @@ void Fit<T,fitT>::Amoeba(){
        * Perhaps we can also change it so that we can have a maximum
        * value.
       */ 
-      if( (pr[i]<minval[i]) || (pr[i]>maxval[i]) )
+      if( minval && ((pr[i]<minval[i]) || (pr[i]>maxval[i])) )
 	ypr += 20;
     }
     if (ypr <= y[ilo]){
@@ -316,7 +348,7 @@ void Fit<T,fitT>::Amoeba(){
       yprr = minfunc(prr);
       /* see above note about minimum values */
       for (i=0;i<ndim;i++) {
-        if( (prr[i]<minval[i]) || (prr[i]>maxval[i]) )
+        if( minval && ((prr[i]<minval[i]) || (prr[i]>maxval[i])) )
 	  yprr += 20;
       }
       if (yprr < y[ilo]){
@@ -348,7 +380,7 @@ void Fit<T,fitT>::Amoeba(){
 	yprr = minfunc(prr);
         /* see above note for minimum values */
 	for (i=0;i<ndim;i++) {
-          if( (prr[i]<minval[i]) || (prr[i]>maxval[i]) )
+          if( minval && ((prr[i]<minval[i]) || (prr[i]>maxval[i])) )
 	    yprr += 20;
 	}
 	if (yprr < y[ihi]) {
@@ -367,7 +399,7 @@ void Fit<T,fitT>::Amoeba(){
 	      y[i] = minfunc(pr);
               /* see above note for minimum values */
 	      for (j=0;j<ndim;j++) {
-                if( (pr[j]<minval[j]) || (pr[j]>maxval[j]) )
+                if( minval && ((pr[j]<minval[j]) || (pr[j]>maxval[j])) )
 		  y[i] += 20;
 	      }
 	    }
