@@ -99,7 +99,7 @@ subroutine rk2step (x, n, t, dt, derivs, derivsArgs)
     end do
 end subroutine
 
-subroutine FFUNC_(rk_adapt_driver)(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
+subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
     IMPLICIT NONE
     integer             n
     double precision    x(1:n), x_cal(1:n), dxdt(1:n)
@@ -158,11 +158,12 @@ subroutine FFUNC_(rk_adapt_driver)(x, n, ti, dt, dt_step, derivs, derivsArgs, ER
 
         if(abs(dt_step).le.TINY) then
             ! This code should NEVER be reached for a physical guide!
-            call log_severe('stepsize (%g) smaller than TINY'//char(0), %val(dt_step),%val(0d0),%val(0d0))
+            ! call log_severe('stepsize (%g) smaller than TINY'//char(0), %val(dt_step),0d0,0d0)
+            call log_severe('stepsize (%g) smaller than TINY'//char(0), dt_step, 0d0, 0d0)
             call exit
         endif
     end do
-    call log_severe('This code (in rk_driver_adapt) is supposed to be unreachable' // char(0),%val(0d0),%val(0d0),%val(0d0))
+    call log_severe('This code (in rk_driver_adapt) is supposed to be unreachable' // char(0),0d0,0d0,0d0)
 end subroutine
 
 ! Modified routine from Numerical Recipies in Fortran
@@ -228,7 +229,8 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
         ! now set the absolute time
         tnew = t + dt
         if (tnew .eq. t) then
-            call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), %val(tnew), %val(t), %val(dt))
+            call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
+            !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), %val(tnew), %val(t), %val(dt))
             call exit
         endif
         nredone = nredone + 1

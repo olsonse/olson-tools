@@ -68,10 +68,7 @@ extern "C" {
 #ifndef DOXYGEN_SKIP
     /* Macro to allow use with fortran code.
      */
-#  if __linux__ != 1
-     /* stinking lame binary formats or mishandling of ELF format! */
-#    define rk_adapt_driver rk_adapt_driver__
-#  endif
+#  define rk_adapt_driver rk_adapt_driver_
 #endif // DOXYGEN_SKIP
 
     /** Adaptive 5th order runge-kutta.
@@ -108,28 +105,12 @@ extern "C" {
     			 double * dt_step,
 			 const derivativesFunction getderivs,
 			 const void * fargs,
-			 const double * errmax)
-#if __linux__ == 1
-                         __attribute__ (( alias ("rk_adapt_driver__") ));
-
-    void rk_adapt_driver__(double * p,
-			 const int * n,
-                         const double * t,
-    			 const double * dt,
-    			 double * dt_step,
-			 const derivativesFunction getderivs,
-			 const void * fargs,
-			 const double * errmax)
-#endif // linux
-    ;
+			 const double * errmax);
 
 #ifndef DOXYGEN_SKIP
     /* Macro to allow use with fortran code.
      */
-#  if __linux__ != 1
-     /* stinking lame binary formats or mishandling of ELF format! */
-#    define rk4step rk4step_
-#  endif
+#  define rk4step rk4step_
 #endif // DOXYGEN_SKIP
 
     /** Simple 4th order runge-kutta.
@@ -156,26 +137,12 @@ extern "C" {
                          const double * t,
     			 const double * dt,
 			 const derivativesFunction getderivs,
-			 const void * fargs)
-#if __linux__ == 1
-                         __attribute__ (( alias ("rk4step_") ));
-
-    void rk4step_       (double * p,
-			 const int * n,
-                         const double * t,
-    			 const double * dt,
-			 const derivativesFunction getderivs,
-			 const void * fargs)
-#endif
-    ;
+			 const void * fargs);
 
 #ifndef DOXYGEN_SKIP
     /* Macro to allow use with fortran code.
      */
-#  if __linux__ != 1
-     /* stinking lame binary formats or mishandling of ELF format! */
-#    define rk2step rk2step_
-#  endif
+#  define rk2step rk2step_
 #endif // DOXYGEN_SKIP
 
     /** Simple 2nd order runge-kutta.
@@ -201,25 +168,14 @@ extern "C" {
                          const double * t,
     			 const double * dt,
 			 const derivativesFunction getderivs,
-			 const void * fargs)
-#if __linux__ == 1
-                         __attribute__ (( alias ("rk2step_") ));
-
-    void rk2step_       (double * p,
-			 const int * n,
-                         const double * t,
-    			 const double * dt,
-			 const derivativesFunction getderivs,
-			 const void * fargs)
-#endif// linux
-    ;
+			 const void * fargs);
 
 
 #ifndef DOXYGEN_SKIP
     /* Macro to allow use with fortran code.
      * @see rk_adapt_driver
      */
-#    define getMachineEPS getmachineeps_
+#  define getMachineEPS getmachineeps_
 #endif // DOXYGEN_SKIP
 
     /** Measure and record machine precision.

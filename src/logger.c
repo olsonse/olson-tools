@@ -258,18 +258,8 @@ log_severe(const char *fmt, ...)
      * Unfortunately, not all binary formats allow for weak symbols.
      * */
 void log_severe_ (const char *fmt, ...) __attribute__ (( alias ("log_severe") )) ;
-void log_severe__ (const char *fmt, ...) __attribute__ (( alias ("log_severe") )) ;
 #else
     /* take care of the lame binary formats. */
-void
-log_severe__(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    vlog(LLOG_SEVERE, 0, fmt, args);
-    va_end(args);
-}
-
 void
 log_severe_(const char *fmt, ...)
 {

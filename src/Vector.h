@@ -25,15 +25,36 @@
  */
 
 
-#ifndef STUFF_H
-#define STUFF_H
+#ifndef VECTOR_H
+#define VECTOR_H
 
 #include <string.h>
 #include <ostream>
+#include <math.h>
+#include <stdarg.h>
+#include <stdint.h>
 
 /** A simple define to help make it easier and cleaner to initialize
- * 3-Vectors. */
-#define V3(a,b,c)       (*(const Vector<double,3>*)((const double[3]){double((a)),double((b)),double((c))}))
+ * 3-Vectors (of a certain type).
+ * Because this uses va_arg stuff: single byte types are only possible with
+ * specific implementations of stdarg.h (such as Intel's).  GCC will issue a
+ * warning and then barf if the code is actually executed.
+ * Because of this inportability, you cannot use single byte types with this
+ * macro (or Vector<T,L>::Vector(Vector::list*,...) either for that matter).
+ *
+ * For single byte types, V3t_ can be used.
+ */
+#define V3t(type,a,b,c)       __CONCAT(vect3,type)(__CONCAT(vect3,type)::list::dummy(),((type)(a)),((type)(b)),((type)(c)))
+
+/** Another simple define to help make it easier and cleaner to init 3-vectors
+ * (of a given type).  This macro can usually (compiler dependent) only
+ * helpful if the arguments are primitive constants.
+ */
+#define V3t_(type,a,b,c)       (*(Vector<type,3>*)((const type[3]){((type)(a)),((type)(b)),((type)(c))}))
+
+/** A simple define to help make it easier and cleaner to initialize
+ * 3-Vectors (of doubles). */
+#define V3(a,b,c)       V3t(double,a,b,c)
 
 /** Another simple define to help casting static 3-element arrays to
  * 3-Vectors.
@@ -43,6 +64,11 @@
 template <class T, unsigned int L>
 class Vector {
   public:
+    class list {
+      public:
+        static const list * dummy() {return NULL;}
+    };
+
     T val[L];
 
     inline Vector () {}
@@ -53,8 +79,27 @@ class Vector {
 
     inline Vector (const T that) {*this = that;}
 
+    /** Copy list of values into Vector.
+     * @param dummy
+     *     a bogus pointer (casting NULL appropriately is fine).
+     */
+    inline Vector (const Vector::list * dummy, ...) {
+        va_list ap;
+        va_start(ap,dummy);
+        for (unsigned int i = 0; i < L; i++) this->val[i] = va_arg(ap,T);
+        va_end(ap);
+    }
+
     inline void zero () {
         memset (&this->val[0], 0, sizeof(T)*L);
+    }
+
+    inline void save_fabs() {
+        for (unsigned int i = 0; i < L; i++) this->val[i] = fabs(this->val[i]);
+    }
+
+    inline void save_sqrt() {
+        for (unsigned int i = 0; i < L; i++) this->val[i] = sqrt(this->val[i]);
     }
 
     inline T & operator[](const int & i) { return val[i]; }
@@ -126,6 +171,11 @@ class Vector {
         return *this;
     }
 
+    inline const Vector & operator-=(const Vector& that) {
+        for (unsigned int i = 0; i < L; i++) this->val[i] -= that.val[i];
+        return *this;
+    }
+
     inline Vector operator+(const Vector& that) const {
         Vector retval;
         for (unsigned int i = 0; i < L; i++) retval.val[i] = this->val[i]+that.val[i];
@@ -148,6 +198,27 @@ class Vector {
         return *this;
     }
 
+    /** component by component multiplication after type of that is converted
+     * type of this.
+     * @return reference to this (type Vector<T,L>).
+     */
+    template <class T2>
+    inline const Vector & compMult(const Vector<T2,L>& that) {
+        for (unsigned int i = 0; i < L; i++) this->val[i] *= (T)that.val[i];
+        return *this;
+    }
+
+    /** component by component division after type of that is converted
+     * type of this.
+     * @return reference to this (type Vector<T,L>).
+     */
+    template <class T2>
+    inline const Vector & compDiv(const Vector<T2,L>& that) {
+        for (unsigned int i = 0; i < L; i++) this->val[i] /= (T)that.val[i];
+        return *this;
+    }
+
+
     inline T abs () const {
         return sqrt ((*this) * (*this));
     }
@@ -160,6 +231,44 @@ inline Vector<T,3> cross (const Vector<T,3> & a, const Vector<T,3> b) {
     retval.val[0] = a.val[1]*b.val[2] - a.val[2]*b.val[1];
     retval.val[1] = a.val[2]*b.val[0] - a.val[0]*b.val[2];
     retval.val[2] = a.val[0]*b.val[1] - a.val[1]*b.val[0];
+    return retval;
+}
+
+/** component by component multiplication after type of that is converted
+ * type of this.
+ * @return reference to this (type Vector<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T1, class T2, unsigned int L>
+inline const Vector<T1,L> compMult(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
+    Vector<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        retval.val[i] = v1.val[i] * (T1)v2.val[i];
+    return retval;
+}
+
+template <class T, unsigned int L>
+inline T max (const Vector<T,L> & v) {
+    T retval = v[0];
+    for (unsigned int i = 1; i < L; i++) {
+        T vi = v[i];
+        if (retval < vi) retval = vi;
+    }
+    return retval;
+}
+
+template <class T, unsigned int L>
+inline T mean (const Vector<T,L> & v) {
+    return sum(v) / ((T)L);
+}
+
+template <class T, unsigned int L>
+inline T sum (const Vector<T,L> & v) {
+    T retval = (T)0;
+    for (unsigned int i = 0; i < L; i++) {
+        retval += v[i];
+    }
     return retval;
 }
 
@@ -329,4 +438,10 @@ class SquareMatrix {
     }
 };
 
-#endif // STUFF_H
+/* these are kludgy types to be used with the kludgy V3t macro. */
+typedef Vector<double,3> vect3double;
+typedef Vector<float,3> vect3float;
+typedef Vector<int,3> vect3int;
+typedef Vector<uint32_t,3> vect3uint32_t;
+
+#endif // VECTOR_H

@@ -33,13 +33,13 @@ void nextvel(double p[3]) {
     p[2] = ww;
 }
 
-struct{
+typedef struct{
     double distrib (const double & v) const {
         return v*v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
     }
 } ThermalDistrib3d ;
 
-struct {
+typedef struct {
     double distrib (const double & v) const {
         return v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
     }
@@ -50,7 +50,7 @@ void nextvelb(double p[3]) {
     static double sigma_v = sqrt(3.0 * K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(sigma_v));
 
-    static Distribution distro = Distribution(ThermalDistrib3d, 0.0, 6*sigma_v, 1000);
+    static Distribution distro = Distribution(ThermalDistrib3d(), 0.0, 6*sigma_v, 1000);
     double speed = distro();
     /* now get the direction:  cosine distribution in \theta and
      * uniform in \phi */
@@ -85,7 +85,7 @@ void nextvelc(double p[3]) {
     static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(sigma_v));
 
-    static Distribution distro = Distribution(ThermalDistrib2d, 0.0, 6*sigma_v_xyz, 100);
+    static Distribution distro = Distribution(ThermalDistrib2d(), 0.0, 6*sigma_v_xyz, 100);
 void nextveld(double p[3]) {
     p[2] = gauss_deviate(sigma_v_xyz);
     p[1] = gauss_deviate(sigma_v_xyz);
@@ -94,7 +94,7 @@ void nextveld(double p[3]) {
 
 /** A flat distribution for use.
 */
-struct {
+typedef struct {
     /** Return 0.5.
      */
     inline double distrib (const double & x) const {
@@ -107,7 +107,7 @@ void nextvele(double p[3]) {
     static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
     //double speed = fabs(gauss_deviate(sigma_v));
 
-    static Distribution distro = Distribution(FlatDistribution,-0.001, 0.0, 1000);
+    static Distribution distro = Distribution(FlatDistribution(),-0.001, 0.0, 1000);
     p[2] = gauss_deviate(sigma_v_xyz);
     p[1] = gauss_deviate(sigma_v_xyz);
     p[0] = distro();

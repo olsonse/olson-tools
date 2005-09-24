@@ -511,7 +511,7 @@ Individual ** new_Individual_list(const Gene & gn, long population,
    * having it given explicitly to us again. (see delete_Individual_list)
    */
   if(!population) return NULL;//will do nothing for this case
-  Individual **ilist = new (Individual *)[population+1];
+  Individual **ilist = new Individual *[population+1];
   if( !createind ) createind = create_Individual;
   for(long i = 1; i<(population+1);i++) {
     ilist[i] = createind( gn, meritfnc, obj_ptr );

@@ -24,10 +24,6 @@
 #ifndef FMACROS_H
 #define FMACROS_H
 
-#if defined (F77COMP_f95) || defined (F77COMP_ifort)
-#  define FFUNC_(fun) fun ## _
-#else
-#  define FFUNC_(fun) fun
-#endif
+/* well, I just took everything out of here. */
 
-#endif // FMACROS_H
+#endif /* FMACROS_H */

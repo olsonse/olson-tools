@@ -182,7 +182,7 @@ namespace BField {
          */
         double mu;
 
-    } __attribute__((packed));
+    };
 
     void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], void * f);
 

@@ -47,7 +47,7 @@
    \endverbatim
  *
  */
-#endif // DUMMY_IFDEF_FOR_FORTRAN
+#endif /* DUMMY_IFDEF_FOR_FORTRAN */
 
 #ifndef MY_OWN_POW
 #define MY_OWN_POW
@@ -96,14 +96,14 @@ double fast_pow(double x,double y);
 
 /** This one is primarily for use from (g77) fortran code.
  * It has only 2 additional mov instructions. */
-double fast_pow__(double*,double*);
+double fast_pow_(double*,double*);
 
-#endif // USE_SPENCERS_FAST_POW
+#endif /* USE_SPENCERS_FAST_POW */
 
 #  ifdef __cplusplus
 }
 #  endif 
 
-#endif //  if LANGUAGE_FORTRAN__ != 1
+#endif /*  if LANGUAGE_FORTRAN__ != 1 */
 
-#endif // MY_OWN_POW
+#endif /* MY_OWN_POW */

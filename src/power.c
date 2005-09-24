@@ -75,24 +75,12 @@
 
 
 /* for (g77) fortran we need to have pointer arguments as well as derefencing */
-double fast_pow__( double *x, double *y ) {
+double fast_pow_( double *x, double *y ) {
     FAST_POW_CODE(*x,*y);
 }
 
 double fast_pow( double x, double y ) {
     FAST_POW_CODE(x,y);
 }
-
-#if __linux__ == 1 || __sun__ == 1
-/** This one is primarily for use from (NAG f95) fortran code.
- * It has only 2 additional mov instructions. */
-double fast_pow_(double*,double*) __attribute__ (( alias ("fast_pow__") )) ;
-#else
-    /* lame binary formats. */
-double fast_pow_(double*,double*) {
-    FAST_POW_CODE(*x,*y);
-}
-#endif
-
 
 #endif // USE_SPENCERS_FAST_POW

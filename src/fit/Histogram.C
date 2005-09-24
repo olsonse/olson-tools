@@ -1,6 +1,7 @@
 
 #include "Histogram.h"
 #include <stdexcept>
+#include <math.h>
 
 Histogram::Histogram(int population, int cont_grid_cols, const Individual & member):
     grid_spacing(0.0), mfact(1.0 - 1.0/sqrt(float(population))) {
@@ -8,7 +9,7 @@ Histogram::Histogram(int population, int cont_grid_cols, const Individual & memb
     if(!(rows = member.DNA.numAlleles(ALLELE_DYNAMIC))) {
       throw std::runtime_error("DNA has zero dynamic alleles(bad!).");
     }
-    histtable = new (int*)[rows];
+    histtable = new int*[rows];
     colsize = new int[rows];
     // create and initialize accumulation arrays to zero
     for(int i=0;i<rows;i++) {

@@ -89,7 +89,7 @@ extern "C" {
      *  (C) Copr. 1986-92 Numerical Recipes Software 'iXR
      * */
     double ran2(int * idum)
-#if __linux__ == 1
+#if __linux__ == 1 && !(defined(F77COMP_gfortran_40) && F77COMP_gfortran_40 == 1 )
                             __attribute__ (( alias ("ran2_") ));
     double ran2_(int * idum)
 #endif

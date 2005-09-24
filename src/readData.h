@@ -70,63 +70,27 @@
  *
  * @param input
  *     Input stream.
- * @param ViP
- *     If you want to have a std::vector<_Data*> returned also, (a vector of
- *     pointers to all your data points, then you must pass in a pointer to 
- *     an empty, but initialized std::vector<_Data*>.
  *
  * @returns Linked list of data on (_Data * next) field of _Data class.
  * @see readDataBlocks.
+ *
+ * @see Data<T,L> below for a generic class to read in data.
  */
 template <class _Data>
-_Data * readData(std::istream & input, std::vector<_Data*> * ViP = NULL) {
-    std::vector<_Data*> * VP = NULL;
-    if (ViP) {VP = ViP;}
-    else { VP = new std::vector<_Data*>; }
+_Data * readData(std::istream & input) {
+    _Data * list = NULL;
+    _Data * next = NULL;
+    int N = 0;
 
-    std::vector<_Data*> & V = *VP;
-
-    /* read in all of the data. */
-    copy(std::istream_iterator<_Data*>(input),
-         std::istream_iterator<_Data*>(),
-         std::back_inserter(V));   
-
-    _Data * last = NULL;
-    for (typename std::vector<_Data*>::iterator i = V.begin(); i < V.end(); i++) {
-        if ( (*i) == NULL ) {
-            /* for some reason, my new gcc (3.3.4) on suse 9.2 comes here
-             * with a bad element in the V array. */
-            if ( (V.end() - i) != 1 ) {
-                std::cout << "element is null!!!!" << '\n'
-                          << "V.end() - i : " << (V.end()-i) << '\n'
-                          << "i - V.begin() : " << (i-V.begin()) << '\n'
-                          << "V.size : " << V.size() << '\n'
-                          << std::flush;
-            }
-            continue;
-        }
-        _Data & f = *(*i);
-        f.next = last;
-        last = &f;
+    while ( (input >> next) && input.good() ) {
+        next->next = list;
+        list = next;
+        N++;
     }
 
-#if 0
-    if (V.size() < 101) {
-        cout << "And the input was:  " << endl;
-        copy(V.begin(), V.end(), ostream_iterator<_Data*>(std::cout, "\n"));
-    }
+    std::cout << "Read in " << N << " data points" << std::endl;
 
-    if (!input.eof()) {
-        std::cerr << "Error reading data point number "
-        << V.size()
-        << std::endl;
-    }
-
-#endif
-    std::cout << "Read in " << V.size() << " data points" << std::endl;
-
-    if (!ViP) delete VP;
-    return last;
+    return list;
 }
 
 static bool interrupt_read = false;
@@ -144,19 +108,22 @@ static bool interrupt_read = false;
  * @param interval
  *     Number of real data blocks to read in per data blocks returned
  *     [Default 1, or ``don't skip any''].
+ * @param end
+ *     Index of block to end on (first block is index 0).
  */
 template <class _Data>
 std::vector<_Data*> & readDataBlocks(std::istream & input,
                                      std::vector<_Data*> & retval,
                                      const unsigned int & start = 0,
-                                     const unsigned int & interval = 1) {
+                                     const unsigned int & interval = 1,
+                                     const unsigned int & end = -1) {
     _Data * dataP = NULL;
     unsigned int index = 0;
 
     /* reset the read interrupt signal. */
     interrupt_read = false;
 
-    while(!interrupt_read) {
+    while(!interrupt_read && (end < 0 || index <= end)) {
         /* this should read the first data block */
         dataP = readData<_Data>(input);
 
@@ -212,6 +179,30 @@ inline bool read_past_comment(std::istream & input, const char & comment_char = 
     }
 
     return false;
+}
+
+#include "Vector.h"
+
+template<class T, unsigned int L>
+class Data : public Vector<T,L> {
+  public:
+    typedef Vector<T,L> super;
+    inline Data() : super(), next(NULL) {}
+    class Data * next;
+};
+
+template<class T, unsigned int L>
+std::istream & operator>>(std::istream & input, Data<T,L> * & d) {
+    while (read_past_comment(input));
+
+    if (!input.good()) return input;
+
+    d = new Data<T,L>;
+    for (unsigned int i = 0; i < L ; i++) {
+        input >> d->val[i];
+    }
+
+    return input;
 }
 
 #endif // READDATA_H

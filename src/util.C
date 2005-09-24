@@ -221,7 +221,7 @@ int text_menu(int nitems, const char * items[], const string & title ) {
 int text_menu( int nitems, const char * items[], bool enabled[], const string & title ) {
   //returns the selection
   int j, msize, selection;
-  char ** enableditems = new (char *)[nitems];
+  char ** enableditems = new char*[nitems];
 
   for( j = 0, msize = 0; j < nitems; j++ ) {
     if( enabled[ j ] ) {

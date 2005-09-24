@@ -63,6 +63,12 @@
  * */
 class Distribution {
   public:
+
+    /** copy constructor. */
+    inline Distribution(const Distribution & that) {
+        *this = that;
+    }
+
     /** Distribution constructor.
      * This is templated constructor to allow for various types of classes or
      * structs to provide the distribution function.  A simple and basic
@@ -158,6 +164,16 @@ class Distribution {
         double r = MTRNGrand() * L;
         register int ri = int(r);
         return q[ri] + (q[ri+1] - q[ri]) * (r - ri);
+    }
+
+    inline const Distribution & operator=(const Distribution & that) {
+        if (q) delete[] q;
+
+        L = that.L;
+        q = new double[L + 1];
+        memcpy (q, that.q, sizeof(double)*(L+1));
+
+        return *this;
     }
 
   private:

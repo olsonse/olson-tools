@@ -131,8 +131,8 @@ protected:
  * a create_DerivedClass() function
  * like the following: */
 typedef Individual * (*CREATE_IND_FUNC)( const Gene &,
-                                         void * meritfnc = NULL,
-                                         void * obj_ptr = NULL );
+                                         void * meritfnc /* = NULL */,
+                                         void * obj_ptr /* = NULL */ );
 
 /** When you use the GeneticAlg class you can have the 
  * population of the algorithm be a population of any class
