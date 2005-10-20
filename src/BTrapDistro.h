@@ -15,7 +15,7 @@
  * with InvCylindricalDist.  This Distribution is suitable for a wire-guide
  * type of trap.
  *
- * Copyright 2004 Spencer Olson.
+ * Copyright 2005 Spencer Olson.
  */
 
 #ifndef BTRAP_DISTRO_H
@@ -29,20 +29,22 @@
 
 namespace BField {
 
+    template <class BSrc>
     class BTrap2DInit {
       public:
         BTrap2DInit () {
             T_perp = (150.0*physical::units::K);     /* default to 1.5cm */
-            bargs = NULL;
+            bsrc = NULL;
         }
 
         double T_perp;
-        BField::Args * bargs;
+        BSrc * bsrc;
     };
 
 
     /** A thermal distribution in a 2D trap.
     */
+    template <class BSrc>
     class BTrapDistribution2D {
       public:
         /** Contructor for thermal distribution in a 2D trap.
@@ -65,14 +67,14 @@ namespace BField {
          *     Position Vector<double,3> that should be added before calculating
          *     the b-field.
          */
-        inline BTrapDistribution2D(const BTrap2DInit & init,
+        inline BTrapDistribution2D(const BTrap2DInit<BSrc> & init,
                                  int i, double iVal_,
                                  const range_t & r_range_,
                                  const range_t & phi_range_,
                                  const double & dr_,
                                  const double & ds_,
                                  const Vector<double,3> & origin_ ) :
-            bargs(init.bargs),
+            bsrc(*init.bsrc),
             beta(1.0 / (physical::constants::K_B * init.T_perp * physical::units::K)),
             const_indx(i),
             iVal(iVal_),
@@ -88,7 +90,7 @@ namespace BField {
             phi_range = phi_range_;
         }
 
-        BField::Args * bargs;
+        BSrc & bsrc;
       private:
         double beta;
         int const_indx, j, k;
@@ -111,7 +113,7 @@ namespace BField {
 
             pos += origin;
 
-            return exp(-beta * BField::potentialNoG(pos.val, bargs) );
+            return exp(-beta * BField::potentialNoG(pos.val, bsrc) );
         }
     };
 

@@ -28,6 +28,8 @@ void fpesig(
            "A math exception was trapped\n"
            "Attach to the debugger and find out where/why.\n"
            "This function will pause here until otherwise interrupted.\n"
+           "Address of 'stop_now' variable:  0x%p\n"
+           "Set stop_now to false to continue\n", &stop_now
           );
 
     while (!stop_now) {

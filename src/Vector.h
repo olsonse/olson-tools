@@ -223,6 +223,52 @@ class Vector {
         return sqrt ((*this) * (*this));
     }
 
+
+    /* ************** COMPARISION OPERATORS *************** */
+
+    /** Cummulative comparison (gt) between Vector and a scalar.
+    */
+    inline bool operator>(const T& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] > that);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (gt) between Vector and a Vector.
+     * @return cummulative expression of component-wise comparision.
+    */
+    template <class T2>
+    inline bool operator>(const Vector<T2,L>& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] > (T)that.val[i]);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (lt) between Vector and a scalar.
+    */
+    inline bool operator<(const T& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] < that);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (lt) between Vector and a Vector.
+     * @return cummulative expression of component-wise comparision.
+    */
+    template <class T2>
+    inline bool operator<(const Vector<T2,L>& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] < (T)that.val[i]);
+
+        return retval;
+    }
 };
 
 template <class T>
@@ -232,6 +278,13 @@ inline Vector<T,3> cross (const Vector<T,3> & a, const Vector<T,3> b) {
     retval.val[1] = a.val[2]*b.val[0] - a.val[0]*b.val[2];
     retval.val[2] = a.val[0]*b.val[1] - a.val[1]*b.val[0];
     return retval;
+}
+
+template <class T>
+inline void cross (Vector<T,3> &retval, const Vector<T,3> & a, const Vector<T,3> b) {
+    retval.val[0] = a.val[1]*b.val[2] - a.val[2]*b.val[1];
+    retval.val[1] = a.val[2]*b.val[0] - a.val[0]*b.val[2];
+    retval.val[2] = a.val[0]*b.val[1] - a.val[1]*b.val[0];
 }
 
 /** component by component multiplication after type of that is converted
