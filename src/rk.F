@@ -142,6 +142,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
 
         ! time is accumulated in this function
         call rkqs(x,n,dxdt,t,dt_step,ERRMAX,x_cal,dt_step_did, derivs, derivsArgs)
+        ! write (*,'(X,F15.8,1X,F15.8,1X,F15.8,1X,F15.8)') x(1:3), dt_step_did
 
         if ( truncated_step .eq. 0 .or. abs(dt_step).lt.abs(dt_step_did)) then
             ! don't increase the stepsize beyond the previous corrected value

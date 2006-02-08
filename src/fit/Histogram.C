@@ -1,3 +1,19 @@
+// -*- c++ -*-
+// $Id: Generation.h,v 1.1 2005/06/14 02:28:19 olsonse Exp $
+/**
+ * Definition of a Gene for the genetic algorithm code.
+ *
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
+/*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ */
+
 
 #include "Histogram.h"
 #include <stdexcept>

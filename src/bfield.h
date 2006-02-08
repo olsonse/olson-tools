@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id$
 /*
- * Copyright 2004 Spencer Olson
+ * Copyright 2004-2005 Spencer Olson
  *
  * $Log$
  *
@@ -10,7 +10,7 @@
 /** \file
  * Bfield namespace includes classes and function for calculating B-fields and
  * potentials.
- * Copyright 2004 Spencer Olson.
+ * Copyright 2004-2005 Spencer Olson.
  */
 
 #ifndef BFIELD_H
@@ -124,20 +124,22 @@ namespace BField {
         }
     };
 
-    class BaseArgs {
+    /** Container of base arguments needed to compute the
+     * potential and acceleration due to the magnetic field+gravity. */
+    class BaseSrc {
       public:
         /** Default constructor. */
-        inline BaseArgs() : delta(10e-6) {
+        inline BaseSrc() : delta(1e-6) {
             gravity = 0.0;
             mass = 0; /* whoah! a massless particle! */
             mu = (-0.5) * (-1) * physical::constant::mu_B;
         }
 
-        inline BaseArgs(const BaseArgs & that) {
+        inline BaseSrc(const BaseSrc & that) {
             *this = that;
         }
 
-        inline const BaseArgs & operator=(const BaseArgs & that) {
+        inline const BaseSrc & operator=(const BaseSrc & that) {
             delta = that.delta;
             gravity = that.gravity;
             mass = that.mass;
@@ -164,38 +166,34 @@ namespace BField {
 
     };
 
-    /* Add a static background field to a BField Src. */
-    template <class BSrc>
-    class AddBgSrc : public virtual BaseArgs, public BSrc {
+    /** Add a static background field to a BField Src. */
+    class BgSrc : public virtual BaseSrc {
       public:
-        typedef BaseArgs super0;
-        typedef BSrc     super1;
+        typedef BaseSrc super0;
 
-        AddBgSrc() : super0(), super1() {
+        BgSrc() : super0() {
             bg = 0.0;
         }
 
-        inline const AddBgSrc & operator=(const AddBgSrc & that) {
+        inline const BgSrc & operator=(const BgSrc & that) {
             super0::operator=(that);
-            super1::operator=(that);
             bg = that.bg;
             return *this;
         }
 
         /** Obtains BField from BSrc and then adds a static background field. */
         inline void getb(Vector<double,3> & B, const Vector<double,3> & r) const {
-            super1::getb(B,r);
-            B += bg;
+            B = bg;
         }
 
         Vector<double,3> bg;
     };
 
-    /* Adds BFields from two different sources. */
+    /** Adds BFields from two different sources. */
     template <class BSrc0, class BSrc1>
-    class AddSrc : public virtual BaseArgs, public BSrc0, public BSrc1 {
+    class AddSrc : public virtual BaseSrc, public BSrc0, public BSrc1 {
       public:
-        typedef BaseArgs super0;
+        typedef BaseSrc super0;
         typedef BSrc0    super1;
         typedef BSrc1    super2;
 
@@ -219,9 +217,9 @@ namespace BField {
 
     /* Add a static background field to a BField Src. */
     template <class Functor>
-    class BFunctor : public virtual BaseArgs, public Functor {
+    class BFunctor : public virtual BaseSrc, public Functor {
       public:
-        typedef BaseArgs super0;
+        typedef BaseSrc super0;
         typedef Functor  super1;
 
         BFunctor() : super0(), super1() {}
@@ -237,9 +235,9 @@ namespace BField {
 
     /** Container of all arguments needed to compute the magnetic fields and
      * potential and acceleration due to the magnetic field+gravity. */
-    class ThinWireSrc : public virtual BaseArgs {
+    class ThinWireSrc : public virtual BaseSrc {
       public:
-        typedef BaseArgs super;
+        typedef BaseSrc super;
         /** Default constructor. */
         inline ThinWireSrc() : currents(), rcut(1e-10) { }
 
@@ -324,7 +322,12 @@ namespace BField {
         double rcut;
     };
 
-    template <class BSrc>
+    /** Container for a static function 'derivs' mainly for use with
+     * integrating functions that accept a pointer to a derivative function.
+     *
+     * @see rk4step and company.
+     */
+    template <class BC>
     class Bderivs {
       public:
 
@@ -333,72 +336,89 @@ namespace BField {
          * Because this is a template, you will have to explicity instantiate this
          * function to get a pointer to pass into rk or the like.
          * Also, this function will have to be correctly cast to the rk type
-         * (where srcP is a void *).
+         * (where bcP is a void *).
          */
-        static void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], BSrc * srcP) {
+        static void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], BC * bcP) {
             rkf[X]  = p[VX];
             rkf[Y]  = p[VY];
             rkf[Z]  = p[VZ];
-            accel(V3C(rkf+VX), V3C(p), *srcP);
+            bcP->accel(V3C(rkf+VX), V3C(p));
         }
     };
 
-    template <class BSrc>
-    inline void getGradB(Vector<double,3> & GradB, const Vector<double,3> & r, const BSrc & src ) {
-        Vector<double,3> B1, B2, dr;
-        for (int j=X; j <= Z; j++) {
-            dr = r;
-
-            dr[j] = r[j] - src.delta;
-            src.getb(B1, dr);
-
-            dr[j] = r[j] + src.delta;
-            src.getb(B2, dr);
-
-            /* now calculate the field gradient centered at the specified location. */
-            GradB[j] = (B2.abs() - B1.abs()) / src.delta;
-        }/* for */
-    }
-
-    template <class BSrc>
-    inline void accel(Vector<double,3> & a, const Vector<double,3> & r, const BSrc & src) {
-        getGradB(a, r, src);
-
-        a *= -src.mu / src.mass;
-        a +=  src.gravity;
-    }
-
-    /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1>.
-     * Note that gF = -1/2
-     * and that V = \f$\mu\f$ . B + m(g . r)
-     * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
-     * and gravitational energy is referenced to (0,0,0).
+    /** Container for several calculations to be performed using a B-field
+     * source.  Doing this all in a template fashion allows for function
+     * inheritance and interface specification with compile-time optimizations
+     * enabled (no v-table for virtual functions).
+     * A user can use this class as an implementation for gradient, accel,
+     * potential, potentialNoG.  For example, the accel function (or similar)
+     * is required for Bderivs::derivs.
      *
-     * @see potentialNoG(const Vector<double,3> & r, Bsrc & src).
+     * The user can certainly also implement smarter replacements for these
+     * functions for some cases (using a lookup-table for example).
+     *
+     * @see Bderivs::derivs.
      */
     template <class BSrc>
-    inline double potential(const Vector<double,3> & r, const BSrc & src) {
-        Vector<double,3> B;
+    class BCalcs : public virtual BaseSrc, public BSrc {
+      public:
+        typedef BaseSrc super0;
+        typedef BSrc    super1;
 
-        src.getb(B, r);
+        inline void gradient(Vector<double,3> & GradB, const Vector<double,3> & r) const {
+            Vector<double,3> B1, B2, dr;
+            register double dxh = 0.5 * super0::delta;
+            for (int j=X; j <= Z; j++) {
+                dr = r;
 
-        return src.mu*B.abs() - src.mass * (src.gravity * r);
-    }
+                dr[j] = r[j] - dxh;
+                super1::getb(B1, dr);
 
-    /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1> ignoring the
-     * gravitational component.
-     * Note that gF = -1/2
-     * and that V = \f$\mu\f$ . B
-     * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
-     *
-     * @see potential(const Vector<double,3> & r, Bsrc & src).
-     */
-    template <class BSrc>
-    inline double potentialNoG(const Vector<double,3> & r, const BSrc & src) {
-        Vector<double,3> B;
-        src.getb(B, r);
-        return src.mu*B.abs();
-    }
+                dr[j] = r[j] + dxh;
+                super1::getb(B2, dr);
+
+                /* now calculate the field gradient centered at the specified location. */
+                GradB[j] = (B2.abs() - B1.abs()) / super0::delta;
+            }/* for */
+        }
+
+        inline void accel(Vector<double,3> & a, const Vector<double,3> & r) const {
+            gradient(a, r);
+
+            a *= -super0::mu / super0::mass;
+            a +=  super0::gravity;
+        }
+
+        /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1>.
+         * Note that gF = -1/2
+         * and that V = \f$\mu\f$ . B + m(g . r)
+         * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
+         * and gravitational energy is referenced to (0,0,0).
+         *
+         * @see potentialNoG(const Vector<double,3> & r).
+         */
+        inline double potential(const Vector<double,3> & r) const {
+            Vector<double,3> B;
+
+            super1::getb(B, r);
+
+            return super0::mu * B.abs() - super0::mass * (super0::gravity * r);
+        }
+
+        /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1> ignoring the
+         * gravitational component.
+         * Note that gF = -1/2
+         * and that V = \f$\mu\f$ . B
+         * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
+         *
+         * @see potential(const Vector<double,3> & r).
+         */
+        inline double potentialNoG(const Vector<double,3> & r) const {
+            Vector<double,3> B;
+            super1::getb(B, r);
+            return super0::mu * B.abs();
+        }
+    };
 
 
 } /* namespace */

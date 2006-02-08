@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id$
 /*
- * Copyright 2004 Spencer Olson
+ * Copyright 2004-2005 Spencer Olson
  *
  * $Log$
  *
@@ -12,7 +12,11 @@
  * Distribution inverter to aid in inverting cylindrically symmetric
  * distributions.
  *
- * Copyright 2004 Spencer Olson.
+ * Copyright 2004-2005 Spencer Olson.
+ *
+ * BUGS:  The range[RHO].min doesn't work quite right yet.
+ *
+ * @see The generic Distribution inverter.
  *
  */
 
@@ -81,12 +85,17 @@ inline void decoupleRhoPhi(const double & nphi_i,
     understand why some day.
     */
 
-    register double nphi_virt = (0.5*phi_range.length()) * SQR(r_range.min) / (ds*dr);
-    register double rindx = floor( sqrt((nphi_i+nphi_virt)* ds * dr / (0.5*phi_range.length()))/dr);
+    /* nphi_virt is supposed to be the number of bins inside the disallowed
+     * area with radius smaller than r_range.min.   This is supposed to allow
+     * us to implement the r_range.min feature, but it doesn't quite work
+     * correctly yet.
+     */
+    //register double nphi_virt = (0.5*phi_range.length()) * SQR(r_range.min) / (ds*dr);
+    register double rindx = floor( sqrt((nphi_i/*+nphi_virt*/)* ds * dr / (0.5*phi_range.length()))/dr);
     register double rj = dr*(rindx + 0.5);
     register double rjm1 = dr*rindx; /* why ??? */
     register double nphi_rjm1 = ((0.5*phi_range.length()) * SQR(rjm1) / (ds * dr));
-    register double phi = (nphi_i+nphi_virt - nphi_rjm1)*(ds / rj) + phi_range.min;
+    register double phi = (nphi_i /*+nphi_virt*/ - nphi_rjm1)*(ds / rj) + phi_range.min;
 
 
     register double cosphi;
@@ -112,7 +121,7 @@ class FlatDistribution {
   public:
     /** A constructor to satisfy tempalte requirements further down. */
     template <class T>
-    FlatDistribution(const T & dontcare) {}
+    FlatDistribution(const T & dontcare, const Vector<double,3> & origin) {}
     /** Return 0.5.
      */
     inline double distrib (const double & x) const {
@@ -134,7 +143,7 @@ class FlatDistribution {
  *     where:
  *     - init is the InitClass (below)
  *     - ith is the index of the axial coordinate
- *     - iVal is the value of the axial coordinate to use (will be midpoint)
+ *     - iVal is the value of the axial coordinate to use
  *     - range[RHO] and range[PHI] are the RHO and PHI 'range_t'es respectively
  *     - dr radial increment size to use for decoupleRhoPhi
  *     - ds curcumferencial increment size to use for decoupleRhoPhi
@@ -146,12 +155,19 @@ class FlatDistribution {
  * @param Distrib1D
  *     The type of distribution function to use for the axial coordinate
  *     [Default = FlatDistribution].
+ * @param N2D
+ *     The number of 2D distributions to use in the axial direction
+ *     [Default = 1];
  * @param InitClass
  *     A user specified class that may be used to help initialize the
  *     distribution functions [Default = nothing].
+ *
+ * @see BFIeld::BTrapDistribution2D as an example of a 2D-distribution
+ * function to use for this class.
  */
 template <class Distrib2D,
           class Distrib1D = FlatDistribution,
+          unsigned int N2D = 1u,
           class InitClass = nothing>
 class InvCylindricalDist {
   public:
@@ -160,7 +176,10 @@ class InvCylindricalDist {
      * What a novel idea.
      */
     inline InvCylindricalDist() {
-        distrib_perp = distrib_long = NULL;
+        distrib_long = NULL;
+        memset(distrib_perp, 0x0, sizeof(void*)*N2D);
+        dz_perp = 0.0;
+        one_over_dz_perp = 0.0;
 
         nbins[RHO] = 1000;
         nbins[PHI] = -1;
@@ -211,16 +230,32 @@ class InvCylindricalDist {
                       * ( SQR(range[RHO].max) - SQR(range[RHO].min) )
                       / (ds * dr);
 
-        /* we'll have iVal be the midpoint int the Z range. */
-        double iVal = range[Z].min + 0.5*range[Z].length();
+        /* we don't want to include endpoints of z-range. */
+        dz_perp = range[Z].length() / (N2D+1);
+        double iVal = range[Z].min + dz_perp;
+        int l = 0;
 
-        distrib_perp =
-            new Distribution(
-                    Distrib2D(init, ith, iVal, range[RHO], range[PHI], dr, ds, origin),
-                    0, nphi_R, nbins[RHO] * nbins[PHI]
-                );
+        /* here is a little bit of really wierd but valid C/C++ code:
+         * interleaving a switch statement with a for statement.
+         */
+        switch (N2D) {
+            case 0: throw std::runtime_error("should never get here with N2D == 0!");
 
-        distrib_long = new Distribution(Distrib1D(init), range[Z].min, range[Z].max, nbins[Z]);
+            default:
+                one_over_dz_perp = 1.0 / dz_perp;
+
+                for (; iVal < range[Z].max; iVal+=dz_perp, l++) {
+
+            case 1:
+                    distrib_perp[l] =
+                        new Distribution(
+                                Distrib2D(init, ith, iVal, range[RHO], range[PHI], dr, ds, origin),
+                                0, nphi_R, nbins[RHO] * nbins[PHI]
+                            );
+                }
+        }  /* switch */
+
+        distrib_long = new Distribution(Distrib1D(init, origin), range[Z].min, range[Z].max, nbins[Z]);
     }/* initialize */
 
     /** Return the next X coordinate from the random distribution.
@@ -267,19 +302,40 @@ class InvCylindricalDist {
     double ds, dr;
 
     inline void cleanup() {
-        if (distrib_perp) delete distrib_perp;
+        for (unsigned int l = 0; l < N2D; l++) {
+            if (distrib_perp[l]) {
+                delete distrib_perp[l];
+                distrib_perp[l] = NULL; 
+            }
+        }
+
         if (distrib_long) delete distrib_long;
     }
 
     inline void get_next_vals() {
-        next_vals[ith] =  distrib_long->lever();
-        double nphi_i = distrib_perp->lever();
+        register double zval;
+        next_vals[ith] =  zval = distrib_long->lever();
+
+        /* now find which perp distro to use.
+         * The '* 0.9999' is for ensuring that we don't overrun our perp
+         * array.
+         * A smart compiler will be able to eliminate the unreachable code
+         * produced with this ? operator (which is reachable depends on the
+         * value of N2D).
+         */
+        int l = (N2D == 1 ? 0 : (int) ( (zval - range[Z].min) * one_over_dz_perp * 0.9999) );
+
+        /* use the found perp distro and get the transverse coordinates. */
+        double nphi_i = distrib_perp[l]->lever();
         decoupleRhoPhi(nphi_i, range[RHO], range[PHI], dr, ds, jth, kth, next_vals);
     }
 
     double next_vals[3];
 
-    Distribution * distrib_perp, * distrib_long;
+    Distribution * distrib_perp[N2D], * distrib_long;
+
+    double dz_perp;
+    double one_over_dz_perp;
 };
 
 #endif // INVCYLINDRICALDIST_H

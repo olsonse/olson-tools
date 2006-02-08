@@ -37,6 +37,11 @@
 
 /** \file
  * Generic distribution inverter.
+ *
+ * For some reason, this inverter class took me a long time to debug.  This
+ * fully debugged (laugh) version is a result of abuse from various types of
+ * distribution functions.
+ *
  * Copyright 2004 Spencer Olson.
  */
 
@@ -104,49 +109,54 @@ class Distribution {
             throw std::runtime_error("Distribution needs more than one bin.");
         }
 
-        double dx = (max-min) / (L-1.0);
+        double dx = (max-min) / ((double)L);
 
-        double * ptmp = new double[L];
+        double * IntP = new double[L+1];
 
         /* integrate the distribution */
-        ptmp[0] = distro.distrib(min);
+        IntP[0] = distro.distrib(min);
         int i = 1;
-        for (double x = min+dx; i < L; x+=dx, i++) {
-            ptmp[i] = distro.distrib(x) + ptmp[i-1];
+        for (double x = min+dx; i <= L; x+=dx, i++) {
+            IntP[i] = distro.distrib(x) + IntP[i-1];
         }
 
         {   /* normalize the sum. */
-            register double qmax = ptmp[L-1];
-            for (i = 0; i < L; ptmp[i++] /= qmax);
+            register double qmax = IntP[L];
+            for (i = 0; i <= L; IntP[i++] /= qmax);
         }
 
         /* now we invert the distribution by using the integral. */
         q = new double[L+1];
-        double dprob = (ptmp[L-1] - ptmp[0]) / L;
+        q[0] = min;
+        q[L] = max;
+        
+        /* make sure that dx is scaled appropriately for this distribution. 
+         * FIXME:  we should probably include the end-points in q[].
+         *         need to figure out how to do that without altering the
+         *         distribution on the ends.  Man this is a pain to get this
+         *         correct.
+         */
+        double dprob = (IntP[L] - IntP[0]) / ((double)L);
 
-        for (i = 0; i <= L; i++) {
+        for (i = 1; i < L; i++) {
             /* the ith probability: */
-            double prob = i*dprob + ptmp[0];
+            double prob = i*dprob + IntP[0];
 
             /* find the probability location above this one. */
             int j = 1;
-            while (j < (L-1) && ptmp[j] < prob) j++;
+            while (j <= L && IntP[j] < prob) j++;
 
             /* now we use linear interpolation to determine the input value at
-             * this probability.  Because j starts at 1 above, this should
-             * also take care of extrapolation towards the zero probability
-             * too.  The j < (L-1) takes care of extrapolation towards 1
-             * (although not the best, since it is extrapolated from the L-2
-             * point.  oh well).
+             * this probability.
              */
 
-            q[i] = (min+(j-0.5)*dx)
-                 + (dx / (ptmp[j] - ptmp[j-1]))
-                   * (prob    - ptmp[j-1]);
+            q[i] = (min+(j-1)*dx)
+                 + (dx / (IntP[j] - IntP[j-1]))
+                   * (prob    - IntP[j-1]);
         }
 
         /* cleanup */
-        delete[] ptmp;
+        delete[] IntP;
     }
 
     ~Distribution();
@@ -162,7 +172,7 @@ class Distribution {
 
     /** Get a random number from this distribution. */
     inline double lever() const {
-        double r = MTRNGrand() * L;
+        double r = MTRNGrand() * L * 0.99999999999;
         register int ri = int(r);
         return q[ri] + (q[ri+1] - q[ri]) * (r - ri);
     }
@@ -190,6 +200,8 @@ class MaxwellianDistrib3D {
      * @param b
      *    Set \f$ \beta \f$ for the distribution defined by 
      *    \f$ v^{2} {\rm e}^{-\beta v^{2}} \f$.
+     * @param offs
+     *    the center of the distribution.
      */
     inline MaxwellianDistrib3D(const double & b, const double & offs = 0.0) :
         beta(b), v0(offs) {}
@@ -217,6 +229,8 @@ class MaxwellianDistrib2D {
      * @param b
      *    Set \f$ \beta \f$ for the distribution defined by 
      *    \f$ v {\rm e}^{-\beta v^{2}} \f$.
+     * @param offs
+     *    the center of the distribution.
      */
     inline MaxwellianDistrib2D(const double & b, const double & offs = 0.0) :
         beta(b), v0(offs) {}
@@ -243,6 +257,8 @@ class MaxwellianDistrib2D {
  * @param v0
  *     v0 must be > 0.0; just call the correct function to get the correct
  *     fraction.
+ * @param beta
+ *     m/(2kT).
  *
  * Note that return value of this function is negative.  Also note that
  * upstream_fraction + downstream_fraction == 1.
@@ -262,6 +278,8 @@ inline double upstream_fraction(const double & v0, const double & beta) {
  * @param v0
  *     v0 must be > 0.0; just call the correct function to get the correct
  *     fraction.
+ * @param beta
+ *     m/(2kT).
  *
  * Note that return value of this function is negative.  Also note that
  * upstream_fraction + downstream_fraction == 1.
@@ -282,6 +300,8 @@ class GaussianDistrib {
      * @param b
      *    Set \f$ \beta \f$ for the distribution defined by 
      *    \f$ {\rm e}^{-\beta v^{2}} \f$.
+     * @param offs
+     *    the center of the Gaussian distribution.
      */
     inline GaussianDistrib(const double & b, const double & offs = 0.0) :
         beta(b), v0(offs) {}

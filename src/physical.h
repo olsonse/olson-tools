@@ -1,6 +1,16 @@
 /** \file
- * A multitude of constants (mks where applicable) organized into a
- * bunch of namespaces.
+ * A multitude of physical constants and units (mks where applicable)
+ * organized into a bunch of namespaces.
+ *
+ * This header is freely avaliable on usenet servers.  The reference for this
+ * header is thus comp.lang.cpp/2004-10/2217 by E. Robert Tisdale (10/17/04).
+ *
+ * E. R. Tisdale <E.Robert.Tisdale_at_jpl.nasa.gov>.
+ *
+ * There were a lot of other comments on usenet for improving this file,
+ * including British spelling of various units and so on.  This version is the
+ * unaltered version from E. R. Tisdale.
+ *
  * */
 
 #ifndef PHYSICAL_H

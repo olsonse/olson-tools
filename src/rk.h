@@ -37,7 +37,11 @@
 
 /** \file
  * Runge-Kutta routines for generic integration.
+ *
  * Copyright 2002-2004 Spencer Olson.
+ *
+ * Some of these routines are altered versions of similar routines from
+ * Numerical Recipes (see the rk.F file for which stem from NR).
  */
 
 #ifndef RK_H

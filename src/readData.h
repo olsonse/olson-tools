@@ -29,6 +29,8 @@
 
 /** \file
  * Some utility functions to help read various types of data from a file.
+ *
+ * Copyright 2004 Spencer Olson
  */
 
 #ifndef READDATA_H

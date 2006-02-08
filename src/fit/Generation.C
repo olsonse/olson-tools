@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Generation.C,v 1.1 2005/06/14 02:28:18 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Generation.C,v $
  * Revision 1.1  2005/06/14 02:28:18  olsonse
  * Split out some files and renamed to be more consistent with olson-tools.

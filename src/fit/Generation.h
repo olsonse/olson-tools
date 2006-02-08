@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Generation.h,v 1.1 2005/06/14 02:28:19 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Generation.h,v $
  * Revision 1.1  2005/06/14 02:28:19  olsonse
  * Split out some files and renamed to be more consistent with olson-tools.
@@ -53,6 +56,17 @@
  * Initial revision
  *
 */
+
+
+/** \file
+ * Definition of a Generation for the genetic algorithm code.
+ *
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 #ifndef GENERATION_H
 #define GENERATION_H

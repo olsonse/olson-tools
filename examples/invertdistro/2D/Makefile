@@ -19,6 +19,7 @@ include ../../../Makeconf
 OBJ=testdist.o
 
 PROGNAME=testdist$(EXT)
+GARBAGE=disttest.dat disttest150uK.dat
 
 LIBS:=-lolson-tools$(EXT) $(LIBS)
 LDFLAGS=-L$(MAINDIR)/lib
@@ -28,4 +29,4 @@ ${PROGNAME}: ${OBJ}
 	$(CXX) ${CFLAGS} ${LDFLAGS} $(INCLUDES) -o $(PROGNAME) ${OBJ} ${LIBS}
 
 clean:
-	rm -f ${OBJ} ${PROGNAME}
+	rm -f ${OBJ} ${PROGNAME} ${GARBAGE}

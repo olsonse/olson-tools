@@ -16,6 +16,7 @@
 
 /* \file
  * Simple utilitiy functions for use with linked lists.
+ *
  * Copyright 2004 Spencer Olson
  */
 

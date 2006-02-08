@@ -1,6 +1,8 @@
 // -*- c++ -*-
 // $Id: io.h,v 1.2 2005/06/07 20:38:12 olsonse Exp $
 /*
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: io.h,v $
  * Revision 1.2  2005/06/07 20:38:12  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
@@ -29,6 +31,14 @@
  *
  *
  */
+
+/** \file
+ * Standard streams for the genetic algorithm code.
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 #ifndef IO_H
 #define IO_H

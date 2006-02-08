@@ -25,7 +25,7 @@
  */
 
 /** \file
- * Option handler system simpler to understand and more modular than getopt.
+ * Option handler system simpler (hmm) to understand and more modular than getopt.
  *
  * Copyright 2000-2004 Spencer Olson.
  */

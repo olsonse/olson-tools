@@ -1,31 +1,29 @@
+
 #include <math.h>
 #include <stdlib.h>
-#include <olson-tools/physical.h>
-#include <olson-tools/random.h>
 #include <iostream>
 #include <fstream>
+
+#include <olson-tools/physical.h>
+#include <olson-tools/random.h>
 #include <olson-tools/Distribution.h>
+#include <olson-tools/Vector.h>
+#include <olson-tools/GenericBin.h>
 
 using namespace physical::constants;
 
-inline double max(const double & a, const double & b) {
-    return a > b ? a : b;
-}
-
-template <class T>
-inline T SQR( const T & a) {return a * a;}
-
+/* this is how G.A. Bird gets his diffusely reflecting velocities. */
 void nextvel(double p[3]) {
     static double betaw = sqrt(2.0 * K_B * 500.0 * uK / (87.0 * amu) );
 
-    double ran = max(1.e-8,MTRNGrand());
+    double ran = std::max(1.e-8,MTRNGrand());
     double B   = sqrt(-log(ran));
 
     double A   = 2.0 * pi * MTRNGrand();
     double uu  = B * sin(A) * betaw;
     double ww  = B * cos(A) * betaw;
 
-           ran = max(1.e-8, MTRNGrand());
+           ran = std::max(1.e-8, MTRNGrand());
     double vv  = sqrt(-log(ran)) * betaw;
 
     p[0] = -vv;
@@ -33,64 +31,8 @@ void nextvel(double p[3]) {
     p[2] = ww;
 }
 
-typedef struct{
-    double distrib (const double & v) const {
-        return v*v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
-    }
-} ThermalDistrib3d ;
 
-typedef struct {
-    double distrib (const double & v) const {
-        return v * exp(-0.5 * 87.0 * amu * v*v / ( K_B * 500.0 * uK ) );
-    }
-} ThermalDistrib2d;
-
-void nextvelb(double p[3]) {
-    /* get the speed from a maxwellian distribution. */
-    static double sigma_v = sqrt(3.0 * K_B * 500.0 * uK /(87.0 * amu));
-    //double speed = fabs(gauss_deviate(sigma_v));
-
-    static Distribution distro = Distribution(ThermalDistrib3d(), 0.0, 6*sigma_v, 1000);
-    double speed = distro();
-    /* now get the direction:  cosine distribution in \theta and
-     * uniform in \phi */
-    double sintheta2 = MTRNGrand();
-    double sintheta  = sqrt(sintheta2);
-    double costheta  = sqrt(1 - sintheta2);
-    double phi       = 2.0 * pi * MTRNGrand();
-    double cosphi;
-    double sinphi;
-
-#if (__x86_64__ == 1 || __amd64__ == 1 || __i386__ == 1)
-    asm ("fsincos" : "=t" (cosphi), "=u" (sinphi) : "0" (phi));
-#else
-    cosphi = cos(phi);
-    sinphi = sin(phi);
-#endif
-
-    p[2] = speed*(cosphi * sintheta);
-    p[1] = speed*(sinphi * sintheta);
-    p[0] = -speed*(costheta);
-}
-
-void nextvelc(double p[3]) {
-    /* get the speed from a maxwellian distribution. */
-    static double sigma_v = sqrt(K_B * 500.0 * uK /(87.0 * amu));
-    p[0] =  gauss_deviate(sigma_v);
-    p[1] =  gauss_deviate(sigma_v);
-    p[2] =  gauss_deviate(sigma_v);
-}
-
-    /* get the speed from a maxwellian distribution. */
-    static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
-    //double speed = fabs(gauss_deviate(sigma_v));
-
-    static Distribution distro = Distribution(ThermalDistrib2d(), 0.0, 6*sigma_v_xyz, 100);
-void nextveld(double p[3]) {
-    p[2] = gauss_deviate(sigma_v_xyz);
-    p[1] = gauss_deviate(sigma_v_xyz);
-    p[0] = -distro();
-}
+/** SOME DISTRIBUTION FUNCTIONS. **/
 
 /** A flat distribution for use.
 */
@@ -102,39 +44,49 @@ typedef struct {
     }
 } FlatDistribution;
 
-void nextvele(double p[3]) {
-    /* get the speed from a maxwellian distribution. */
-    static double sigma_v_xyz = sqrt(K_B * 500.0 * uK /(87.0 * amu));
-    //double speed = fabs(gauss_deviate(sigma_v));
 
-    static Distribution distro = Distribution(FlatDistribution(),-0.001, 0.0, 1000);
-    p[2] = gauss_deviate(sigma_v_xyz);
-    p[1] = gauss_deviate(sigma_v_xyz);
-    p[0] = distro();
+static double beta = 0.5 * (87.0 * amu) / (K_B * 500.0 * uK);
+static double sigma = sqrt( 0.5 / beta);
+
+static Distribution t2d = Distribution(MaxwellianDistrib2D(beta), 0.0, 5*sigma, 10000);
+
+static Distribution t3d = Distribution(MaxwellianDistrib3D(beta), 0.0, 5*sigma, 10000);
+
+static Distribution gau = Distribution(GaussianDistrib(beta), -4*sigma, 4*sigma, 10000);
+
+static Distribution flt = Distribution(FlatDistribution(),-4*sigma, 4*sigma, 10000);
+
+void nextvalues(Vector<double,5> & p) {
+    p[0] = gauss_deviate(sigma);
+    p[1] = gau();
+    p[2] = t2d();
+    p[3] = t3d();
+    p[4] = flt();
 }
 
+typedef GenericBin<double,1000> bin;
+
+bin bins[5] = {
+    bin(-4*sigma, 4*sigma),     /* gauss_deviate */
+    bin(-4*sigma, 4*sigma),     /* GaussianDistrib */
+    bin(0.0, 5*sigma),          /* MaxwellianDistrib2D */
+    bin(0.0, 5*sigma),          /* MaxwellianDistrib3D */
+    bin(-4*sigma, 4*sigma)      /* FlatDistribution */
+};
+
 int main() {
+    for (int i = 0; i < 10000000; i++) {
+        Vector<double,5> p;
+        nextvalues(p);
+
+        for (int j = 0; j < 5; j++) bins[j].bin(p[j]);
+
+    }
+
     std::ofstream outf("/tmp/tmpdist.dat");
-    for (int i = 0; i < 100000; i++) {
-        double p[3];
-        nextveld(p);
-
-        outf      << p[0] << '\t'
-                  << p[1] << '\t'
-                  << p[2] << std::endl;
+    for (int j = 0; j < 5; j++) {
+        bins[j].print(outf,"") << "\n\n";
     }
-
-#if 0
-    std::ofstream qfile("qvals.dat");
-    for(int i = 0; i <= distro.L; i++) {
-        qfile << i << '\t' << distro.q[i] << '\n';
-    }
-
-    std::ofstream pfile("pvals.dat");
-    for(int i = 0; i < distro.L; i++) {
-        pfile << i << '\t' << distro.ptmp[i] << '\n';
-    }
-#endif
 
     return 0;
 }

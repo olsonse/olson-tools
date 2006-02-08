@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Gene.C,v 1.1 2005/06/07 20:38:10 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Gene.C,v $
  * Revision 1.1  2005/06/07 20:38:10  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.

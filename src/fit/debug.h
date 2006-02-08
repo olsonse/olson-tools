@@ -1,10 +1,15 @@
+// -*- c++ -*-
+// $Id$
+/** \file
+ * Debug levels and flags for the genetic algorithm code.
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
 
 
 #ifndef GA_DEBUG_H
 #define GA_DEBUG_H
-/**\file
- * name Debuging Tools
- */
 
 /** This function creates a pause in the program which requires user intervention. */
 int pausel();

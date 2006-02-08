@@ -22,7 +22,25 @@
 
 /** \file
  * A collection of handy logging routines.
- * Copyright 2000-2004 Spencer Olson
+ *
+ * Partial Copyright 2000-2004 Spencer Eugene Olson --- All Rights Reserved
+ *
+ * Partial Copyright Neil Winton <neil@winton.org.uk>
+ *
+ *   Some of these logging routines are modified code from the Zebedee package
+ *   from Niel Winton.  These are thus released under GPL:
+ *
+ * This program is free software; you can redistribute it and/or  
+ * modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation; either version 2  
+ * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License 
+ * along with this program; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef LOGGER_H

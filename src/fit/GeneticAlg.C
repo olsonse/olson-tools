@@ -1,5 +1,8 @@
+// -*- c++ -*-
 // $Id: GeneticAlg.C,v 1.3 2005/06/14 02:28:19 olsonse Exp $
 /*
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: GeneticAlg.C,v $
  * Revision 1.3  2005/06/14 02:28:19  olsonse
  * Split out some files and renamed to be more consistent with olson-tools.

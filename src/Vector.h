@@ -105,6 +105,12 @@ class Vector {
     inline T & operator[](const int & i) { return val[i]; }
     inline const T & operator[](const int & i) const { return val[i]; }
 
+    template <class T2>
+    inline const Vector & operator=(const Vector<T2,L>& that) {
+        for (unsigned int i = 0; i < L; i++) this->val[i] = (T)that.val[i];
+        return *this;
+    }
+
     inline const Vector & operator=(const Vector & that) {
         memcpy (&this->val[0], &that.val[0], sizeof(T)*L);
         return *this;
@@ -269,6 +275,32 @@ class Vector {
 
         return retval;
     }
+
+    /** The product of all components of the Vector.
+    */
+    inline T prod() const {
+        T retval = (T)1;
+        for (unsigned int i = 0; i < L; i++) {
+            retval *= this->val[i];
+        }
+        return retval;
+    }
+
+    /** Return a type casted Vector from the original. */
+    template <class T2>
+    inline Vector<T2,L> to_type() const {
+        Vector<T2,L> retval;
+        retval = *this;
+        return retval;
+    }
+
+
+    /** Add a fraction of another Vector to this Vector. */
+    template <class T2>
+    inline Vector<T,L> addFraction(const double & f, const Vector<T2,L> & that) {
+        for (unsigned int i = 0; i < L; i++) this->val[i] += (T)(f*that.val[i]);
+        return *this;
+    }
 };
 
 template <class T>
@@ -301,6 +333,20 @@ inline const Vector<T1,L> compMult(const Vector<T1,L> & v1, const Vector<T2,L>& 
     return retval;
 }
 
+/** component by component division after type of that is converted
+ * type of this.
+ * @return reference to (type Vector<T,L>).
+ *
+ * @see Vector::compDiv.
+ */
+template <class T1, class T2, unsigned int L>
+inline const Vector<T1,L> compDiv(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
+    Vector<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        retval.val[i] = v1.val[i] / (T1)v2.val[i];
+    return retval;
+}
+
 template <class T, unsigned int L>
 inline T max (const Vector<T,L> & v) {
     T retval = v[0];
@@ -329,6 +375,12 @@ template <class T, unsigned int L>
 inline std::ostream & operator<<(std::ostream & output, const Vector<T,L> & v) {
     for (unsigned int i = 0; i < L; i++) output << v.val[i] << '\t';
     return output;
+}
+
+template <class T, unsigned int L>
+inline std::istream & operator>>(std::istream & input, Vector<T,L> & v) {
+    for (unsigned int i = 0; i < L; i++) input >> v.val[i];
+    return input;
 }
 
 template <class T, unsigned int L>

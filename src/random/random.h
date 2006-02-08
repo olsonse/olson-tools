@@ -43,6 +43,10 @@
  * MTRNGseedV1 is because I want to make sure that this is all callable from
  * fortran.  Remember that fortran ONLY passes by reference into functions.
  *
+ * Copyright 1997-2004 Spencer Olson
+ *
+ * (RAN2 is from numerical recipes and is copyrighted by them--see random.F).
+ *
  * @see MersenneTwister.h.
  * */
 

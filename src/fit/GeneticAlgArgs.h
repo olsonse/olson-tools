@@ -1,11 +1,22 @@
+// -*- c++ -*-
 // $Id: GeneticAlgArgs.h,v 1.1 2005/06/14 02:28:19 olsonse Exp $
 /*
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: GeneticAlgArgs.h,v $
  * Revision 1.1  2005/06/14 02:28:19  olsonse
  * Split out some files and renamed to be more consistent with olson-tools.
  *
  *
  */
+
+/** \file
+ * Collection (into a class) of arguments of the genetic algorithm code.
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 
 #ifndef GENETICALGARGS_H

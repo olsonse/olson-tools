@@ -1,5 +1,8 @@
+// -*- c++ -*-
 // $Id: GeneticAlg.h,v 1.2 2005/06/09 08:50:42 olsonse Exp $
 /*
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: GeneticAlg.h,v $
  * Revision 1.2  2005/06/09 08:50:42  olsonse
  * Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.
@@ -42,6 +45,14 @@
  *
  *
  */
+
+/** \file
+ * Genetic algorithm container class.
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 
 #ifndef GENETICALG_H

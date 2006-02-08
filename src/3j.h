@@ -1,7 +1,8 @@
 // -*- c -*-
 // $Id: 3j.h,v 1.1.1.1 2005/01/08 04:27:25 olsonse Exp $
 /*
- * Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
+ *         Copyright ? Riccardo Gusmeroli
+ * Partial Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
  *
  * Author: Riccardo Gusmeroli (web.address@libero.it)
  * Altered by:  Spencer Olson (olsonse@umich.edu)

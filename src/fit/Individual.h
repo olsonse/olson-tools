@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Individual.h,v 1.2 2005/06/09 09:12:08 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Individual.h,v $
  * Revision 1.2  2005/06/09 09:12:08  olsonse
  * Style changes.
@@ -45,6 +48,16 @@
  * Initial revision
  *
 */
+
+/** \file
+ * Base class of an Individual in the genetic algorithm code.
+ *
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H

@@ -7,6 +7,12 @@
  *
  */
 
+/** \file
+ * A generic binning class to make it easier to perform mundane binning tasks.
+ *
+ * Copyright 2004-2005 Spencer Olson.
+ */
+
 
 #ifndef GENERICBIN_H
 #define GENERICBIN_H

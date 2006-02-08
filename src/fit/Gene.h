@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Gene.h,v 1.1 2005/06/07 20:38:11 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Gene.h,v $
  * Revision 1.1  2005/06/07 20:38:11  olsonse
  * Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
@@ -45,6 +48,16 @@
  *
  * Revision 1.1  1997/12/02  20:04:42  turley
  * Initial revision
+ *
+ */
+
+
+/** \file
+ * Definition of a Gene for the genetic algorithm code.
+ *
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
  *
  */
 

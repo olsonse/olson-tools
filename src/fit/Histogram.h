@@ -1,12 +1,25 @@
 // -*- c++ -*-
 // $Id: Histogram.h,v 1.1 2005/06/14 02:28:19 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Histogram.h,v $
  * Revision 1.1  2005/06/14 02:28:19  olsonse
  * Split out some files and renamed to be more consistent with olson-tools.
  *
  *
 */
+
+/** \file
+ * Histogramming function to heighten competition for resources in genetic algorithm code.
+ *
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ *
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
+
 
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H

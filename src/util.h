@@ -36,7 +36,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-/* TextUI Library
+/** \file
+ * TextUI Library
  * by Spencer Olson
  * copyright 1999
  *

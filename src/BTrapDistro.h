@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id$
 /*
- * Copyright 2004 Spencer Olson
+ * Copyright 2005 Spencer Olson
  *
  * $Log$
  *
@@ -67,7 +67,8 @@ namespace BField {
          *     Position Vector<double,3> that should be added before calculating
          *     the b-field.
          */
-        inline BTrapDistribution2D(const BTrap2DInit<BSrc> & init,
+        template <class Binit>
+        inline BTrapDistribution2D(const Binit & init,
                                  int i, double iVal_,
                                  const range_t & r_range_,
                                  const range_t & phi_range_,
@@ -102,7 +103,7 @@ namespace BField {
       public:
 
         /** Evaluate something.
-         * @param v
+         * @param nphi_i
          *     Independent variable.
          */
         inline double distrib (const double & nphi_i) const {
@@ -113,7 +114,7 @@ namespace BField {
 
             pos += origin;
 
-            return exp(-beta * BField::potentialNoG(pos.val, bsrc) );
+            return exp(-beta * bsrc.potentialNoG(pos) );
         }
     };
 

@@ -8,6 +8,16 @@
  */
 
 
+/** \file
+ * A keyed histogramming class to make it easier to perform mundane binning
+ * tasks based on a keyed value.
+ *
+ * Copyright 2004-2005 Spencer Olson.
+ *
+ * @see GenericBin.
+ */
+
+
 #ifndef KEYEDBIN_H
 #define KEYEDBIN_H
 

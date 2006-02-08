@@ -1,6 +1,9 @@
 // -*- c++ -*-
 // $Id: Individual.C,v 1.2 2005/06/09 08:50:44 olsonse Exp $
 /*
+ * Copyright 199?-1998 Robert Steven Turley --- All Rights Reserved
+ * Copyright 1998-2005 Spencer Eugene Olson --- All Rights Reserved
+ *
  * $Log: Individual.C,v $
  * Revision 1.2  2005/06/09 08:50:44  olsonse
  * Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.

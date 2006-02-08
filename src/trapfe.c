@@ -1,3 +1,13 @@
+// -*- c -*-
+// $Id$
+/** \file
+ * FPU initialization routines to arm FPU exceptions.  
+ *
+ * Supported processors: i386, amd64, PowerPC (MacOS X), SUN Solaris SPARC.
+ *
+ * Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
+ *
+ */
 
 #define _GNU_SOURCE 1
 

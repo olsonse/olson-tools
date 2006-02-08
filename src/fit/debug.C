@@ -1,3 +1,8 @@
+// -*- c++ -*-
+// $Id$
+/*
+ * Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
+ */
 
 #include "io.h"
 #include "debug.h"

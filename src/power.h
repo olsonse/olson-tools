@@ -19,9 +19,10 @@
  */
 
 /** \file
- * Insanity drove me to write my own pow function.
+ * Insanity drove me to write my own pow function.  (Actually, this was my
+ * first assembly project.)
  *
- * Copyright Spencer Olson 2004
+ * Copyright Spencer Olson 2004 -- All rights reserved.
  * 
  * Because of my own insanity, I wrote my own pow function.
  * pow(x,y) == \f$ x^{y} \f$
