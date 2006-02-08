@@ -24,7 +24,7 @@
     \subsection fit_history Historical Development
         Todo:  edit and update.
 
-    Originally begun by Dr. R. Steven Turley of Brigham Young University to
+    Originally begun by Prof. R. Steven Turley of Brigham Young University to
     find solutions for designing the special mirrors for the EUV Imager of the
     Imager Mission (NASA).  The EUV Imager was to image the earth's
     magnetoshpere.  Because of the situation, it was required that the mirrors
@@ -41,7 +41,7 @@
     Spencer Olson, also an undergraduate in the group, then undertook to
     optimize and improve the algorithm and the associating program.  After
     including newer algorithms to calculate reflectivies from another program
-    written by Dr. Turley, the name of the program became XUVMulti.\n
+    written by Prof. Turley, the name of the program became XUVMulti.\n
 
     Currently, the distribution of this program includes a general fitting
     library, a multilayer library, a database of optical constants of
