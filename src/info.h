@@ -1,6 +1,12 @@
 /** \mainpage A simple manual
 
-    Some general info.
+    The OlsonTools package includes a variety of routines and algorithms that
+    I've developed and collected over the past few years.  This collection
+    represents tools that are most useful for scientific and numerical
+    software.
+
+
+    - Spencer E. Olson
   
   This manual is divided in the following sections:
   - \subpage intro 
