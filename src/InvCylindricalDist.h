@@ -231,8 +231,8 @@ class InvCylindricalDist {
                       / (ds * dr);
 
         /* we don't want to include endpoints of z-range. */
-        dz_perp = range[Z].length() / (N2D+1);
-        double iVal = range[Z].min + dz_perp;
+        dz_perp = range[Z].length() / N2D;
+        double iVal = range[Z].min + 0.5*dz_perp;
         int l = 0;
 
         /* here is a little bit of really wierd but valid C/C++ code:

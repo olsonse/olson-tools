@@ -46,6 +46,6 @@
     Currently, the distribution of this program includes a general fitting
     library, a multilayer library, a database of optical constants of
     materials, and several user interfaces.  Interfaces included (or to be)
-    are text-based, web-based, X-Windows-based, and Microsoft Windows-based.
+    are text-based, web-based, and java-based.
 
 */

@@ -24,12 +24,12 @@ F77_Darwin=g77
 #CXX_Linux=g++
 #F77_Linux=g77
 #F77_Linux=f95
-CC_Linux=icc
-CXX_Linux=icpc
-F77_Linux=ifort
-#CC_Linux=gcc-4.0
-#CXX_Linux=g++-4.0
-#F77_Linux=gfortran-4.0
+#CC_Linux=icc
+#CXX_Linux=icpc
+#F77_Linux=ifort
+CC_Linux=gcc-4.0
+CXX_Linux=g++-4.0
+F77_Linux=gfortran-4.0
 
 # and set the actual compiler used
 CC=$(CC_$(OS))
@@ -64,7 +64,7 @@ OPTIM_gcc_x86_64=-O3 -m64 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumu
 
 OPTIM_gcc-4.0_athlon=-O3 -mtune=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
 OPTIM_gcc-4.0_i686=-O3 -mtune=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
-OPTIM_gcc-4.0_x86_64=-O3 -m32 -mtune=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+OPTIM_gcc-4.0_x86_64=-O3 -m64 -mtune=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
 
 OPTIM_gcc_powerpc= -O3 -funroll-loops -fstrict-aliasing -fsched-interblock \
            -falign-loops=16 -falign-jumps=16 -falign-functions=16 \

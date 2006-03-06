@@ -38,13 +38,26 @@ void fpesig(
            "A math exception was trapped\n"
            "Attach to the debugger and find out where/why.\n"
            "This function will pause here until otherwise interrupted.\n"
-           "Address of 'stop_now' variable:  0x%p\n"
+           "Address of 'stop_now' variable:  %p\n"
            "Set stop_now to false to continue\n", &stop_now
           );
 
     while (!stop_now) {
         sleep(1);
     }
+}
+
+/** a simple function to clear the exception register values with the
+ * debugger. */
+static int __attribute__ ((used)) clearfpe() {
+#if defined(__sun__)
+    fprintf(stderr, "I'm not yet sure how to clear the exception register\n"
+                    "on sun machines\n"
+           );
+#else
+    feclearexcept (FE_INVALID | FE_DIVBYZERO |FE_UNDERFLOW |FE_OVERFLOW);
+#endif
+    return -1;
 }
 
 static int __attribute__ ((constructor)) trapfpe () {
