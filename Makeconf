@@ -24,12 +24,12 @@ F77_Darwin=g77
 #CXX_Linux=g++
 #F77_Linux=g77
 #F77_Linux=f95
-#CC_Linux=icc
-#CXX_Linux=icpc
-#F77_Linux=ifort
-CC_Linux=gcc-4.0
-CXX_Linux=g++-4.0
-F77_Linux=gfortran-4.0
+CC_Linux=icc
+CXX_Linux=icpc
+F77_Linux=ifort
+#CC_Linux=gcc-4.0
+#CXX_Linux=g++-4.0
+#F77_Linux=gfortran-4.0
 
 # and set the actual compiler used
 CC=$(CC_$(OS))

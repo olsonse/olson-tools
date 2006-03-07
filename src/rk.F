@@ -123,7 +123,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
     t = ti
     tf = ti + dt
     do while ((t*dir) .lt. (tf*dir))
-        call derivs(x, t, dxdt, derivsArgs, ERRMAX)
+        call derivs(x, t, dxdt, derivsArgs)
 
         do i=1,n
             ! Scaling used to monitor accuracy. This
