@@ -99,6 +99,11 @@ double fast_pow(double x,double y);
  * It has only 2 additional mov instructions. */
 double fast_pow_(double*,double*);
 
+#else
+    /* the least we can do is provide an alias macro for the math lib pow
+     * function. */
+#  define fast_pow pow
+
 #endif /* USE_SPENCERS_FAST_POW */
 
 #  ifdef __cplusplus

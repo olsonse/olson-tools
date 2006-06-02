@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <cfloat>
 
 /** A generic histogramming class.
  * @param T
@@ -46,8 +47,15 @@ class GenericBin {
      * @param mx
      *     Expected maximum of the data.
      */
-    inline GenericBin(const T & mn, const T & mx) :
-        max(mx), min(mn), scale(double(nbins)/(max - min) * 0.999999) {
+    inline GenericBin(const T & mn = (T)0, const T & mx = (T)0) {
+        init(mn,mx);
+    }
+
+    /** Initialize the binning. */
+    inline void init(const T & mn, const T & mx) {
+        max = mx;
+        min = mn;
+        scale = (mn==0 && mx==0 ? DBL_MAX : double(nbins)/(max - min) * 0.999999);
         clearBins();
     }
 

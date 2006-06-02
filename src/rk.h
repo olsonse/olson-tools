@@ -40,8 +40,6 @@
  *
  * Copyright 2002-2004 Spencer Olson.
  *
- * Some of these routines are altered versions of similar routines from
- * Numerical Recipes (see the rk.F file for which stem from NR).
  */
 
 #ifndef RK_H
@@ -77,8 +75,7 @@ extern "C" {
 
     /** Adaptive 5th order runge-kutta.
      * This is using the Cash-Karp parameters for doing 5th order accuracy
-     * adaptive Runge-Kutta.  This is a modified implementation of that found
-     * in Numerical Recipes.
+     * adaptive Runge-Kutta.  
      * @param p
      *     A pointer to the Particle who's position and velocity will be
      *     integrated.
@@ -189,7 +186,7 @@ extern "C" {
     * allowed. 
     * getMachineEPS() MUST BE RUN AT LEAST ONCE before rk_adapt_driver is called.
     */
-    const double getMachineEPS ();
+    double getMachineEPS ();
 
 #    ifdef __cplusplus
 }

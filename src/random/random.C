@@ -138,8 +138,8 @@ double gauss_deviate__(const double sigma[]) {
 }
 
 /** The following is for getting a gaussian distribution of random
- * numbers.  This function uses a Box-Mueller transformation to get the normal
- * deviates (as described in Numerical Recipes chapter 7 section 2).
+ * numbers.  This function uses a Box-Muller transformation to get the normal
+ * deviates.
  * This function returns a normally distributed deviate with zero
  * mean and arbitrary variance, using ????? as the source of uniform deviates.
  *@memo Random Gaussian Deviate

@@ -19,6 +19,7 @@
 \*********************/
 
 #include "logger.h"
+#include "fmacros.h"
 #define logger_c_rcsid "$Id: logger.c,v 1.1.1.1 2005/01/08 04:27:24 olsonse Exp $"
 
 #include <stdarg.h>
@@ -253,7 +254,7 @@ log_severe(const char *fmt, ...)
     va_end(args);
 }
 
-#if __linux__ == 1 || __sun__ == 1
+#if CAN_ALIAS
     /* make available the weak symbols to allow fortran programs to use this.
      * Unfortunately, not all binary formats allow for weak symbols.
      * */

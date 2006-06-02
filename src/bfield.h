@@ -23,42 +23,7 @@
 #include "physical.h"
 #include "Vector.h"
 #include "power.h"
-
-#ifndef X
-#  define X 0
-#elif defined(X) && (X != 0)
-#  error X already defined and it is not == 0!
-#endif
-
-#ifndef Y
-#  define Y 1
-#elif defined(Y) && (Y != 1)
-#  error Y already defined and it is not == 1!
-#endif
-
-#ifndef Z
-#  define Z 2
-#elif defined(Z) && (Z != 2)
-#  error Z already defined and it is not == 2!
-#endif
-
-#ifndef VX
-#  define VX 3
-#elif defined(VX) && (VX != 3)
-#  error VX already defined and it is not == 3!
-#endif
-
-#ifndef VY
-#  define VY 4
-#elif defined(VY) && (VY != 4)
-#  error VY already defined and it is not == 4!
-#endif
-
-#ifndef VZ
-#  define VZ 5
-#elif defined(VZ) && (VZ != 5)
-#  error VZ already defined and it is not == 5!
-#endif
+#include "indices.h"
 
 namespace BField {
 
@@ -70,6 +35,9 @@ namespace BField {
         Vector<double,3> pb;
         /** Sign and magnitude of current flowing from pa to pb. */
         double I;
+
+        const double & operator[](const int & i) const { return pa.val[i]; }
+              double & operator[](const int & i)       { return pa.val[i]; }
 
         /** Constructor to set all elements. */
         inline ThinCurrentElement(
@@ -89,6 +57,23 @@ namespace BField {
             pb[Z] = pbz;
 
             I = cur;
+        }
+
+        /** Constructor to set all elements.
+         * @param v
+         *     Expected to be a 7 element double array.
+         */
+        inline ThinCurrentElement(const double * v) {
+            pa = V3C(&v[0]);
+            pb = V3C(&v[3]);
+            I  = v[6];
+        }
+
+        /** Constructor to set all elements. */
+        inline ThinCurrentElement(const Vector<double,7> & v) {
+            pa = V3C(&v.val[0]);
+            pb = V3C(&v.val[3]);
+            I  = v.val[6];
         }
 
         /** Copy constructor. */
@@ -398,11 +383,7 @@ namespace BField {
          * @see potentialNoG(const Vector<double,3> & r).
          */
         inline double potential(const Vector<double,3> & r) const {
-            Vector<double,3> B;
-
-            super1::getb(B, r);
-
-            return super0::mu * B.abs() - super0::mass * (super0::gravity * r);
+            return potentialNoG(r) - super0::mass * (super0::gravity * r);
         }
 
         /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1> ignoring the

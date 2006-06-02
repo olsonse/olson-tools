@@ -11,11 +11,12 @@
 #define VX 3
 #define VY 4
 #define VZ 5
-typedef struct {
+class Particle {
+  public:
    double pos[3];
    double vel[3];
    static int ndim;
-} __attribute__ ((packed)) Particle;
+} __attribute__ ((packed));
 int Particle::ndim = 6;
 
 std::ostream & operator<<(std::ostream & output, Particle & p) {

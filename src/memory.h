@@ -94,7 +94,7 @@ private: \
   static class *freelist; /* free-store for stuff already allocated */ \
   static int freelistsz; /* will store the size of the freelist */ \
   static int freelistlimit; /* to store limit for size of freelist */ \
-  class *_new_next;
+  class *_new_next
 
 
 /** Memory Storage Implementation.

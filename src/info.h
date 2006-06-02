@@ -18,14 +18,14 @@
 
 /** \page intro Introduction
     This page introduces the user to the topic.
-    Now you can proceed to the \ref advanced "advanced section".  
 */
+    //Now you can proceed to the \ref advanced "advanced section".  
 
 //-----------------------------------------------------------
 
 /** \page random Random Routines
     There are several routines for generating random numbers of various
-    distributions.  The base generator for most of these is the \ref twister
+    distributions.  The base generator for most of these is the \ref MTRand
     MerserneTwister package from Richard Wagner.
 
     This document is a work in progress.

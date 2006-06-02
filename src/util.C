@@ -51,6 +51,7 @@
 #include <ctype.h>
 #include <string>
 #include <iostream>
+#include <cfloat>
 
 using namespace std;
 
@@ -134,7 +135,7 @@ double text_getDouble( double min, double defaultval, double max,
                const string & qstring) {
   //query the user for some specific value
   char buf[100];
-  double selection=-1e400;
+  double selection=-FLT_MAX;
   while((selection<min)||(selection>max)) {
     cout<<qstring<<"["<<defaultval<<"] ";
     cin.getline(buf,100);
@@ -143,7 +144,7 @@ double text_getDouble( double min, double defaultval, double max,
        &&(selection>=min)&&(selection<=max)) {
        return selection;
     }//if
-    selection=-1e400;
+    selection=-FLT_MAX;
     cout<<"Value must be between "<<min<<" and "<<max<<".\n";
   }//while
   return 0;//this line of code should never be reached
@@ -168,7 +169,7 @@ int text_getInt( int min, int defaultval, int max, const string & qstring ) {
 float text_getFloat(float min, float defaultval, float max, const string & qstring) {
   //query the user for some specific value
   char buf[100];
-  float selection=-1e400;
+  float selection=-FLT_MAX;
   while((selection<min)||(selection>max)) {
     cout<<qstring<<"["<<defaultval<<"] ";
     cin.getline(buf,100);
@@ -177,7 +178,7 @@ float text_getFloat(float min, float defaultval, float max, const string & qstri
        &&(selection>=min)&&(selection<=max)) {
        return selection;
     }//if
-    selection=-1e400;
+    selection=-FLT_MAX;
     cout<<"Value must be between "<<min<<" and "<<max<<".\n";
   }//while
   return 0;//this line of code should never be reached

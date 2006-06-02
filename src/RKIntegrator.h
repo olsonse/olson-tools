@@ -54,7 +54,7 @@ const int RKIntegrator<ndim_>::ndim = ndim_;
 
 /** Integration done by an adaptive Runge-Kutta method yielding 5th order
  * accuracy.
- * @see rk_adapt_driver in rk.h as well as Numerical Recipies.
+ * @see rk_adapt_driver in rk.h.
  */
 template <int ndim_ = 6>
 class RK5AdaptiveIntegrator : public RKIntegrator<ndim_> {

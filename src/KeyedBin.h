@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <cfloat>
 #include "Vector.h"
 
 /** A keyed histogramming class.
@@ -59,8 +60,15 @@ class KeyedBin {
      * @param mx
      *     Expected maximum of the data.
      */
-    inline KeyedBin(const T & mn, const T & mx) :
-        max(mx), min(mn), scale(double(nbins)/(max - min) * 0.999999) {
+    inline KeyedBin(const T & mn = (T)0, const T & mx = (T)0) {
+        init(mn,mx);
+    }
+
+    /** Initialize the binning. */
+    inline void init(const T & mn, const T & mx) {
+        max = mx;
+        min = mn;
+        scale = (mn==0 && mx==0 ? DBL_MAX : double(nbins)/(max - min) * 0.999999);
         clearBins();
     }
 

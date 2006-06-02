@@ -73,13 +73,17 @@
  * @param input
  *     Input stream.
  *
+ * @param Nout
+ *     On exit, the memory pointed to by Nout (if not NULL) will store the
+ *     number of data elements read in.
+ *
  * @returns Linked list of data on (_Data * next) field of _Data class.
  * @see readDataBlocks.
  *
  * @see Data<T,L> below for a generic class to read in data.
  */
 template <class _Data>
-_Data * readData(std::istream & input) {
+_Data * readData(std::istream & input, int * Nout = NULL) {
     _Data * list = NULL;
     _Data * next = NULL;
     int N = 0;
@@ -90,7 +94,7 @@ _Data * readData(std::istream & input) {
         N++;
     }
 
-    std::cout << "Read in " << N << " data points" << std::endl;
+    if (Nout != NULL) *Nout = N;
 
     return list;
 }
@@ -158,8 +162,13 @@ std::vector<_Data*> & readDataBlocks(std::istream & input,
  *
  * @param comment_char
  *     The character to use for comments [Default '#'].
+ *
+ * @param end_block_lines
+ *     The number of blank lines between blocks [Default 2].
  */
-inline bool read_past_comment(std::istream & input, const char & comment_char = '#') {
+inline bool read_past_comment(std::istream & input,
+                              const char & comment_char = '#',
+                              const unsigned int end_block_lines = 2) {
     char testchar = input.peek();
     unsigned int endblock = 0;
     /* read past spaces and endlines. */
@@ -168,7 +177,7 @@ inline bool read_past_comment(std::istream & input, const char & comment_char = 
         testchar = input.peek();
     }
 
-    if (endblock>=3) {
+    if (endblock>=(1+end_block_lines)) {
         input.setstate(std::ios_base::failbit);
         return false;
     }

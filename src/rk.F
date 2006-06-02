@@ -24,6 +24,22 @@ double precision function setMachineEPSHelper (x)
     setMachineEPSHelper = y
 end function
 
+subroutine killMe ()
+    implicit none
+    integer pid, getpid
+    integer SIGFPE, SIGINT
+    parameter(SIGINT=2, SIGFPE=8)
+
+    ! The purpose of this is to make sure that we first give the trapfe stuff
+    ! a chance to trap this signal and thus allow the user to attach with
+    ! a debugger.  We follow by a real exit in case the SIGFPE signal is not
+    ! caught.
+    pid = getpid()
+    call kill(pid,SIGFPE)
+
+    call exit;
+end subroutine
+
 subroutine rk4step (x, n, t, dt, derivs, derivsArgs)
     implicit none
     integer             n
@@ -161,7 +177,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
             ! This code should NEVER be reached for a physical guide!
             ! call log_severe('stepsize (%g) smaller than TINY'//char(0), %val(dt_step),0d0,0d0)
             call log_severe('stepsize (%g) smaller than TINY'//char(0), dt_step, 0d0, 0d0)
-            call exit
+            call killMe()
         endif
     end do
     call log_severe('This code (in rk_driver_adapt) is supposed to be unreachable' // char(0),0d0,0d0,0d0)
@@ -232,7 +248,7 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
         if (tnew .eq. t) then
             call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
             !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), %val(tnew), %val(t), %val(dt))
-            call exit
+            call killMe()
         endif
         nredone = nredone + 1
 

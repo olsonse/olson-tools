@@ -45,7 +45,6 @@
  *
  * Copyright 1997-2004 Spencer Olson
  *
- * (RAN2 is from numerical recipes and is copyrighted by them--see random.F).
  *
  * @see MersenneTwister.h.
  * */
@@ -70,15 +69,16 @@ extern "C" {
 #  else
 #  endif
     /** Generate a Gaussian deviate.
-     * The random gaussian distribution is created using a Box-Mueller
+     * The random gaussian distribution is created using a Box-Muller
      * transformation from a uniform distribution.
      * @param sigma
      *    The standard deviation of the resulting gaussian
      *    distribution.
      * @return Random number from a gaussian distribution with specified
      *    standard deviation; possible values are (-Inf,+Inf).
-     * @see Numerical recipes for a description of a Box-Mueller
-     *    transformation.
+     * @see G.E.P. Box, M.E. Muller, ``A Note on the Generation of Random Normal Deviates,''
+     *    <i>The Annals of Mathematical Statistics</i>, Institute of Mathematical Statistics, 1958.
+     *    (Look at many many web references to this article.)
      * */
     double gauss_deviate(const double & sigma);
 
@@ -91,9 +91,15 @@ extern "C" {
     /** RAN2 from numerical recipes.
      * The source code lists this copyright:
      *  (C) Copr. 1986-92 Numerical Recipes Software 'iXR
+     *
+     * Because of the NR license, I cannot distribute this.  If you do not
+     * want to add it in (in the random.F file in the src/random/
+     * subdirectory), or do not have your own license for this, you will probably
+     * want to comment this out.
      * */
     double ran2(int * idum)
-#if __linux__ == 1 && !(defined(F77COMP_gfortran_40) && F77COMP_gfortran_40 == 1 )
+#if __linux__ == 1 && !(defined(F77COMP_gfortran_40) && F77COMP_gfortran_40 == 1 ) \
+    && !(defined(F77COMP_gfortran) && F77COMP_gfortran == 1 )
                             __attribute__ (( alias ("ran2_") ));
     double ran2_(int * idum)
 #endif

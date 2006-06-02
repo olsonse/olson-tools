@@ -5,11 +5,15 @@
  *
  * Supported processors: i386, amd64, PowerPC (MacOS X), SUN Solaris SPARC.
  *
+ * Supported compilers:  gcc, Intel, PGI
+ *
  * Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
  *
  */
 
 #define _GNU_SOURCE 1
+
+extern "C" {
 
 #if defined(__x86_64__) || defined(__amd64__) || defined(__i386__) || defined(__sun__)
 #  include <fenv.h>
@@ -38,7 +42,7 @@ void fpesig(
            "A math exception was trapped\n"
            "Attach to the debugger and find out where/why.\n"
            "This function will pause here until otherwise interrupted.\n"
-           "Address of 'stop_now' variable:  %p\n"
+           "Address of 'stop_now' variable:  (int*)%p\n"
            "Set stop_now to false to continue\n", &stop_now
           );
 
@@ -63,6 +67,8 @@ static int __attribute__ ((used)) clearfpe() {
 static int __attribute__ ((constructor)) trapfpe () {
     /* Enable some exceptions.  At startup all
      * exceptions are masked.  */
+    fprintf(stderr, "TrapFPE installed\n");
+    fflush(stderr);
 
 #if defined(__sun__)
     (void) fex_set_handling(FEX_COMMON, FEX_CUSTOM, fpesig);
@@ -72,3 +78,12 @@ static int __attribute__ ((constructor)) trapfpe () {
 #endif
     return 1;
 }
+
+/* for some reason, some of the compilers (PGI, INTEL) are too dumb to know
+ * what to do with some __attribute__ commands (PGI seems to ignore them all).
+ * This makes sure that these functions are called.
+ */
+static int bob_the_builder      = trapfpe();
+static int wendy_the_builder    = clearfpe();
+
+};

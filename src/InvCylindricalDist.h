@@ -100,7 +100,7 @@ inline void decoupleRhoPhi(const double & nphi_i,
 
     register double cosphi;
     register double sinphi;
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
+#if !defined(PGCC) && (defined(__x86_64__) || defined(__amd64__) || defined(__i386__))
     asm ("fsincos" : "=t" (cosphi), "=u" (sinphi) : "0" (phi));
 #else
     cosphi = cos(phi);

@@ -24,6 +24,6 @@
 #ifndef FMACROS_H
 #define FMACROS_H
 
-/* well, I just took everything out of here. */
+#define CAN_ALIAS       (!defined(PGCC) && (__linux__ == 1 || __sun__ == 1))
 
 #endif /* FMACROS_H */
