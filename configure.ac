@@ -100,6 +100,7 @@ probe_for_fast_pow(){
         ]
     )
 
+    AM_CONDITIONAL([FAST_POW_ENABLED], [test "$fast_pow_enabled" = "1"])
     if test "$fast_pow_enabled" = "1" ; then
         echo "yes"
         echo "fast_pow enabled"

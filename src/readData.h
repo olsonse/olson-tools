@@ -122,7 +122,7 @@ std::vector<_Data*> & readDataBlocks(std::istream & input,
                                      std::vector<_Data*> & retval,
                                      const unsigned int & start = 0,
                                      const unsigned int & interval = 1,
-                                     const unsigned int & end = -1) {
+                                     const int & end = -1) {
     _Data * dataP = NULL;
     unsigned int index = 0;
 

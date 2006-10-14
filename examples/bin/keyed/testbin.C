@@ -28,11 +28,12 @@ int main() {
     if (iter == 0) return EXIT_FAILURE;
     std::cout << iter << " samples requested." << std::endl;
 
+    FlatDistribution flat;
 
-    Distribution distro(FlatDistribution(), -0.5, 0.5, 1000);
+    Distribution distro(flat, -0.5, 0.5, 1000);
     for (int i = 0; i < iter; i++) {
         double x = distro();
-        Vector<double,3> v(Vector<double,3>::list::dummy(), log(fabs(x)), exp(x), pow(2.0,x));
+        Vector<double,3> v(VInit, log(fabs(x)), exp(x), pow(2.0,x));
         bin.bin(distro(),v);
     }
 

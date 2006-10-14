@@ -54,12 +54,7 @@ int main() {
     bsrc.bg[Y] = 0;
     bsrc.bg[Z] = 1.0*Gauss;
     bsrc.mass = 87.0*amu;
-
-    const double table_angle = (-5.7*mm)/(1.5*m);
     bsrc.gravity = 0.0;
-    //bsrc.gravity[X] = 0;
-    //bsrc.gravity[Y] = -physical::unit::gravity * cos(table_angle);
-    //bsrc.gravity[Z] = -physical::unit::gravity * sin(table_angle);
 
     P_xyz  pos_distrib;
     const double temperature = 150. * uK;
@@ -126,7 +121,7 @@ int main() {
             potential_integral += 0.5 * 1e6 * X_INCR * (last_potI + potI);
             last_potI = potI;
 
-            Vector<double,2> v(Vector<double,2>::list::dummy(),x[X],potI);
+            Vector<double,2> v(VInit,x[X],potI);
             potential.push_back(v);
         }
 

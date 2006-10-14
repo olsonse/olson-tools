@@ -11,6 +11,7 @@ OS=@host_os@
 OPTIM_gcc_athlon        = -O3 -mcpu=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
 OPTIM_gcc_i686          = -O3 -mcpu=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
 OPTIM_gcc_x86_64        = -O3 -m64 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+OPTIM_gcc_ia64          = -O3
 
 OPTIM_gcc-4.0_athlon    = -O3 -mtune=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
 OPTIM_gcc-4.0_i686      = -O3 -mtune=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
@@ -77,34 +78,33 @@ OT_CPPFLAGS=-DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1
 
 
 
+# TODO:  Use autoconf to test Whether we should use -fpic or -fPIC
 # Specify CFLAGS for various architecture/compiler combinations
-OT_FLAGS0_gcc_athlon    = -Wall -fpic 
-OT_FLAGS0_gcc_i686      = -Wall -fpic 
-OT_FLAGS0_gcc_x86_64    = -Wall -fpic 
-OT_FLAGS0_gcc_powerpc   = -Wall -fPIC 
-OT_FLAGS0_gcc-3.4.3_powerpc = -Wall -fPIC 
-OT_FLAGS0_gcc_sparc     = -Wall -fpic 
-OT_FLAGS0_gcc-4.0_athlon = -Wall -fpic 
-OT_FLAGS0_gcc-4.0_i686  = -Wall -fpic 
-OT_FLAGS0_gcc-4.0_x86_64 = -Wall -fpic 
-
-OT_FLAGS0_icc_athlon    = -w1 -fpic 
-OT_FLAGS0_icc_i686      = -w1 -fpic 
-OT_FLAGS0_icc_x86_64    = -w1 -fpic 
-OT_FLAGS0_icc_ia64      = -w1 -fpic 
-
-OT_FLAGS0_pgcc_x86_64   = -Minform=warn -fpic  -B -DPGCC
-
-
-OT_FLAGS0_g77          = -Wall -fpic -ffree-form -ff90 -fno-second-underscore
-OT_FLAGS0_g77-3.4.3    = -Wall -fpic -ffree-form -ff90 -fno-second-underscore
-OT_FLAGS0_gfortran-4.0 = -Wall -fpic -ffree-form -x f95-cpp-input
+OT_FLAGS0_gcc           = -Wall
+OT_FLAGS0_g++           = -Wall
+OT_FLAGS0_gcc-3.4.3     = -Wall 
+OT_FLAGS0_g++-3.4.3     = -Wall 
+OT_FLAGS0_gcc-4.0       = -Wall 
+OT_FLAGS0_g++-4.0       = -Wall 
+OT_FLAGS0_g77           = -Wall -ffree-form -ff90 -fno-second-underscore
+OT_FLAGS0_g77-3.4.3     = -Wall -ffree-form -ff90 -fno-second-underscore
+OT_FLAGS0_gfortran-4.0  = -Wall -ffree-form -x f95-cpp-input
 # I used to have to use -x f95-cpp-input with gfortran.  It is now causing
 # problems and works without.
-OT_FLAGS0_gfortran     = -Wall -fpic -ffree-form
-OT_FLAGS0_f95          = -free -C=none -w=x77
-OT_FLAGS0_ifort        = -warn all -free
-OT_FLAGS0_pgf90        = -Mfree
+OT_FLAGS0_gfortran      = -Wall -ffree-form
+
+
+OT_FLAGS0_icc           = -w1
+OT_FLAGS0_icpc          = -w1
+OT_FLAGS0_ifort         = -warn all -free
+
+OT_FLAGS0_pgcc          = -Minform=warn -B -DPGCC
+OT_FLAGS0_pgCC          = -Minform=warn -B -DPGCC
+OT_FLAGS0_pgf90         = -Minform=warn -Mfree
+
+# NAG fortran (to c) compiler
+OT_FLAGS0_f95           = -free -C=none -w=x77
+
 
 
 

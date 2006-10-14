@@ -28,7 +28,9 @@ int main() {
     if (iter == 0) return EXIT_FAILURE;
     std::cout << iter << " samples requested." << std::endl;
 
-    Distribution distro(FlatDistribution(), -0.5, 0.5, 1000);
+    FlatDistribution flat;
+
+    Distribution distro(flat, -0.5, 0.5, 1000);
     for (int i = 0; i < iter; i++) {
         bin.bin(distro());
     }

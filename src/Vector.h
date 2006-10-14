@@ -46,9 +46,9 @@
  * For single byte types, V3t_ can be used, and if that doesn't work (some
  * compilers complain), then use V3tcast.
  */
-#define V3t(type,a,b,c)       __CONCAT(vect3,type)(VInit(),((type)(a)),((type)(b)),((type)(c)))
+#define V3t(type,a,b,c)       __CONCAT(vect3,type)(VInit,((type)(a)),((type)(b)),((type)(c)))
 
-#define V3tcast(type,cast_type,a,b,c)   __CONCAT(vect3,type)((cast_type)0,VInit(),((cast_type)(a)),((cast_type)(b)),((cast_type)(c)))
+#define V3tcast(type,cast_type,a,b,c)   __CONCAT(vect3,type)((cast_type)0,VInit,((cast_type)(a)),((cast_type)(b)),((cast_type)(c)))
 
 /** Another simple define to help make it easier and cleaner to init 3-vectors
  * (of a given type).  This macro can usually (compiler dependent) only
@@ -69,7 +69,8 @@
  */
 #define V3C(a)          (*((Vector<double,3>*)(a)))
 
-typedef struct { int dontbugme; } VInit;
+typedef struct { int dontbugme; } VInit_t;
+#define VInit   ((VInit_t *)NULL)
 
 template <class T, unsigned int L>
 class Vector {
@@ -88,7 +89,7 @@ class Vector {
      * @param dummy
      *     a bogus pointer (casting NULL appropriately is fine).
      */
-    inline Vector (const VInit dummy, ...) {
+    inline Vector (const VInit_t * dummy, ...) {
         va_list ap;
         va_start(ap,dummy);
         for (unsigned int i = 0; i < L; i++) this->val[i] = va_arg(ap,T);
@@ -96,7 +97,7 @@ class Vector {
     }
 
     template <class TP>
-    inline Vector (const TP another_dummy, const VInit dummy, ...) {
+    inline Vector (const TP another_dummy, const VInit_t * dummy, ...) {
         va_list ap;
         va_start(ap,dummy);
         for (unsigned int i = 0; i < L; i++) this->val[i] = (T)va_arg(ap,TP);
