@@ -31,14 +31,14 @@ CXX_Darwin=g++
 F77_Darwin=g77
 #F77_Darwin=f95
 
-#CC_Linux=gcc
-#CXX_Linux=g++
+CC_Linux=gcc
+CXX_Linux=g++
 #F77_Linux=gfortran
-#F77_Linux=g77
+F77_Linux=g77
 #F77_Linux=f95
-CC_Linux=icc
-CXX_Linux=icpc
-F77_Linux=ifort
+#CC_Linux=icc
+#CXX_Linux=icpc
+#F77_Linux=ifort
 #CC_Linux=gcc-4.0
 #CXX_Linux=g++-4.0
 #F77_Linux=gfortran-4.0
@@ -75,10 +75,11 @@ CFLAGS_gcc-4.0_x86_64=-Wall -fpic
 CFLAGS_icc_athlon=-w1 -fpic 
 CFLAGS_icc_i686=-w1 -fpic 
 CFLAGS_icc_x86_64=-w1 -fpic 
+CFLAGS_icc_ia64=-w1 -fpic 
 
 
-CFLAGS_pgcc_x86_64=-Minform=warn -fpic  -B -DPGCC \
-    --instantiate=local
+CFLAGS_pgcc_x86_64=-Minform=warn -fpic  -B -DPGCC -D_ISOC9X_SOURCE
+#    --instantiate=local
 
 #    --instantiate=used
 #    --instantiation_dir/home/olsonse/src/olson-tools/templates
@@ -126,6 +127,10 @@ OPTIM_ifort_x86_64=$(OPTIM_icc_x86_64)
 
 OPTIM_icc_athlon=-xK -ip -O3
 OPTIM_ifort_athlon=$(OPTIM_icc_athlon)
+
+OPTIM_icc_ia64=-ip -O3
+OPTIM_ifort_ia64=$(OPTIM_icc_ia64)
+
 
 OPTIM_f95_athlon=-O3 -Wc,-mcpu=athlon-xp,-march=athlon-xp,-malign-double,-mmmx,-m3dnow,-msse,-maccumulate-outgoing-args
 OPTIM_f95_i686=-O3 -Wc,-mcpu=pentium4,-march=pentium4,-malign-double,-mmmx,-msse,-msse2

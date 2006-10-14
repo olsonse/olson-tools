@@ -21,7 +21,9 @@ typedef struct {
 int main() {
     GenericBin<double,201> bin(-0.5,0.5);
 
-    Distribution distro(FlatDistribution(), -0.5, 0.5, 1000);
+    FlatDistribution flat;
+
+    Distribution distro(flat, -0.5, 0.5, 1000);
     for (int i = 0; i < 1000000; i++) {
         bin.bin(distro());
     }

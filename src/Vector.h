@@ -39,12 +39,16 @@
  * Because this uses va_arg stuff: single byte types are only possible with
  * specific implementations of stdarg.h (such as Intel's).  GCC will issue a
  * warning and then barf if the code is actually executed.
- * Because of this inportability, you cannot use single byte types with this
- * macro (or Vector<T,L>::Vector(Vector::list*,...) either for that matter).
+ * The safest way to handle single byte types (bools for example) is to
+ * promote them to something larger and then cast them back.  V3tcast will do
+ * this for you.  For booleans, see V3b(...).
  *
- * For single byte types, V3t_ can be used.
+ * For single byte types, V3t_ can be used, and if that doesn't work (some
+ * compilers complain), then use V3tcast.
  */
-#define V3t(type,a,b,c)       __CONCAT(vect3,type)(__CONCAT(vect3,type)::list::dummy(),((type)(a)),((type)(b)),((type)(c)))
+#define V3t(type,a,b,c)       __CONCAT(vect3,type)(VInit(),((type)(a)),((type)(b)),((type)(c)))
+
+#define V3tcast(type,cast_type,a,b,c)   __CONCAT(vect3,type)((cast_type)0,VInit(),((cast_type)(a)),((cast_type)(b)),((cast_type)(c)))
 
 /** Another simple define to help make it easier and cleaner to init 3-vectors
  * (of a given type).  This macro can usually (compiler dependent) only
@@ -56,19 +60,20 @@
  * 3-Vectors (of doubles). */
 #define V3(a,b,c)       V3t(double,a,b,c)
 
+/** A simple define to help make it easier and cleaner to initialize
+ * 3-Vectors (of bools). */
+#define V3b(a,b,c)       V3tcast(bool,uint32_t,a,b,c)
+
 /** Another simple define to help casting static 3-element arrays to
  * 3-Vectors.
  */
 #define V3C(a)          (*((Vector<double,3>*)(a)))
 
+typedef struct { int dontbugme; } VInit;
+
 template <class T, unsigned int L>
 class Vector {
   public:
-    class list {
-      public:
-        static const list * dummy() {return NULL;}
-    };
-
     T val[L];
 
     inline Vector () {}
@@ -83,10 +88,18 @@ class Vector {
      * @param dummy
      *     a bogus pointer (casting NULL appropriately is fine).
      */
-    inline Vector (const Vector::list * dummy, ...) {
+    inline Vector (const VInit dummy, ...) {
         va_list ap;
         va_start(ap,dummy);
         for (unsigned int i = 0; i < L; i++) this->val[i] = va_arg(ap,T);
+        va_end(ap);
+    }
+
+    template <class TP>
+    inline Vector (const TP another_dummy, const VInit dummy, ...) {
+        va_list ap;
+        va_start(ap,dummy);
+        for (unsigned int i = 0; i < L; i++) this->val[i] = (T)va_arg(ap,TP);
         va_end(ap);
     }
 
@@ -548,5 +561,6 @@ typedef Vector<double,3> vect3double;
 typedef Vector<float,3> vect3float;
 typedef Vector<int,3> vect3int;
 typedef Vector<uint32_t,3> vect3uint32_t;
+typedef Vector<bool,3> vect3bool;
 
 #endif // VECTOR_H

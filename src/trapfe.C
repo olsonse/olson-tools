@@ -15,7 +15,7 @@
 
 extern "C" {
 
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__) || defined(__sun__)
+#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__) || defined(__sun__) || defined(__ia64__)
 #  include <fenv.h>
 #elif defined(__ppc__)
 #  define feenableexcept(bits)                                  \
