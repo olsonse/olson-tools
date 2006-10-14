@@ -1,4 +1,4 @@
-#include <olson-tools/random.h>
+#include <olson-tools/random/random.h>
 #include <iostream>
 #include <fstream>
 #include <sys/times.h>

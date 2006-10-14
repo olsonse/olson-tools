@@ -58,11 +58,7 @@
  */
 
 #include "Gene.h"
-#if defined (BUILD_TOOLS)
-#  include "../random/random.h"
-#else
-#  include "random.h"
-#endif
+#include "../random/random.h"
 #include "io.h" // in and output
 #include <stdlib.h>
 #include <assert.h>

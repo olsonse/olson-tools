@@ -3,7 +3,7 @@
 #include <fstream>
 #include <olson-tools/logger.h>
 #include <olson-tools/rk.h>
-#include <olson-tools/random.h>
+#include <olson-tools/random/random.h>
 #define X 0
 #define Y 1
 #define Z 2

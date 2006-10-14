@@ -14,18 +14,11 @@
 #
 #
 
-include ../../../Makeconf
+MAKECONF=$(top_builddir)/Makeconf
+include $(MAKECONF)
 
-OBJ=testdist.o
-
-PROGNAME=testdist$(EXT)
-
-LIBS:=-lolson-tools$(EXT) $(LIBS)
-LDFLAGS=-L$(MAINDIR)/lib
-INCLUDES=-I$(MAINDIR)/include
-
-${PROGNAME}: ${OBJ}
-	$(CXX) ${CFLAGS} ${LDFLAGS} $(INCLUDES) -o $(PROGNAME) ${OBJ} ${LIBS}
-
-clean:
-	rm -f ${OBJ} ${PROGNAME}
+CLEANFILES      = dist.dat
+bin_PROGRAMS    = testdist
+LDADD           = -L$(top_builddir)/lib -lolson-tools
+AM_CPPFLAGS     = -I$(top_builddir)/include
+testdist_SOURCES = testdist.C

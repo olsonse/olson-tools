@@ -58,11 +58,7 @@
 #include "GeneticAlg.h"
 
 #include "Gene.h"
-#if defined (BUILD_TOOLS)
-#  include "../random/random.h"
-#else
-#  include "random.h"
-#endif
+#include "random/random.h"
 #include <signal.h> // This is so we can issue ^C to stop the ga in its tracks
 #include <assert.h>
 #include <stdexcept>

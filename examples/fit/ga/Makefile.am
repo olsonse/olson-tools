@@ -11,18 +11,10 @@
 #
 #
 
-include ../../../Makeconf
+MAKECONF=$(top_builddir)/Makeconf
+include $(MAKECONF)
 
-OBJ=testGA.o
-
-PROGNAME=testGA$(EXT)
-
-LIBS:=-lolson-tools$(EXT) $(LIBS)
-LDFLAGS=-L$(MAINDIR)/lib
-INCLUDES=-I$(MAINDIR)/include
-
-${PROGNAME}: ${OBJ}
-	$(CXX) ${CFLAGS} ${LDFLAGS} $(INCLUDES) -o $(PROGNAME) ${OBJ} ${LIBS}
-
-clean:
-	rm -f ${OBJ} ${PROGNAME}
+bin_PROGRAMS    = testGA
+AM_CPPFLAGS     = -I$(top_builddir)/include
+LDADD           = -L$(top_builddir)/lib -lolson-tools
+testGA_SOURCES  = testGA.C

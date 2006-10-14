@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+makeconf=@MAKECONF_PATH@/Makeconf
+cppflags=@CPPFLAGS@
+
+Name: olson-tools
+Description: olson-tools contains various tools that I've collected (mostly for computational purposes).
+Requires:
+Version: @VERSION@
+Libs: -L${libdir} -lolson-tools
+Cflags: -I${includedir}

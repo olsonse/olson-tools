@@ -76,11 +76,7 @@
 #include "Generation.h"
 #include "debug.h"
 #include "Gene.h"
-#if defined (BUILD_TOOLS)
-#  include "../random/random.h"
-#else
-#  include "random.h"
-#endif
+#include "random/random.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>

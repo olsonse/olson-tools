@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include <olson-tools/physical.h>
-#include <olson-tools/random.h>
+#include <olson-tools/random/random.h>
 #include <olson-tools/Distribution.h>
 #include <olson-tools/Vector.h>
 #include <olson-tools/GenericBin.h>
@@ -75,7 +75,15 @@ bin bins[5] = {
 };
 
 int main() {
-    for (int i = 0; i < 10000000; i++) {
+
+    int iter = 0;
+    std::cout << "Enter the nubmer of samples:  "
+              << std::flush;
+    std::cin >> iter;
+    if (iter == 0) return EXIT_FAILURE;
+    std::cout << iter << " samples requested." << std::endl;
+
+    for (int i = 0; i < iter; i++) {
         Vector<double,5> p;
         nextvalues(p);
 
@@ -83,7 +91,7 @@ int main() {
 
     }
 
-    std::ofstream outf("/tmp/tmpdist.dat");
+    std::ofstream outf("dist.dat");
     for (int j = 0; j < 5; j++) {
         bins[j].print(outf,"") << "\n\n";
     }

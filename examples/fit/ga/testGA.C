@@ -1,5 +1,5 @@
 
-#include <olson-tools/GeneticAlg.h>
+#include <olson-tools/fit/GeneticAlg.h>
 #include <iostream>
 #include <math.h>
 

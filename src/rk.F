@@ -1,3 +1,4 @@
+#include "config.h"
 #include "fmacros.h"
 
 ! Copyright 2004 Spencer Eugene Olson --- All Rights Reserved

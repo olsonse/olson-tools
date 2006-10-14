@@ -151,11 +151,8 @@ class Vector {
         return ret;
     }
 
-    friend inline Vector operator*(const T & that, const Vector & v) {
-        Vector ret;
-        for (unsigned int i = 0; i < L; i++) ret.val[i] = v.val[i] * that;
-        return ret;
-    }
+    template <class TT, unsigned int LL>
+    friend inline Vector operator*(const T & that, const Vector & v);
 
     inline const Vector & operator*=(const T & that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] *= that;
@@ -315,6 +312,13 @@ class Vector {
         return *this;
     }
 };
+
+template <class T, unsigned int L>
+inline Vector<T,L> operator*(const T & that, const Vector<T,L> & v) {
+    Vector<T,L> ret;
+    for (unsigned int i = 0; i < L; i++) ret.val[i] = v.val[i] * that;
+    return ret;
+}
 
 template <class T>
 inline Vector<T,3> cross (const Vector<T,3> & a, const Vector<T,3> b) {

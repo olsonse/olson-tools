@@ -53,6 +53,8 @@
 #ifndef MY_OWN_POW
 #define MY_OWN_POW
 
+#include "config.h"
+
 #ifdef SQR
 !  error  SQR already defined.  Better figure out what to do here now.
 #else

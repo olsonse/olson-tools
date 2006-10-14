@@ -1,5 +1,5 @@
 
-#include <olson-tools/simfit.h>
+#include <olson-tools/fit/simfit.h>
 #include <iostream>
 
 template <typename T>

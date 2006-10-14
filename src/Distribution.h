@@ -52,11 +52,7 @@
 
 #include <stdexcept>
 #include <math.h>
-#if defined (BUILD_TOOLS)
-#  include "random/random.h"
-#else
-#  include "random.h"
-#endif
+#include "random/random.h"
 #include "physical.h"
 #include "power.h"
 

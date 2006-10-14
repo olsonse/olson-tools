@@ -11,6 +11,7 @@
  *
  * Added fmacros.h file to simplify mixing fortran code with others.
  * Added alias function names for Fortran interoperability.
+ * Took it back out.
  *
  *
  */
@@ -24,6 +25,5 @@
 #ifndef FMACROS_H
 #define FMACROS_H
 
-#define CAN_ALIAS       (!defined(PGCC) && (__linux__ == 1 || __sun__ == 1))
 
 #endif /* FMACROS_H */

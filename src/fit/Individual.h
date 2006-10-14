@@ -63,11 +63,7 @@
 #define INDIVIDUAL_H
 
 #include "Gene.h"
-#if defined (BUILD_TOOLS)
-#  include "../memory.h"
-#else
-#  include "memory.h"
-#endif
+#include "../memory.h"
 #include "io.h"
 #include "merit_def.h"
 
