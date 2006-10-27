@@ -1,5 +1,5 @@
-# And you'll need to mention it in your Makefile.am file, so that it gets
-# installed and distributed. For instance:
+ACLOCAL_AMFLAGS = -I m4
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = olson-tools.pc
 

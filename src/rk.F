@@ -1,4 +1,4 @@
-#include "config.h"
+#include "olson-tools-config.h"
 #include "fmacros.h"
 
 ! Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
@@ -219,7 +219,7 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
     double precision    SAFETY,PGROW,PSHRNK,ERRCON,TINY
     parameter (SAFETY=0.9,PGROW=-.2,PSHRNK=-.25,ERRCON=1.89e-4,TINY=1.e-30)
     integer ncomp, nredone
-#if defined(USE_SPENCERS_FAST_POW)
+#if defined(OLSON_TOOLS_USE_SPENCERS_FAST_POW)
     double precision    fast_pow
     external  fast_pow
 #endif
@@ -238,7 +238,7 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
 
     if ( errmax .gt. 1.0 ) then
         ! Truncation error too large, reduce stepsize.
-#if !defined(USE_SPENCERS_FAST_POW)
+#if !defined(OLSON_TOOLS_USE_SPENCERS_FAST_POW)
         dt_temp = SAFETY*dt*(errmax**PSHRNK)
 #else
         dt_temp = SAFETY*dt*fast_pow(errmax,PSHRNK)
@@ -257,7 +257,7 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
         goto 1    ! For another try.
     else    ! Step succeeded. Compute size of next step.
         if(errmax .gt. ERRCON)then
-#if !defined(USE_SPENCERS_FAST_POW)
+#if !defined(OLSON_TOOLS_USE_SPENCERS_FAST_POW)
             dt_try = SAFETY*dt*(errmax**PGROW)
 #else
             dt_try = SAFETY*dt*fast_pow(errmax,PGROW)

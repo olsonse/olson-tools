@@ -53,7 +53,7 @@
 #ifndef MY_OWN_POW
 #define MY_OWN_POW
 
-#include "config.h"
+#include "olson-tools-config.h"
 
 #ifdef SQR
 !  error  SQR already defined.  Better figure out what to do here now.
@@ -86,7 +86,7 @@
 extern "C" {
 #    endif 
 
-#ifdef USE_SPENCERS_FAST_POW
+#ifdef OLSON_TOOLS_USE_SPENCERS_FAST_POW
 
 /** Because of my own insanity, I wrote my own pow function.
  * Call this one for c/c++ code.  It will be every so infinitesimally faster
@@ -106,7 +106,7 @@ double fast_pow_(double*,double*);
      * function. */
 #  define fast_pow pow
 
-#endif /* USE_SPENCERS_FAST_POW */
+#endif /* OLSON_TOOLS_USE_SPENCERS_FAST_POW */
 
 #  ifdef __cplusplus
 }

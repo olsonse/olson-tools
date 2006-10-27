@@ -39,7 +39,7 @@ OPTIM_gfortran-4.0_$(PROCESSOR) = $(OPTIM_gcc-4.0_$(PROCESSOR))
 
 
 #       BEGIN PGCC
-OPTIM_pgcc_x86_64       = -tp=k8-64 -fastsse  -Mipa=inline:10 -O2
+OPTIM_pgcc_x86_64       = -tp=k8-64 -Mvect -fastsse  -Mipa=inline:10 -O2
 OPTIM_pgCC_x86_64       = $(OPTIM_pgcc_x86_64)
 OPTIM_pgf90_x86_64      = $(OPTIM_pgcc_x86_64)
 #         END PGCC

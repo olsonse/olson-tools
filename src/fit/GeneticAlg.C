@@ -62,6 +62,7 @@
 #include <signal.h> // This is so we can issue ^C to stop the ga in its tracks
 #include <assert.h>
 #include <stdexcept>
+#include "../ompexcept.h"
 
 typedef void (*sighandler_t)(int);
 
@@ -110,7 +111,7 @@ merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
     //set the SIGINT signal so we can stop
     sighandler_t old_signal_handler = signal(SIGINT, Generation::setStop);
 
-    try {
+    TRY {
         parents.stop = false; // reset the stop boolean
         parents.randinit(); // init with random population
         if (args.seed_fraction > 0) {
@@ -166,16 +167,16 @@ merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
                       << std::endl;
         }//if
 
-    } catch ( std::runtime_error & e ) {
+    } CATCH( std::runtime_error & e,
         if(output) {
           (*output) << "GenticAlg exception caught:\n"
                     << e.what() << std::endl;
         }//if
-    } catch (...) {
+    ) CATCH(...,
         if(output) {
             (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" << std::endl;
         }//if
-    }/* catch */
+    )/* catch */
 
     /* Now we take care of getting the system back to what it should be. */
 

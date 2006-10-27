@@ -22,6 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include "ompexcept.h"
 #include "bfield.h"
 
 /**
@@ -253,7 +254,7 @@ class BFieldLookup : public virtual BField::BaseSrc {
         }
 
         if (fname.length() == 0) {
-            throw std::runtime_error("field-lookup:readindata:  missing filename.");
+            THROW(std::runtime_error,"field-lookup:readindata:  missing filename.");
         }
 
         /* format will be:

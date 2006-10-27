@@ -28,6 +28,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "ompexcept.h"
+
 
 /** sent to the receiver to ensure existence. */
 #define PING_MSG        1
@@ -161,7 +163,7 @@ class IPCMessage {
 
         if (s < 0) {
             if (errno == ENOMSG) return NULL;
-            else throw std::runtime_error(strerror(errno));
+            else THROW(std::runtime_error,strerror(errno));
         }
 
         /* set the received timestamp. */
@@ -183,7 +185,7 @@ class IPCMessage {
         gettimeofday(&message.timestamp,NULL);
         this->message.type = this->mtype;
         int s = msgsnd(msqid, &this->message, this->size(), msgflag);
-        if (s < 0) throw std::runtime_error(strerror(errno));
+        if (s < 0) THROW(std::runtime_error,strerror(errno));
     }
 
     inline size_t size() const { return sizeof(struct timeval) + this->msize; }
@@ -229,7 +231,7 @@ inline int getMsgQID(const std::string & path, char proj_id) {
     int msqid = msgget(msg_key, IPC_CREAT|S_IRWXU);
 
     if (msqid <=0) {
-        throw std::runtime_error(std::string("error obtaining message queue\n") + strerror(errno));
+        THROW(std::runtime_error,std::string("error obtaining message queue\n") + strerror(errno));
     }
 
     return msqid;

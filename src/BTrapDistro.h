@@ -82,7 +82,7 @@ namespace BField {
             dr(dr_), ds(ds_),
             origin(origin_) {
 
-            if (i < 0 || i > 2) throw std::runtime_error(FILE_LINE "invalid index");
+            if (i < 0 || i > 2) THROW(std::runtime_error,FILE_LINE "invalid index");
 
             j = (i+1)%3;
             k = (i+2)%3;

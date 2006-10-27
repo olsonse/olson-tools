@@ -52,6 +52,7 @@
 
 #include <stdexcept>
 #include <math.h>
+#include "ompexcept.h"
 #include "random/random.h"
 #include "physical.h"
 #include "power.h"
@@ -102,7 +103,7 @@ class Distribution {
                   const int & nbins = 100 ) : L(nbins) {
 
         if (L <= 1) {
-            throw std::runtime_error("Distribution needs more than one bin.");
+            THROW(std::runtime_error,"Distribution needs more than one bin.");
         }
 
         double dx = (max-min) / ((double)L);

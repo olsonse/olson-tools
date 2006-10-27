@@ -6,6 +6,7 @@ AC_INIT(olson-tools, rev-27, olsonse@umich.edu)
 AM_INIT_AUTOMAKE(olson-tools,rev-27)
 AC_CONFIG_SRCDIR([src/config.h.in])
 AC_CONFIG_HEADER([src/config.h])
+AX_PREFIX_CONFIG_H([src/$PACKAGE-config.h])
 AC_PREFIX_DEFAULT(`pwd`)
 
 # Now let's make sure that we figure out what kind of platform is being
@@ -113,9 +114,12 @@ probe_for_fast_pow(){
 }
 
 AC_ARG_ENABLE(fast_pow,
-[  --enable-fast_pow
-                        Use Spencer's fast_pow function.  See examples/fast_pow
-                        to test it's accuracy and speed.],
+    AC_HELP_STRING(
+        [--disable-fast_pow],
+        [Disable use of Spencer's fast_pow function.  
+         See examples/fast_pow to test it's accuracy
+         and speed.]
+    ),
 [ if test "$enableval" = "yes" ; then
     probe_for_fast_pow
   else

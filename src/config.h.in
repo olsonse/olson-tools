@@ -1,6 +1,3 @@
-#ifndef _OLSON_TOOLS_CONFIG_H
-#define _OLSON_TOOLS_CONFIG_H
-
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* ELF aliasing of symbols is supported using GCC type __attribute__. */
@@ -151,5 +148,3 @@
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
-
-#endif // _OLSON_TOOLS_CONFIG_H

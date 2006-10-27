@@ -6,7 +6,7 @@
 
 #include "power.h"
 
-#ifdef USE_SPENCERS_FAST_POW
+#ifdef OLSON_TOOLS_USE_SPENCERS_FAST_POW
 
 #define FAST_POW_CODE(derefd_x, derefd_y)			\
     register double value;					\
@@ -83,4 +83,4 @@ double fast_pow( double x, double y ) {
     FAST_POW_CODE(x,y);
 }
 
-#endif // USE_SPENCERS_FAST_POW
+#endif // OLSON_TOOLS_USE_SPENCERS_FAST_POW

@@ -64,7 +64,8 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./power.h \
         ./RKIntegrator.h \
         ./memory.h \
-        ./config.h
+        ./ompexcept.h \
+        ./$(PACKAGE)-config.h
 
 
 

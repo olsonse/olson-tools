@@ -64,6 +64,7 @@
 #include <assert.h>
 #include <stdexcept>
 #include <algorithm>
+#include "../ompexcept.h"
 
 /* All of the following needs to be changed where we
    use Allele definitions, so that, if ALLELE_STATIC
@@ -80,7 +81,7 @@ Chromosome::~Chromosome(){
 void crossover(Chromosome& c1, Chromosome& c2){
   int nalleles=c1.numAlleles();
   if (nalleles!=c2.numAlleles()) {
-     throw std::runtime_error("crossover:  Number of alleles of both chromosomes does not match.");
+     THROW(std::runtime_error,"crossover:  Number of alleles of both chromosomes does not match.");
   }
   // make t1 and t2 a copy of c1 and c2
   Chromosome t1(c1);
@@ -159,7 +160,7 @@ void Chromosome::mutate(){
     validv=valid();
     if(!validv){
       if(++loops > 100){
-        throw std::runtime_error("mutate:  Too many invalid loops.");
+        THROW(std::runtime_error,"mutate:  Too many invalid loops.");
       } // if too many loops
 // For this method, we need to be able to switch back to the original
 #if CROSSOVER==CBIT
@@ -249,7 +250,10 @@ int Gene::randgene() const {
     i++;// increment iteration number
     rgint++;
   }
-  throw std::runtime_error("Gene::randgene(): Too many iterations.  Nothing can be modified");
+  THROW(std::runtime_error,"Gene::randgene(): Too many iterations.  Nothing can be modified");
+#ifdef _OPENMP
+  return 0; /* shut the compiler up */
+#endif
 }//Gene::randgene
 
 void Gene::regene(const Allele_t newalleles[], const unsigned char alleletype){
@@ -275,7 +279,10 @@ Allele_struct & Gene::operator[](int i) {
   // throw an error
   //first check to see if index is valid; if not, throw error
   if( i >= 0 && i < numalleles ) return alleles[i];
-  throw std::runtime_error( ( i<0 ? "Allele_t &Gene[]: Allele index too low.":"Allele_t &Gene[]: Allele index too high.") );
+  THROW(std::runtime_error, ( i<0 ? "Allele_t &Gene[]: Allele index too low.":"Allele_t &Gene[]: Allele index too high.") );
+#ifdef _OPENMP
+  return alleles[0]; /* shut the compiler up */
+#endif
 }//Gene::operator[]
 
 const Allele_struct & Gene::operator[](int i) const{
@@ -285,7 +292,10 @@ const Allele_struct & Gene::operator[](int i) const{
   // throw an error
   //first check to see if index is valid; if not, throw error
   if( i >= 0 && i < numalleles ) return alleles[i];
-  throw std::runtime_error( ( i<0 ? "Allele_t &Gene[]: Allele index too low.":"Allele_t &Gene[]: Allele index too high.") );
+  THROW(std::runtime_error, ( i<0 ? "Allele_t &Gene[]: Allele index too low.":"Allele_t &Gene[]: Allele index too high.") );
+#ifdef _OPENMP
+  return alleles[0]; /* shut the compiler up */
+#endif
 }//Gene::operator[]
 
 int Gene::numAlleles() const {
@@ -318,7 +328,10 @@ Allele_struct & Gene::Allele(int i, unsigned char alleletype) {
       }
     }
   } // if index valid
-  throw std::runtime_error("Gene::Allele(): Allele index invalid");
+  THROW(std::runtime_error,"Gene::Allele(): Allele index invalid");
+#ifdef _OPENMP
+  return alleles[0]; /* shut the compiler up */
+#endif
 } // Gene::Allele
 
 const Allele_struct & Gene::Allele(int i, unsigned char alleletype) const {
@@ -339,7 +352,10 @@ const Allele_struct & Gene::Allele(int i, unsigned char alleletype) const {
       }
     }
   } // if index valid
-  throw std::runtime_error("Gene::Allele(): Allele index invalid");
+  THROW(std::runtime_error,"Gene::Allele(): Allele index invalid");
+#ifdef _OPENMP
+  return alleles[0]; /* shut the compiler up */
+#endif
 } // Gene::Allele
 
 const Gene & Gene::operator=(const Gene & g2) {

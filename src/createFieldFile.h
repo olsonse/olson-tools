@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include "ompexcept.h"
 #include "Vector.h"
 #include "indices.h"
 
@@ -82,11 +83,11 @@ void createFieldFile(const FieldSrc & fsrc,
     try {
         int N = 0;
         if ( (N =spitfieldout(fieldout, fsrc, X_MINc, X_MAXc, dxc)) != Nc.prod()) {
-            throw std::runtime_error("wrote out " + to_string(N) + ", should have been " + to_string(Nc.prod()));
+            THROW(std::runtime_error,"wrote out " + to_string(N) + ", should have been " + to_string(Nc.prod()));
         }
         fieldout << '\n';
         if ( (N=spitfieldout(fieldout, fsrc, X_MINs, X_MAXs, dxs)) != Ns.prod()) {
-            throw std::runtime_error("didn't wrote out " + to_string(N) + ", should have been " + to_string(Ns.prod()));
+            THROW(std::runtime_error,"didn't wrote out " + to_string(N) + ", should have been " + to_string(Ns.prod()));
         }
     } catch (std::exception & e) {
         std::cout << "failed:  " << e.what() << std::endl;

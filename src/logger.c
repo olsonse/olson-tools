@@ -254,7 +254,7 @@ log_severe(const char *fmt, ...)
     va_end(args);
 }
 
-#if CAN_ALIAS
+#if OLSON_TOOLS_CAN_ALIAS
     /* make available the weak symbols to allow fortran programs to use this.
      * Unfortunately, not all binary formats allow for weak symbols.
      * */

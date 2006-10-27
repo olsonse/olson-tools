@@ -239,7 +239,7 @@ class InvCylindricalDist {
          * interleaving a switch statement with a for statement.
          */
         switch (N2D) {
-            case 0: throw std::runtime_error("should never get here with N2D == 0!");
+            case 0: THROW(std::runtime_error,"should never get here with N2D == 0!");
 
             default:
                 one_over_dz_perp = 1.0 / dz_perp;

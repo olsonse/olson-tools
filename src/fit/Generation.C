@@ -81,6 +81,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdexcept>
+#include "../ompexcept.h"
 
 /* *****       stopGeneticAlg portion ******* */
 
@@ -386,7 +387,7 @@ int Generation::tselect(merit_t rtot, int skip){
 int Generation::seed(const Gene & seedgene, float seed_fraction){
     // insure inclusion of a specific solution in the set
     if (seed_fraction > 1.0) {
-        throw std::runtime_error("Generation::seed:  seed fraction must be <= 1.0");
+        THROW(std::runtime_error,"Generation::seed:  seed fraction must be <= 1.0");
     }
 
     int numseed = int(seed_fraction * population);
@@ -431,7 +432,7 @@ merit_t simplex_fit( Individual *member, int local_fit_max_iteration,
   // algorithm
   int nalleles = member->DNA.numAlleles( ALLELE_DYNAMIC_CONT );
   if(!nalleles) {
-    throw std::runtime_error("simplex_fit: DNA has zero dynamic alleles(bad!).");
+    THROW(std::runtime_error,"simplex_fit: DNA has zero dynamic alleles(bad!).");
   }
   Allele_t *ppar    = new Allele_t[nalleles];
   Allele_t *minvals = new Allele_t[nalleles];
