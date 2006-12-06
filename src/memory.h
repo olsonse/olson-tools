@@ -38,6 +38,41 @@
 
 #include <stdlib.h>
 
+#ifdef _OPENMP
+#  include <omp.h>
+#  define IFOMP(x) x
+#else
+#  define IFOMP(x)
+#endif
+
+
+/** MemGooLock is a class to facilitate mutual exlusion locks for
+ * multi-threaded code.  This should be specialized (by ifdefs) for the
+ * specific type of mutex needed.
+ */
+class MemGooLock {
+  private:
+    IFOMP(omp_lock_t omplock;)
+
+  public:
+    MemGooLock() {
+        IFOMP(omp_init_lock(&omplock);)
+    }
+
+    ~MemGooLock() {
+        IFOMP(omp_destroy_lock(&omplock);)
+    }
+
+    inline void lock() {
+        IFOMP(omp_set_lock(&omplock);)
+    }
+
+    inline void unlock() {
+        IFOMP(omp_unset_lock(&omplock);)
+    }
+};
+
+
 /** Memory Storage Implementation.
  * This begins the overloading of the new and delete operators.  This must be
  * used inside the class declaration which matches the class parameter.
@@ -55,14 +90,17 @@
   public: \
     inline void* operator new(size_t sz) { \
 	/* get free node from freelist if any */ \
+        memGooLock.lock(); \
 	if (freelist) { \
 	    /* cerr<< #class <<"::new: returning from free list\n"; */ \
 	    class* p = freelist; \
 	    freelist = freelist->_new_next; \
 	    freelistsz--; \
+            memGooLock.unlock(); \
 	    /* cerr<<#class<<": freelistsz = "<<freelistsz<<endl; */ \
 	    return p; \
 	}   \
+        memGooLock.unlock(); \
 	/* call malloc() otherwise */ \
 	/* cerr<< #class <<"::new: Allocating memory\n"; */ \
 	return malloc(sz); \
@@ -70,6 +108,7 @@
  \
     inline void operator delete(void* vp) { \
 	class* p = (class*)vp; \
+        memGooLock.lock(); \
 	if( freelistsz >= freelistlimit ) { \
 	    free( p ); \
 	}/* if */ \
@@ -81,6 +120,7 @@
 	    freelistsz++; \
 	    /* cerr<<#class<<": freelistsz = "<<freelistsz<<endl; */ \
 	}/* else */ \
+        memGooLock.unlock(); \
     } /* class::operator delete() */ \
  \
   /** frees freelist back to heap.  \
@@ -91,10 +131,12 @@
   static void freetoheap( int new_memlimit = -1 ); \
   \
 private: \
+  static MemGooLock memGooLock; \
   static class *freelist; /* free-store for stuff already allocated */ \
   static int freelistsz; /* will store the size of the freelist */ \
   static int freelistlimit; /* to store limit for size of freelist */ \
   class *_new_next
+
 
 
 /** Memory Storage Implementation.
@@ -112,6 +154,7 @@ private: \
 template class* class::freelist = 0; /*init to NULL */ \
 template int class::freelistsz = 0; /* init to zero */ \
 template int class::freelistlimit = memlimit; /* limit number of instances */ \
+template MemGooLock class::memGooLock = MemGooLock(); \
  \
  \
 /* The following function will delete \
@@ -120,6 +163,7 @@ template int class::freelistlimit = memlimit; /* limit number of instances */ \
  \
 template void class::freetoheap( int new_memlimit /* = -1 */) { \
   /* cerr<< #class <<"::freetoheap: This was called\n"; */ \
+  memGooLock.lock(); \
   if(freelist) { \
     for(int i = 0;i<freelistsz;i++) { \
        class* tmp = freelist;freelist=freelist->_new_next; \
@@ -128,6 +172,7 @@ template void class::freetoheap( int new_memlimit /* = -1 */) { \
     freelistsz = 0; \
   } \
   freelistlimit = ( new_memlimit < 0 ) ? memlimit : new_memlimit; \
+  memGooLock.unlock(); \
 } /* freetoheap */
 
 

@@ -52,7 +52,7 @@ AC_CHECK_LIB([m], [cos])
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fenv.h limits.h stdint.h stdlib.h string.h strings.h sys/time.h syslog.h unistd.h])
+AC_CHECK_HEADERS([fenv.h limits.h stdint.h stdlib.h string.h strings.h sys/time.h syslog.h unistd.h pthread.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -88,7 +88,7 @@ probe_for_fast_pow(){
     AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM(
 [[
-#define USE_SPENCERS_FAST_POW 1
+#define OLSON_TOOLS_USE_SPENCERS_FAST_POW 1
 #include "$srcdir/src/power.c"
 ]],
             [[fast_pow (0.5,0.5);]])],
@@ -166,6 +166,32 @@ probe_alias_attribute
 # TODO:  Check to see whether you can define an alias in one object code but
 # define its target in a separately compiled object code.
 #                        END CAN_ALIAS CHECK
+
+
+
+# ############# BEGIN OPENMP CHECKS ###########
+
+AC_ARG_WITH(
+    [openmp-cppflag],
+    AC_HELP_STRING(
+        [--with-openmp-cppflag=FLAG],
+        [Specify the compiler flag to enable OpenMP.]
+    ),
+    [
+        # --with-openmp-cppflag given
+        OPENMP_CPPFLAG="$withval -D_REENTRANT"
+        CPPFLAGS="$CPPFLAGS $OPENMP_CPPFLAG"
+        AC_SUBST(OPENMP_CPPFLAG,"$OPENMP_CPPFLAG")
+    ],
+    [
+        # TODO:  In the future, perhaps we can probe for this flag.
+        echo "No OpenMP Flag given"
+    ]
+)
+
+# #############   END OPENMP CHECKS ###########
+
+
 
 
 

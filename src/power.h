@@ -53,7 +53,12 @@
 #ifndef MY_OWN_POW
 #define MY_OWN_POW
 
-#include "olson-tools-config.h"
+#if defined(LANGUAGE_FORTRAN__) && defined(F77COMP_ifort)
+/* Stupid ifort include bug. */
+#  include <olson-tools/olson-tools-config.h>
+#else
+#  include "olson-tools-config.h"
+#endif
 
 #ifdef SQR
 !  error  SQR already defined.  Better figure out what to do here now.

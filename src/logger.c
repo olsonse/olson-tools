@@ -20,6 +20,7 @@
 
 #include "logger.h"
 #include "fmacros.h"
+#include "olson-tools-config.h"
 #define logger_c_rcsid "$Id: logger.c,v 1.1.1.1 2005/01/08 04:27:24 olsonse Exp $"
 
 #include <stdarg.h>
@@ -45,6 +46,10 @@
 #else
 #  include <syslog.h>
 
+#  ifdef OLSON_TOOLS_HAVE_PTHREAD_H
+#    include <pthread.h>
+#  endif
+
 #endif
 
 
@@ -67,7 +72,7 @@ void setLogFileMutex( LOG_MUTEX_TYPE * mutex)
 #    define mutexLock(a)	EnterCriticalSection((a))
 #    define mutexUnlock(a)	LeaveCriticalSection((a))
 #  elif defined(N_PLAT_NLM)
-#  elif defined(HAVE_PTHREADS)
+#  elif defined(OLSON_TOOLS_HAVE_PTHREAD_H)
 #    define mutexLock(a)	pthread_mutex_lock((a))
 #    define mutexUnlock(a)	pthread_mutex_unlock((a))
 #  endif
@@ -132,7 +137,7 @@ LogThreadTid(void)
     return (unsigned long)GetCurrentThreadId();
 #elif defined(N_PLAT_NLM)
     return (unsigned long)GetThreadID();
-#elif defined(HAVE_PTHREADS)
+#elif defined(OLSON_TOOLS_HAVE_PTHREAD_H)
     return (unsigned long)pthread_self();
 #else
     return 0;
