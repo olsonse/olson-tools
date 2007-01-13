@@ -45,6 +45,13 @@
 #  define IFOMP(x)
 #endif
 
+#ifdef HAVE_PTHREAD
+#  include <pthread.h>
+#  define IFPTHREAD(x) x
+#else
+#  define IFPTHREAD(x)
+#endif
+
 
 /** MemGooLock is a class to facilitate mutual exlusion locks for
  * multi-threaded code.  This should be specialized (by ifdefs) for the
@@ -53,22 +60,27 @@
 class MemGooLock {
   private:
     IFOMP(omp_lock_t omplock;)
+    IFPTHREAD(pthread_mutex_t pthread_mutex;)
 
   public:
     MemGooLock() {
         IFOMP(omp_init_lock(&omplock);)
+        IFPTHREAD(pthread_mutex_init(&pthread_mutex, NULL);)
     }
 
     ~MemGooLock() {
         IFOMP(omp_destroy_lock(&omplock);)
+        IFPTHREAD(pthread_mutex_destroy(&pthread_mutex);)
     }
 
     inline void lock() {
         IFOMP(omp_set_lock(&omplock);)
+        IFPTHREAD(pthread_mutex_lock(&pthread_mutex);)
     }
 
     inline void unlock() {
         IFOMP(omp_unset_lock(&omplock);)
+        IFPTHREAD(pthread_mutex_unlock(&pthread_mutex);)
     }
 };
 
