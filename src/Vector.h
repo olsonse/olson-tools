@@ -96,6 +96,15 @@ class Vector {
         va_end(ap);
     }
 
+    /** Copy list of values into Vector.
+     * @param another_dummy
+     *     a bogus value of a given type (casting 0 works fine).  This
+     *     constructor assumes that all values passed in are of this type.
+     *     The values will then be cast back to the type of the Vector.
+     * @param dummy
+     *     a bogus pointer (casting NULL appropriately is fine).
+     * @see V3tcast macro to use the more easily.
+     */
     template <class TP>
     inline Vector (const TP another_dummy, const VInit_t * dummy, ...) {
         va_list ap;
