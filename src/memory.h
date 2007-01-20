@@ -38,14 +38,15 @@
 
 #include <stdlib.h>
 
-#ifdef _OPENMP
+/* We'll only use pthread mutexes if pthread library is being used at all. */
+#if defined(_OPENMP) && !defined(OLSON_TOOLS_USE_PTHREAD)
 #  include <omp.h>
 #  define IFOMP(x) x
 #else
 #  define IFOMP(x)
 #endif
 
-#ifdef HAVE_PTHREAD
+#ifdef OLSON_TOOLS_USE_PTHREAD
 #  include <pthread.h>
 #  define IFPTHREAD(x) x
 #else

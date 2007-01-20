@@ -193,6 +193,41 @@ AC_ARG_WITH(
 
 
 
+# ############# BEGIN PTHREAD CHECK ###########
+AC_ARG_ENABLE(pthread,
+    AC_HELP_STRING(
+        [--enable-pthread],
+        [Enable use of pthreads.  Mostly this puts mutexes in place for
+        memory.h.]
+    ),
+[ if test "$enableval" = "yes" ; then
+    printf "Checking to see whether pthreads was found... "
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+[[
+#ifdef HAVE_PTHREAD_H
+    /* pthreads where already found */
+#  include <pthread.h>
+#else
+   We can't find pthread support
+#endif
+]],
+            [[pthread_exit (NULL);]])],
+        [
+            AC_DEFINE(USE_PTHREAD, 1, [Enable use of pthread library.])
+            AC_SUBST([PTHREAD_LIB],"-lpthread")
+            echo "yes"
+        ],
+        [
+            echo "no"
+        ]
+    )
+  else
+    echo "Use of pthread library disabled."
+  fi
+])
+# #############   END PTHREAD CHECK ###########
+
 
 
 # Now let's set the CFLAGS and such variables:

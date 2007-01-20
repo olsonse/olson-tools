@@ -9,5 +9,5 @@ Name: olson-tools
 Description: olson-tools contains various tools that I've collected (mostly for computational purposes).
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lolson-tools
+Libs: -L${libdir} -lolson-tools @PTHREAD_LIB@
 Cflags: -I${includedir}
