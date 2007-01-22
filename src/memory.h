@@ -37,6 +37,7 @@
 #define MEMORY_GOO
 
 #include <stdlib.h>
+#include "olson-tools-config.h"
 
 /* We'll only use pthread mutexes if pthread library is being used at all. */
 #if defined(_OPENMP) && !defined(OLSON_TOOLS_USE_PTHREAD)

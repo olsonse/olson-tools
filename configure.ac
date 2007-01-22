@@ -138,7 +138,7 @@ AC_ARG_ENABLE(fast_pow,
 probe_alias_attribute(){
     local alias_supported=0
     printf "Testing to see if aliasing of symbols is supported... "
-    AC_COMPILE_IFELSE(
+    AC_RUN_IFELSE(
         [AC_LANG_PROGRAM(
 [[
 extern "C" {
@@ -209,7 +209,7 @@ AC_ARG_ENABLE(pthread,
     /* pthreads where already found */
 #  include <pthread.h>
 #else
-   We can't find pthread support
+   We cannot find pthread support
 #endif
 ]],
             [[pthread_exit (NULL);]])],
