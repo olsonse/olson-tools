@@ -277,6 +277,11 @@ class BFieldLookup : public virtual BField::BaseSrc {
             SHELL-DATA
         */
         std::ifstream infile(fname.c_str());
+
+        if (!infile.good()) {
+            THROW(std::runtime_error,"field-lookup:readindata:  invalid filename.");
+        }
+
         char pound;
         char line[1024];
         infile >> pound; infile.getline(line,sizeof(line)); /* # center  : */
