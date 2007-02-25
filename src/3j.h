@@ -55,7 +55,7 @@ extern "C" {
     double s3j(double j1, double j2, double j3, double m1, double m2, double m3);
 
 
-    /** Computer Clebsch-Gordon coefficients.
+    /** Compute Clebsch-Gordon coefficients.
      * @return \f$ \left< \left\{j_{1},m_{1}\right\}\ \left\{j_{2},m_{2}\right\} | j, m \right> \f$
      * */
     double cg (double j1, double m1, double j2, double m2, double j, double m);

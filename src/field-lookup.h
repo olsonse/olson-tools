@@ -20,6 +20,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <sstream>
 #include <stdexcept>
 #include "ompexcept.h"
@@ -41,13 +42,16 @@ class BFieldLookup : public virtual BField::BaseSrc {
 
   private:
     std::string fname;
+    bool initialized;
 
   public:
-    BFieldLookup() : super0(), fname("") {}
+    BFieldLookup() : super0(), fname(""), initialized(false) {}
 
     BFieldLookup(const std::string & filename) : super0() {
         readindata(filename);
     }
+
+    const bool & isInitialized() const { return initialized; }
 
     /** this function will allow the user to change the field-file then
      * request a re-read mid-stream.  This is meant to be useful as a trigger
@@ -257,13 +261,16 @@ class BFieldLookup : public virtual BField::BaseSrc {
             THROW(std::runtime_error,"field-lookup:readindata:  missing filename.");
         }
 
-        /* format will be:
+        /* format will be (note that {Ni \w} means Nx \w Ny \w Nz \w.):
             # center : \n
             #   x0 y0 z0 \n
             # CORE : \n
-            #   Nx \w Ny \w Nz \w dx \w dy \w dz \n
+            #   {Ni \w} {di \w} {mini \w} {maxi \w} \n
             # SHELL : \n
-            #   Nx \w Ny \w Nz \w dx \w dy \w dz \n
+            #   {Ni \w} {di \w} {mini \w} {maxi \w} \n
+            # \n
+            <any number of consecutive comment lines
+             (each line starts with '#' and ends with '\n')>
             # \n
             CORE-DATA
             \n
@@ -271,14 +278,27 @@ class BFieldLookup : public virtual BField::BaseSrc {
         */
         std::ifstream infile(fname.c_str());
         char pound;
-        char line[100];
-        infile >> pound; infile.getline(line,sizeof(line)); /* center  : */
-        infile >> pound >> r0;                              /* r0 */
-        infile >> pound; infile.getline(line,sizeof(line)); /* CORE : */
-        infile >> pound >> core_N >> core_dx >> core_min >> core_max; /* core_N core_dx core_min core_max*/
-        infile >> pound; infile.getline(line,sizeof(line)); /* SHELL : */
-        infile >> pound >> shell_N >> shell_dx >> shell_min >> shell_max;/* shell_N shell_dx min max */
-        infile >> pound; infile.getline(line,sizeof(line)); /* blank comment line */
+        char line[1024];
+        infile >> pound; infile.getline(line,sizeof(line)); /* # center  : */
+        infile >> pound >> r0;
+        infile >> pound; infile.getline(line,sizeof(line)); /* # CORE : */
+        infile >> pound >> core_N >> core_dx >> core_min >> core_max;
+        infile >> pound; infile.getline(line,sizeof(line)); /* # SHELL : */
+        infile >> pound >> shell_N >> shell_dx >> shell_min >> shell_max;
+
+        /* now read in all comment lines and skip them */
+        while (infile.good()) {
+            char testchar = infile.peek();
+            if (isspace(testchar)) {
+                (void)infile.get();
+            } else if (testchar == '#') {
+                /* read past comments. */
+                std::stringbuf cmtbuf;
+                infile.get(cmtbuf, '\n');
+            } else {
+                break;
+            }
+        }
 
         core_dx_inv  = 1.0; core_dx_inv .compDiv(core_dx);
         shell_dx_inv = 1.0; shell_dx_inv.compDiv(shell_dx);
@@ -294,6 +314,8 @@ class BFieldLookup : public virtual BField::BaseSrc {
         /* now read in the core data-block. */
         data[CORE].readindata(infile);
         data[SHELL].readindata(infile);
+
+        initialized = true;
     }
 };
 

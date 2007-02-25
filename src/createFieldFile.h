@@ -49,6 +49,8 @@ int spitfieldout(std::ostream & output,
  *     The shell stepsize.
  * @param filename
  *     The place to store this all.
+ * @param comments
+ *     A set of lines that begin with '#' each [Default ""].
  */
 template <class FieldSrc>
 void createFieldFile(const FieldSrc & fsrc,
@@ -58,7 +60,8 @@ void createFieldFile(const FieldSrc & fsrc,
                 const Vector<double,3> & X_MINs,
                 const Vector<double,3> & X_MAXs,
                 const Vector<double,3> & dxs,
-                const std::string & filename) {
+                const std::string & filename,
+                const std::string & comments = "") {
     Vector<double,3> r0(0.0), dlc, dls;
     Vector<int,3> Nc, Ns;
     dlc   = (X_MAXc - X_MINc);
@@ -77,7 +80,8 @@ void createFieldFile(const FieldSrc & fsrc,
                 "# " << Nc << dxc << X_MINc << X_MAXc << "\n"
                 "# SHELL : \n"
                 "# " << Ns << dxs << X_MINs << X_MAXs << "\n"
-                "# \n";
+                "# \n"
+             << comments << "# \n";
 
 
     try {
