@@ -22,7 +22,7 @@ int main() {
     GenericBin<double,201> bin(-0.5,0.5);
 
     int iter = 0;
-    std::cout << "Enter the nubmer of samples:  "
+    std::cout << "Enter the number of samples:  "
               << std::flush;
     std::cin >> iter;
     if (iter == 0) return EXIT_FAILURE;
