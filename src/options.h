@@ -76,6 +76,19 @@ class OptionHandler {
     */
     virtual int handleOpt(const char * opt, const char * optarg, const bool silent = false) = 0;
 
+    /**
+    * Called by the OptionProcessor::postProcess (called by user).
+    *
+    * This function allows easy post-processing of all options.  The default
+    * function is to do nothing. 
+    *
+    * @param silent
+    *    Boolean to indicate that the post-processing should not result in
+    *    any error messages.
+    * @return false if any errors were reported.
+    */
+    virtual bool postProcess( const bool slient = false ) { return true;}
+
     public: class defs {
       public:
 	/** The various types of standard options supported.
@@ -94,7 +107,8 @@ class OptionHandler {
 	    USHORT=9,
 	    LONG=10,
 	    ULONG=11,
-	    NOOPT=12
+            STRING=12,
+	    NOOPT=13
 	};
 
         static const char * option_type_desc[];
@@ -245,6 +259,12 @@ class OptionHandler {
 		    break;
 		}
 
+		case defs::STRING: {
+		    std::string val = *((std::string*)(*i).mem);
+		    log_info("\t%s%s%.*s= %s %s", pre, (*i).name.c_str(), nspaces, spaces, val.c_str(), (*i).units.c_str());
+		    break;
+		}
+
 		case defs::NOOPT:
 		default:
 		    log_warning("programmer user error!!!! (with the option printer)");
@@ -368,6 +388,11 @@ class OptionHandler {
 			retval = 1;
 			break;
 
+		    case defs::STRING:
+			(*((std::string *)(*i).mem)) = optarg;
+			retval = 1;
+			break;
+
 		    case defs::NOOPT:
 		    default:
 			log_warning("programmer user error!!!! (with the option handler)");
@@ -417,6 +442,17 @@ class OptionProcessor {
      * @return false if all options were not successfully used.
      */
     bool processOptions( std::vector<std::string> & options, const bool silent = false ) const;
+
+    /** Post process.
+     *
+     * This hooks into all handlers to allow post-processing.
+     *
+     * @param silent
+     *    Boolean to indicate that the post-processing should not result in
+     *    any error messages.
+     * @return false if any errors were reported.
+     */
+    bool postProcess( const bool slient = false ) const ;
 
     /** Send to stdout all of the usage information.
      * The result of this function call will vary as the OptionHandler\s are

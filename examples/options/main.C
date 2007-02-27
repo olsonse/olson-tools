@@ -21,7 +21,7 @@ const char * PROGRAM = "A Good Program";
 /******************* BEGIN BOOT OPTIONHANDLER *******************/
 class BootOptionHandler : public OptionHandler {
   public:
-    BootOptionHandler() {
+    BootOptionHandler() : v0(0.0), v1(0.0), v2(0), logfile(""), loglevel("") {
         help_requested = false;
 
         /* add standard type options */
@@ -46,6 +46,15 @@ class BootOptionHandler : public OptionHandler {
             defs::standard_option("uint",&v2,defs::UINT, "number particles",
                 "Set a uint value."
             ));
+        stdopts.push_back(
+            defs::standard_option("logfile",&logfile,defs::STRING, "filename",
+                "Append log information to filename."
+            ));
+        stdopts.push_back(
+            defs::standard_option("loglevel",&loglevel,defs::STRING, "",
+		"Specify log level from the following:  "
+		"severe, warning, info, config, fine, finer, finest."
+            ));
     }
     virtual ~BootOptionHandler() {}
 
@@ -59,9 +68,6 @@ class BootOptionHandler : public OptionHandler {
             std::string(
 		FORMAT_USAGE("include=filename","Read additional options from filename.")
 		FORMAT_USAGE_CONT("This file should contain a series of valid seperated by white space.")
-		FORMAT_USAGE("loglevel=level","Specify log level from the following:")
-		FORMAT_USAGE_CONT("severe, warning, info, config, fine, finer, finest.")
-		FORMAT_USAGE("logfile=filename","Append log information to filename.")
 		FORMAT_USAGE("print-vals","Print out the standard type options' values")
 	);
     }
@@ -69,6 +75,8 @@ class BootOptionHandler : public OptionHandler {
     float v0;
     double v1;
     unsigned int v2;
+    std::string logfile;
+    std::string loglevel;
 
     /** Handle Opt
      * Handle the options as parsed by the optionProcessor.
@@ -100,42 +108,41 @@ class BootOptionHandler : public OptionHandler {
 	    }
 
 	    return 1;
-	} else if (strcasecmp(opt, "loglevel") == 0) {
-	    if (optarg == NULL) {
-		log_severe("loglevel option expects a value");
-		return -1;
-	    }
+	} else return 0;
+    }
 
-	    if (strcasecmp(optarg, "severe") == 0) LogLevel = LLOG_SEVERE;
-	    else if (strcasecmp(optarg, "warning") == 0) LogLevel = LLOG_WARNING;
-	    else if (strcasecmp(optarg, "info") == 0) LogLevel = LLOG_INFO;
-	    else if (strcasecmp(optarg, "config") == 0) LogLevel = LLOG_CONFIG;
-	    else if (strcasecmp(optarg, "fine") == 0) LogLevel = LLOG_FINE;
-	    else if (strcasecmp(optarg, "finer") == 0) LogLevel = LLOG_FINER;
-	    else if (strcasecmp(optarg, "finest") == 0) LogLevel = LLOG_FINEST;
-	    else {
-		log_severe("cannot set loglevel to '%s'", optarg);
-		return -1;
-	    }
-
-	    return 1;
-	} else if (strcasecmp(opt, "logfile") == 0) {
+    virtual bool postProcess(const bool silent = false) {
+        bool error = false;
+	if (logfile.length() > 0) {
 	    FILE * lfp = NULL;
-	    if (optarg == NULL) {
-		log_severe("logfile option expects a filename");
-		return -1;
-	    }
-
-	    lfp = fopen(optarg, "a");
+	    lfp = fopen(logfile.c_str(), "a");
 	    
 	    if (!lfp) {
-		log_severe("cannot open log file '%s'", optarg);
-		return -1;
+		log_severe("cannot open log file '%s'", logfile.c_str());
+                error = true;
 	    }
 
+            if (LogFileP != NULL) fclose(LogFileP);
 	    LogFileP = lfp;
-	    return 1;
-	} else return 0;
+        }
+
+	if (loglevel.length() > 0) {
+            std::transform(loglevel.begin(), loglevel.end(),
+                           loglevel.begin(), std::tolower);
+	    if (loglevel == "severe")           LogLevel = LLOG_SEVERE;
+	    else if (loglevel == "warning")     LogLevel = LLOG_WARNING;
+	    else if (loglevel == "info")        LogLevel = LLOG_INFO;
+	    else if (loglevel == "config")      LogLevel = LLOG_CONFIG;
+	    else if (loglevel == "fine")        LogLevel = LLOG_FINE;
+	    else if (loglevel == "finer")       LogLevel = LLOG_FINER;
+	    else if (loglevel == "finest")      LogLevel = LLOG_FINEST;
+	    else {
+		log_severe("cannot set loglevel to '%s'", loglevel.c_str());
+		error = true;
+	    }
+        }
+
+        return !error;
     }
 
     bool helpRequested() const { return help_requested; }
@@ -163,18 +170,14 @@ int main(int argc, char *argv[]) {
     );
 
     optProcessor.addHandler(bootOptionHandler);
+    bool opt_error = !optProcessor.processOptions(argc-1,argv+1);
+    if (bootOptionHandler.options.size() > 0)
+        opt_error |= !optProcessor.processOptions(bootOptionHandler.options);
 
-    if ((!optProcessor.processOptions(argc-1,argv+1) ||
-	 bootOptionHandler.helpRequested()
-	) || 
-	(bootOptionHandler.options.size() > 0 &&
-	 (!optProcessor.processOptions(bootOptionHandler.options) ||
-	  bootOptionHandler.helpRequested()
-	 )
-	)
-       ) {
+    optProcessor.postProcess();
+
+    if (opt_error || bootOptionHandler.helpRequested())
 	optProcessor.usage();
-    }
 
     return 0;
 }// main

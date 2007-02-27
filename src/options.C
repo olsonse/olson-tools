@@ -37,6 +37,7 @@ const char * OptionHandler::defs::option_type_desc[] = {
     "unsigned-short-integer",
     "long-integer",
     "unsigned-long-integer",
+    "string",
     "null-option",
     NULL
 };
@@ -137,6 +138,19 @@ bool OptionProcessor::processOptions( std::vector<std::string> & options, const 
     if( unhandled > 0 ) return false;
     else return true;
 }// OptionProcessor::processOptions
+
+/**
+ * returns false if not successful with all options.
+ */
+bool OptionProcessor::postProcess(const bool silent /* = false */) const {
+    bool errored = false;
+
+    for( int j = handlers.size() -1; j >= 0; j-- ) {
+        errored |= ! (*(handlers[j])).postProcess(silent);
+    }// for
+
+    return !errored;
+}// OptionProcessor::postProcess
 
 /**
  * Print out usage message and exit
