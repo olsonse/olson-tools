@@ -11,8 +11,14 @@
 #
 #
 
-MAKECONF=$(srcdir)/Makeconf.proxy
+MAKECONF=$(top_builddir)/Makeconf
 include $(MAKECONF)
+
+DUMMY:=$(shell printf "OPTIM_CXX_COPY:=\$$(OPTIM_CXX)\nOPTIM_CXX:= \n" '$$' > Makeconf.local; echo Makeconf.local)
+include $(DUMMY)
+
+OPTIM_CXX_COPY:=$(OPTIM_CXX)
+OPTIM_CXX:=
 
 bin_PROGRAMS    = testtrapfe_opt testtrapfe_debug
 LDADD           = -L$(top_builddir)/lib -ltrapfe

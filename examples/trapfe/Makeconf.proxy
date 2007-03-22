@@ -1,6 +1,0 @@
-
-include $(top_builddir)/Makeconf
-
-OPTIM_CXX_COPY:=$(OPTIM_CXX)
-OPTIM_CXX:=
-

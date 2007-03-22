@@ -8,6 +8,8 @@ makeconf_DATA = Makeconf
 
 SUBDIRS = src
 
+DIST_SUBDIRS = src examples
+
 tests :
 	cd examples; make
 

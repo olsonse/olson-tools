@@ -1,9 +1,11 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+# This is $Revision$ of olson-tools.
+
 AC_PREREQ(2.59)
-AC_INIT(olson-tools, rev-$Revision$, olsonse@umich.edu)
-AM_INIT_AUTOMAKE(olson-tools,rev-$Revision$)
+AC_INIT(olson-tools, rev-122, olsonse@umich.edu)
+AM_INIT_AUTOMAKE(olson-tools,rev-122)
 AC_CONFIG_SRCDIR([src/config.h.in])
 AC_CONFIG_HEADER([src/config.h])
 AX_PREFIX_CONFIG_H([src/$PACKAGE-config.h])
