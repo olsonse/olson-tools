@@ -71,32 +71,44 @@ void OptionProcessor::removeHandler( const OptionHandler & oh ) {
 /**
  * returns false if not successful with all options.
  */
-bool OptionProcessor::processOptions( const int argc, char ** argv, const bool silent /* = false */) const {
+bool OptionProcessor::processOptions( const int argc, char ** argv,
+                                      const bool silent /* = false */,
+                                      const bool ignore_nonopt /* = false */) const {
     /* convert to a vector of options */
     std::vector<std::string> options;
     for( int i = 0; i < argc; i++ ) {
-	options.push_back(argv[i]);
+        /* some times there are some libraries that must initialize first and
+         * then remove some items from argv[].
+         */
+        if (argv[i]) {
+            options.push_back(argv[i]);
+        }
     }
 
     /* now finish with the call to the real function */
-    return processOptions( options, silent );
+    return processOptions( options, silent, ignore_nonopt );
 }
 
 /**
  * returns false if not successful with all options.
  */
-bool OptionProcessor::processOptions( std::vector<std::string> & options, const bool silent /* = false */) const {
+bool OptionProcessor::processOptions( std::vector<std::string> & options, 
+                                      const bool silent /* = false */,
+                                      const bool ignore_nonopt /* = false */) const {
     int unhandled = 0;
 
     for( std::vector<std::string>::iterator i = options.begin(), e = options.end() ; i < e; i++ ) {
 	bool handled = false;
 	std::string & option = *i;
 	size_t len = option.length();
+
+        if (len == 0) continue;/* ignore blank options. */
+
 	char * arg = new char[len + 1];
 	option.copy(arg, len);
 	arg[len] = '\0';
 
-	if( arg[0] == '-' && arg[1] == '-' ) {
+	if( len > 2 && arg[0] == '-' && arg[1] == '-' ) {
 	    char * opt = &arg[2], * optarg = NULL;
 	    char * equal_sign = index(arg, '=');
 
@@ -130,7 +142,8 @@ bool OptionProcessor::processOptions( std::vector<std::string> & options, const 
 		unhandled++;
 	    }
 
-	} else return false;
+	} else if (ignore_nonopt) continue;
+        else return false;
 
 	delete[] arg;
     }// for
@@ -197,7 +210,7 @@ std::string  OptionHandler::defs::standard_option::getUsage(const std::string & 
      * the correct width. */
     std::string opthelp;
     std::string unitsStr = this->units.size()>0 ? "(" + this->units + ")" : "";
-    char * opt_help = new char[this->help.size()];
+    char * opt_help = new char[this->help.size()+1];
     memcpy(opt_help, this->help.c_str(), this->help.size()+1);
     bool firstline = true;
     {
@@ -234,7 +247,7 @@ std::string  OptionHandler::defs::standard_option::getUsage(const std::string & 
             break;
         }/* while */
     }
-    delete opt_help;
+    delete[] opt_help;
 
     /* And return the formated usage string. */
      return

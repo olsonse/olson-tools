@@ -429,9 +429,14 @@ class OptionProcessor {
      * @param silent
      *    Boolean to indicate that the option handling should not result in
      *    any error messages.
+     * @param ignore_nonopt
+     *    Boolean:  specify that command line options that do not begin with
+     *    '--' are ignored [Default false].
      * @return false if all options were not successfully used.
      */
-    bool processOptions( const int argc, char ** argv, const bool silent = false ) const;
+    bool processOptions( const int argc, char ** argv,
+                         const bool silent = false,
+                         const bool ignore_nonopt = false ) const;
 
     /** Process all of the options.
      * @param options
@@ -439,9 +444,14 @@ class OptionProcessor {
      * @param silent
      *    Boolean to indicate that the option handling should not result in
      *    any error messages.
+     * @param ignore_nonopt
+     *    Boolean:  specify that command line options that do not begin with
+     *    '--' are ignored [Default false].
      * @return false if all options were not successfully used.
      */
-    bool processOptions( std::vector<std::string> & options, const bool silent = false ) const;
+    bool processOptions( std::vector<std::string> & options,
+                         const bool silent = false,
+                         const bool ignore_nonopt = false ) const;
 
     /** Post process.
      *
