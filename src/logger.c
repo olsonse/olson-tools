@@ -46,7 +46,7 @@
 #else
 #  include <syslog.h>
 
-#  ifdef OLSON_TOOLS_HAVE_PTHREAD_H
+#  ifdef OLSON_TOOLS_USE_PTHREAD
 #    include <pthread.h>
 #  endif
 
@@ -72,7 +72,7 @@ void setLogFileMutex( LOG_MUTEX_TYPE * mutex)
 #    define mutexLock(a)	EnterCriticalSection((a))
 #    define mutexUnlock(a)	LeaveCriticalSection((a))
 #  elif defined(N_PLAT_NLM)
-#  elif defined(OLSON_TOOLS_HAVE_PTHREAD_H)
+#  elif defined(OLSON_TOOLS_USE_PTHREAD)
 #    define mutexLock(a)	pthread_mutex_lock((a))
 #    define mutexUnlock(a)	pthread_mutex_unlock((a))
 #  endif
@@ -137,7 +137,7 @@ LogThreadTid(void)
     return (unsigned long)GetCurrentThreadId();
 #elif defined(N_PLAT_NLM)
     return (unsigned long)GetThreadID();
-#elif defined(OLSON_TOOLS_HAVE_PTHREAD_H)
+#elif defined(OLSON_TOOLS_USE_PTHREAD)
     return (unsigned long)pthread_self();
 #else
     return 0;

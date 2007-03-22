@@ -180,7 +180,7 @@ void timestamp(char *timeBuf, int local);
 #  include <windows.h>
 #  define LOG_MUTEX_TYPE CRITICAL_SECTION
 #elif defined(N_PLAT_NLM)
-#elif defined(HAVE_PTHREADS)
+#elif defined(OLSON_TOOLS_USE_PTHREAD)
 /*  This is probably alread included, but oh well. */
 #  include <pthread.h>
 #  define LOG_MUTEX_TYPE pthread_mutex_t
