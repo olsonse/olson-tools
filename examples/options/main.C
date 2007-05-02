@@ -15,6 +15,7 @@
 #include <vector>
 #include <olson-tools/options.h>
 #include <olson-tools/logger.h>
+#include <olson-tools/strutil.h>
 
 const char * PROGRAM = "A Good Program";
 
@@ -127,8 +128,7 @@ class BootOptionHandler : public OptionHandler {
         }
 
 	if (loglevel.length() > 0) {
-            std::transform(loglevel.begin(), loglevel.end(),
-                           loglevel.begin(), std::tolower);
+            loglevel = tolower(loglevel);
 	    if (loglevel == "severe")           LogLevel = LLOG_SEVERE;
 	    else if (loglevel == "warning")     LogLevel = LLOG_WARNING;
 	    else if (loglevel == "info")        LogLevel = LLOG_INFO;

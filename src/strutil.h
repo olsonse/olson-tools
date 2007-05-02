@@ -34,4 +34,12 @@ inline T from_string( const std::string & ToConvert)
     return ReturnValue;
 }
 
+inline std::string tolower( const std::string & ToLower) {
+    std::string retval;
+    std::transform(ToLower.begin(), ToLower.end(),
+                   retval.begin(),
+                   static_cast<int(*)(int)>(std::tolower));
+    return retval;
+}
+
 #endif // STRUTIL_H

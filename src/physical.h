@@ -187,8 +187,12 @@ namespace physical {
         const double Hz = Hertz;
         const double kiloHertz = 1000.0*Hertz;
         const double kHz = kiloHertz;
-        const double megaHertz = 1000000*Hertz;
+        const double megaHertz = 1000000.0*Hertz;
         const double MHz = megaHertz;
+        const double gigaHertz = 1000000000.0*Hertz;
+        const double GHz = gigaHertz;
+        const double teraHertz = 1000000000000.0*Hertz;
+        const double THz = teraHertz;
         // spacial frequency
         const double diopter = 1.0/meter;
         const double diopters = diopter;
@@ -249,6 +253,12 @@ namespace physical {
         const double milliWatt = Watt/1000.0;
         const double milliWatts = milliWatt;
         const double mW = milliWatt;
+        const double microWatt = Watt/1000000.0;
+        const double microWatts = microWatt;
+        const double uW = microWatt;
+        const double nanoWatt =  Watt/1000000000.0;
+        const double nanoWatts = nanoWatt;
+        const double nW = nanoWatt;
         namespace dose { // energy
             const double Gray = Joule/kilogram;
             const double Grays = Gray;

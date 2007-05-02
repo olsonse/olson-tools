@@ -11,6 +11,17 @@ AC_CONFIG_HEADER([src/config.h])
 AX_PREFIX_CONFIG_H([src/$PACKAGE-config.h])
 AC_PREFIX_DEFAULT(`pwd`)
 
+# Docygen features
+DX_HTML_FEATURE(ON)
+DX_CHM_FEATURE(OFF)
+DX_CHI_FEATURE(OFF)
+DX_MAN_FEATURE(OFF)
+DX_RTF_FEATURE(OFF)
+DX_XML_FEATURE(OFF)
+DX_PDF_FEATURE(OFF)
+DX_PS_FEATURE(OFF)
+DX_INIT_DOXYGEN(olson-tools, tools.doxy, doc/api)
+
 # Now let's make sure that we figure out what kind of platform is being
 # compiled for:  
 AC_CANONICAL_HOST

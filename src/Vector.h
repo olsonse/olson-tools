@@ -64,10 +64,16 @@
  * 3-Vectors (of bools). */
 #define V3b(a,b,c)       V3tcast(bool,uint32_t,a,b,c)
 
+
+/** Simple define to help casting static N-element arrays to
+ * N-Vectors.
+ */
+#define VNCAST(t,n,a)          (*((Vector<t,n>*)(a)))
+
 /** Another simple define to help casting static 3-element arrays to
  * 3-Vectors.
  */
-#define V3C(a)          (*((Vector<double,3>*)(a)))
+#define V3C(a)          VNCAST(double,3,a)
 
 typedef struct { int dontbugme; } VInit_t;
 #define VInit   ((VInit_t *)NULL)

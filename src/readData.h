@@ -129,7 +129,7 @@ std::vector<_Data*> & readDataBlocks(std::istream & input,
     /* reset the read interrupt signal. */
     interrupt_read = false;
 
-    while(!interrupt_read && (end < 0 || index <= end)) {
+    while(!interrupt_read && (end < 0 || index <= ((unsigned long)end))) {
         /* this should read the first data block */
         dataP = readData<_Data>(input);
 

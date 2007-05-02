@@ -32,7 +32,6 @@
 
 #include "rk.h"
 
-template <int ndim_>
 class RKIntegrator {
   public:
     /** Default constructor doesn't do anything exciting except init derivs to
@@ -44,37 +43,33 @@ class RKIntegrator {
      * @see rk.h and rk.F for more details on the adaptive Runge-Kutta method.
      */
     derivativesFunction derivs;
-
-    static const int ndim;
 };
-
-template <int ndim_>
-const int RKIntegrator<ndim_>::ndim = ndim_;
 
 
 /** Integration done by an adaptive Runge-Kutta method yielding 5th order
  * accuracy.
  * @see rk_adapt_driver in rk.h.
  */
-template <int ndim_ = 6>
-class RK5AdaptiveIntegrator : public RKIntegrator<ndim_> {
-    typedef RKIntegrator<ndim_> super;
+class RK5AdaptiveIntegrator : public RKIntegrator {
+    typedef RKIntegrator super;
   public:
     /** Default constructor sets errmax to 1e-5.
      * @see RKIntegrator.
      */
-    inline RK5AdaptiveIntegrator() : RKIntegrator<ndim_>(), errmax(1e-5) {}
+    inline RK5AdaptiveIntegrator() : RKIntegrator(), errmax(1e-5) {}
 
     /** Integrate using an adaptive Runge-Kutta which yields 5th order
      * accuracy.
      * @see rk_adapt_driver from rk.h .
      */
-    inline void integrate(double p[ndim_],
+    template <unsigned int ndim_>
+    inline void integrate(Vector<double,ndim_> & p,
                           const double & t,
     			  const double & dt,
     			  double & ddt,
 			  const void * fargs) {
-        rk_adapt_driver (p, &super::ndim, &t, &dt, &ddt, super::derivs, fargs, &errmax);
+        int ndim = ndim_;
+        rk_adapt_driver (p, &ndim, &t, &dt, &ddt, super::derivs, fargs, &errmax);
     }
 
     /** Error tolerance used for adaptive Runge-Kutta.
@@ -84,35 +79,37 @@ class RK5AdaptiveIntegrator : public RKIntegrator<ndim_> {
     double errmax;
 };
 
-template <int ndim_ = 6>
-class RK4Integrator : public RKIntegrator<ndim_> {
-    typedef RKIntegrator<ndim_> super;
+class RK4Integrator : public RKIntegrator {
+    typedef RKIntegrator super;
   public:
-    inline RK4Integrator() : RKIntegrator<ndim_>() {}
+    inline RK4Integrator() : RKIntegrator() {}
 
-    inline void integrate(double p[ndim_],
+    template <unsigned int ndim_>
+    inline void integrate(Vector<double,ndim_> &p,
                           const double & t,
     			  const double & dt,
     			  const double & dt_step,
 			  const void * fargs) {
 
-        rk4step (p, &super::ndim, &t, &dt, super::derivs, fargs);
+        int ndim = ndim_;
+        rk4step (p, &ndim, &t, &dt, super::derivs, fargs);
     }
 };
 
-template <int ndim_ = 6>
-class RK2Integrator : public RKIntegrator<ndim_> {
-    typedef RKIntegrator<ndim_> super;
+class RK2Integrator : public RKIntegrator {
+    typedef RKIntegrator super;
   public:
-    inline RK2Integrator() : RKIntegrator<ndim_>() {}
+    inline RK2Integrator() : RKIntegrator() {}
 
-    inline void integrate(double p[ndim_],
+    template <unsigned int ndim_>
+    inline void integrate(Vector<double,ndim_> & p,
                           const double & t,
     			  const double & dt,
     			  const double & dt_step,
 			  const void * fargs) {
 
-        rk2step (p, &super::ndim, &t, &dt, super::derivs, fargs);
+        int ndim = ndim_;
+        rk2step (p, &ndim, &t, &dt, super::derivs, fargs);
     }
 };
 
