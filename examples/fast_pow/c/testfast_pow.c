@@ -1,11 +1,18 @@
 #include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
+#include <sys/times.h>
+#include <unistd.h>
 #include <math.h>
 #include <olson-tools/power.h>
 
 #define CUBE(x)  ((x)*(x)*(x))
 
+
+double difftms(struct tms tf, struct tms ti) {
+    double seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
+    return  
+        ( (tf.tms_utime + tf.tms_stime) - (ti.tms_utime + ti.tms_stime) )
+        * seconds_per_clock_tick ;
+}
 
 int
 main (void)
@@ -16,10 +23,10 @@ main (void)
     printf("fast_pow(%g,%g) = %g\n", x,y,fast_pow(x,y));
     printf("pow(%g,%g) = %g\n", x,y,pow(x,y));
 #else
-    clock_t start, finish;
+    struct tms ti, tf;
     double i =0, k=0, mink = 100, maxk = 110, min = -150, max = 150;
 
-#  if 1
+//#  if 1
     double total_err = 0.0, err = 0.0, t1,t2;
     for (k = mink; k < maxk; k+=0.01) {
 	if (k == 0 && i <= 0) continue;
@@ -31,37 +38,47 @@ main (void)
 	}
     }
 
-    fprintf(stderr,"total error is %g\n", total_err);
-#  else
+    fprintf(stderr,"total error sum((pow(..) - fast_pow(..))/pow(..)) is %g\n", total_err);
+//#  else
     double sum = 0.0;
 
-    start = clock ();
-    for (i = min; i < max; i+=0.01) {
-	sum += fast_pow (x, i);
+    times(&ti);
+    for (k = mink; k < maxk; k+=0.01) {
+	if (k == 0 && i <= 0) continue;
+	for (i = min; i < max; i+=0.01) {
+	    t2 = fast_pow (k, i);
+            sum += t2;
+	}
     }
-    finish = clock ();
+    times(&tf);
 
-    double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+    double duration = difftms(tf,ti);
 
+    printf ("fast_pow : \n");
     printf ("sum is %.3f\n", sum);
     printf ("Elapsed time = %.3f s\n", duration);
 
 
     sum = 0.0;
 
-    start = clock ();
-    for (i = min; i < max; i+=0.01) {
-	//sum += CUBE(i);
-	sum += pow (x, i);
+    times(&ti);
+    for (k = mink; k < maxk; k+=0.01) {
+	if (k == 0 && i <= 0) continue;
+	for (i = min; i < max; i+=0.01) {
+	    t1 = pow (k, i);
+            sum += t1;
+	}
     }
-    finish = clock ();
+    times(&tf);
 
-    duration = (double) (finish - start) / CLOCKS_PER_SEC;
+    duration = difftms(tf,ti);
 
+    printf ("pow : \n");
     printf ("sum is %.3f\n", sum);
     printf ("Elapsed time = %.3f s\n", duration);
-#  endif
+//#  endif
 #endif
+    fflush(stdout);
 
     return 0;
 }

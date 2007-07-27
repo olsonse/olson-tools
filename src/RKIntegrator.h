@@ -69,7 +69,7 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
     			  double & ddt,
 			  const void * fargs) {
         int ndim = ndim_;
-        rk_adapt_driver (p, &ndim, &t, &dt, &ddt, super::derivs, fargs, &errmax);
+        rk_adapt_driver (p.val, &ndim, &t, &dt, &ddt, super::derivs, fargs, &errmax);
     }
 
     /** Error tolerance used for adaptive Runge-Kutta.
@@ -92,7 +92,7 @@ class RK4Integrator : public RKIntegrator {
 			  const void * fargs) {
 
         int ndim = ndim_;
-        rk4step (p, &ndim, &t, &dt, super::derivs, fargs);
+        rk4step (p.val, &ndim, &t, &dt, super::derivs, fargs);
     }
 };
 
@@ -109,7 +109,7 @@ class RK2Integrator : public RKIntegrator {
 			  const void * fargs) {
 
         int ndim = ndim_;
-        rk2step (p, &ndim, &t, &dt, super::derivs, fargs);
+        rk2step (p.val, &ndim, &t, &dt, super::derivs, fargs);
     }
 };
 

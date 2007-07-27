@@ -1,9 +1,5 @@
-#ifdef TIMED_RUN
-#  define DX 0.3*um
-#  define NO_TESTFIELD
-#else
-#  define DX 6*um
-#endif
+#define DX_TIMED 0.3*um
+#define DX_TEST 6*um
 
 #include <sys/times.h>
 #include <unistd.h>
@@ -27,7 +23,8 @@ double timefield(const BSrc & bsrc,
 
 const Vector<double,3> X_MIN   = V3(-30.0*um,          -30.0*um,         -30.*um );
 const Vector<double,3> X_MAX   = V3( 30.0*um + 1e-12,   30.0*um + 1e-12,  30.*um + 1e-12 );
-const Vector<double,3> dx      = V3(DX, DX, DX);
+const Vector<double,3> dx_timed= V3(DX_TIMED, DX_TIMED, DX_TIMED);
+const Vector<double,3> dx_test = V3(DX_TEST, DX_TEST, DX_TEST);
 
 static const double seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
 
@@ -47,31 +44,30 @@ int main() {
     blookup.gravity[Z] = -physical::unit::gravity;
 
 
-#ifndef NO_TESTFIELD
     std::ofstream errout(ERR_FILE);
     errout.precision(8);
     errout << std::scientific;
     /* print header in file */
     errout << "# x[3] error a_calc[3] a_lookup[3] Verr V_calc V_lookup\n";
-    testfield(errout, bsrc, blookup, X_MIN, X_MAX, dx);
+    testfield(errout, bsrc, blookup, X_MIN, X_MAX, dx_test);
     errout.close();
-#endif
+    std::cout << "Finished field test.\nDoing timed test" << std::endl;
 
     std::cout
-            << "BSrc Time    : "
-            << timefield(bsrc,X_MIN, X_MAX, dx) << " s" << std::endl;
+            << "1. BSrc Time    : "
+            << timefield(bsrc,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     std::cout
-            << "Blookup Time : "
-            << timefield(blookup,X_MIN, X_MAX, dx) << " s" << std::endl;
+            << "1. Blookup Time : "
+            << timefield(blookup,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     std::cout
-            << "BSrc Time    : "
-            << timefield(bsrc,X_MIN, X_MAX, dx) << " s" << std::endl;
+            << "2. BSrc Time    : "
+            << timefield(bsrc,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     std::cout
-            << "Blookup Time : "
-            << timefield(blookup,X_MIN, X_MAX, dx) << " s" << std::endl;
+            << "2. Blookup Time : "
+            << timefield(blookup,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     return 0;
 }
