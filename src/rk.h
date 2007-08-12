@@ -53,15 +53,19 @@
  *     doubles representing position and velocity.
  * @param t
  *     Absolute time.
+ * @param dt
+ *     Time-step used in the integration.  Note that this is not the smaller
+ *     timestep used to calculate intermediate steps in the Runge-Kutta
+ *     methods, but rather the total timestep.
  * @param F
  *     An array of doubles to which this function must write the derivatives
  *     of the respective elements in p.
  * @param args
- *     A pointer to a derivsfunct_t argument that Runge-Kutta doesn't know
- *     about.
+ *     A pointer to an auxilliary argument passed into one of the Runge-Kutta
+ *     methods needed for computing F.  
  * @see DSMCContainer::setForceRoutine(...)
  */
-typedef void (*derivativesFunction)(const double *p, const double * t, double *F, void * args);
+typedef void (*derivativesFunction)(const double *p, const double * t, const double * dt, double *F, void * args);
 
 #    ifdef __cplusplus
 extern "C" {
@@ -187,6 +191,15 @@ extern "C" {
     * getMachineEPS() MUST BE RUN AT LEAST ONCE before rk_adapt_driver is called.
     */
     double getMachineEPS ();
+
+
+#ifndef DOXYGEN_SKIP
+    /* Macro to allow use with fortran code.
+     * @see rk_adapt_driver
+     */
+#  define rkqs rkqs_
+#endif // DOXYGEN_SKIP
+    void rkqs(double *x,int *n,double *dxdt,double *t,double *dt_step,const double *ERRMAX,double *x_cal, double *dt_step_did, derivativesFunction derivs, const void * fargs);
 
 #    ifdef __cplusplus
 }

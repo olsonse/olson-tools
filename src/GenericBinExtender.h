@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string.h>
 #include "Vector.h"
+#include "strutil.h"
 #include <cfloat>
 
 /** A histogramming dimension extender.
@@ -88,6 +89,13 @@ class GenericBinExtender {
         for(unsigned int i = 0; i < nbins; bins[i++].init(mn,mx));
     }
 
+    /** Operator for multiplying the whole distrib by a factor. */
+    template <class Tf>
+    inline GenericBinExtender & operator*=(const Tf & factor) {
+        for(unsigned int i = 0; i < nbins; bins[i++] *= factor );
+        return *this;
+    }
+
     /** The actual bin containers holding the data. */
     T2 bins[nbins];
 
@@ -97,8 +105,7 @@ class GenericBinExtender {
      */
     template <class T3,unsigned int L>
     inline void bin(const T & key, const T & key2, const Vector<T3,L> & v) {
-        register int i = int( ( (key<max?(key>min?key:min):max) - min) * scale);
-        bins[i].bin(key2,v);
+        getBin(key).bin(key2,v);
     }
 
     /** Gets the appropriate child bin.
@@ -130,9 +137,11 @@ class GenericBinExtender {
      * @param prefix
      *     A string to prepend to each row of the output.
      */
-    inline std::ostream & print(std::ostream & output, const std::string & prefix) const {
-        for (unsigned int i = 0; i < nbins;
-             bins[i++].print(output, prefix) << '\n');
+    inline std::ostream & print(std::ostream & output, const std::string & prefix = "") const {
+        for (unsigned int i = 0; i < nbins; i++) {
+            std::string pref = prefix + to_string( (T) (min + (((double)i)/scale)) ) + '\t';
+            bins[i].print(output, pref) << '\n';
+        }
         return output;
     }
 };

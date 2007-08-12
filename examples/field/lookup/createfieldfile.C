@@ -18,11 +18,11 @@ const Vector<double,3> dxc      = V3(5.*um,   5.*um,  5.*um);
 const Vector<double,3> dxs      = V3(20.*um, 20.*um, 20.*um);
 
 int main() {
-    BFieldSrc bsrc;
+    BFieldForceTableSrc bsrc;
     addwires(bsrc);
 
     bsrc.mass = mass;
-    bsrc.gravity[Z] = -physical::unit::gravity;
+    bsrc.Gravity::bg[Z] = -physical::unit::gravity;
     bsrc.delta = delta_B;
 
     createFieldFile(bsrc,

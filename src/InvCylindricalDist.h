@@ -28,9 +28,8 @@
 #include "logger.h"
 #include "Vector.h"
 #include "power.h"
-
-#define RHO     X
-#define PHI     Y
+#include "nothing.h"
+#include "indices.h"
 
 /** Simple class to keep range information. */
 class range_t {
@@ -111,9 +110,6 @@ inline void decoupleRhoPhi(const double & nphi_i,
     pos[k] = rj*sinphi;
 }
 
-
-/** just what is says;  nothing. */
-typedef struct {} nothing;
 
 /** A flat distribution for use.
 */

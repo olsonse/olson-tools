@@ -114,7 +114,7 @@ namespace BField {
 
             pos += origin;
 
-            return exp(-beta * bsrc.potentialNoG(pos) );
+            return exp(-beta * bsrc.potential(pos) );
         }
     };
 

@@ -8,7 +8,7 @@
  */
 
 /** \file
- * Definitions of X, Y, Z, VX, VY, and VZ macros.
+ * Definitions of X, Y, Z, RHO, PHI, VX, VY, and VZ macros.
  * Copyright 2005-2006 Spencer Olson.
  */
 
@@ -49,6 +49,18 @@
 #  define VZ 5
 #elif defined(VZ) && (VZ != 5)
 #  error VZ already defined and it is not == 5!
+#endif
+
+#ifndef RHO
+#  define RHO X
+#elif defined(RHO) && (RHO != X)
+#  error RHO already defined and it is not == X!
+#endif
+
+#ifndef PHI
+#  define PHI Y
+#elif defined(PHI) && (PHI != Y)
+#  error PHI already defined and it is not == Y!
 #endif
 
 #endif // INDICES_H

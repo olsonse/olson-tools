@@ -24,6 +24,8 @@
 #include "Vector.h"
 #include "power.h"
 #include "indices.h"
+#include "Fields.h"
+#include "Forces.h"
 
 namespace BField {
 
@@ -109,122 +111,14 @@ namespace BField {
         }
     };
 
-    /** Container of base arguments needed to compute the
-     * potential and acceleration due to the magnetic field+gravity. */
-    class BaseSrc {
-      public:
-        /** Default constructor. */
-        inline BaseSrc() : delta(1e-6) {
-            gravity = 0.0;
-            mass = 0; /* whoah! a massless particle! */
-            mu = (-0.5) * (-1) * physical::constant::mu_B;
-        }
-
-        inline BaseSrc(const BaseSrc & that) {
-            *this = that;
-        }
-
-        inline const BaseSrc & operator=(const BaseSrc & that) {
-            delta = that.delta;
-            gravity = that.gravity;
-            mass = that.mass;
-            mu = that.mu;
-            return *this;
-        }
-
-        /* dx == dy == dz to use for computing gradient. */
-        double delta;
-
-        /** x,y,z components of gravity. */
-        Vector<double,3> gravity;
-
-        /** mass of a particle. */
-        double mass;
-
-        /**  \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$.
-         * Note that V = \f$\mu\f$ . B
-         * and for dark trapped state (\f$ \left|F=1,m_{F}=-1\right> \f$)
-         *  of \f$^{87}{\rm Rb} \f$,  gF = -1/2.
-         * This defaults to \f$F=1\f$ and \f$m_{F}=-1\f$
-         */
-        double mu;
-
-    };
-
-    /** Add a static background field to a BField Src. */
-    class BgSrc : public virtual BaseSrc {
-      public:
-        typedef BaseSrc super0;
-
-        BgSrc() : super0() {
-            bg = 0.0;
-        }
-
-        inline const BgSrc & operator=(const BgSrc & that) {
-            super0::operator=(that);
-            bg = that.bg;
-            return *this;
-        }
-
-        /** Obtains BField from BSrc and then adds a static background field. */
-        inline void getb(Vector<double,3> & B, const Vector<double,3> & r) const {
-            B = bg;
-        }
-
-        Vector<double,3> bg;
-    };
-
-    /** Adds BFields from two different sources. */
-    template <class BSrc0, class BSrc1>
-    class AddSrc : public virtual BaseSrc, public BSrc0, public BSrc1 {
-      public:
-        typedef BaseSrc super0;
-        typedef BSrc0    super1;
-        typedef BSrc1    super2;
-
-        AddSrc() : super0(), super1(), super2() {}
-
-        inline const AddSrc & operator=(const AddSrc & that) {
-            super0::operator=(that);
-            super1::operator=(that);
-            super2::operator=(that);
-            return *this;
-        }
-
-        /** Obtains BField from BSrc and then adds a static background field. */
-        inline void getb(Vector<double,3> & B, const Vector<double,3> & r) const {
-            super1::getb(B,r);
-            Vector<double,3> B2;
-            super2::getb(B2,r);
-            B += B2;
-        }
-    };
-
-    /* Add a static background field to a BField Src. */
-    template <class Functor>
-    class BFunctor : public virtual BaseSrc, public Functor {
-      public:
-        typedef BaseSrc super0;
-        typedef Functor  super1;
-
-        BFunctor() : super0(), super1() {}
-
-        inline const BFunctor & operator=(const BFunctor & that) {
-            super0::operator=(that);
-            super1::operator=(that);
-            return *this;
-        }
-
-        /* the functor must implement the getb method. */
-    };
-
     /** Container of all arguments needed to compute the magnetic fields and
-     * potential and acceleration due to the magnetic field+gravity. */
-    class ThinWireSrc : public virtual BaseSrc {
+     * potential and acceleration due to the magnetic field. */
+    class ThinWireSrc : public virtual BaseField {
       public:
-        typedef BaseSrc super;
+        typedef BaseField super;
+
         /** Default constructor. */
-        inline ThinWireSrc() : currents(), rcut(1e-10) { }
+        inline ThinWireSrc() : super(), currents(), rcut(1e-10) { }
 
         inline ThinWireSrc(const ThinWireSrc & that) {
             *this = that;
@@ -243,7 +137,7 @@ namespace BField {
         ! Calculate the B Field for a bunch of thin current elements
         ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         */
-        inline void getb(Vector<double,3> & B, const Vector<double,3> & r) const {
+        inline void operator()(Vector<double,3> & B, const Vector<double,3> & r) const {
             /* start with field vector at zero */
             B = 0.0;
         
@@ -307,100 +201,74 @@ namespace BField {
         double rcut;
     };
 
-    /** Container for a static function 'derivs' mainly for use with
-     * integrating functions that accept a pointer to a derivative function.
-     *
-     * @see rk4step and company.
-     */
-    template <class BC>
-    class Bderivs {
-      public:
 
-        /** Compute phase-space derivatives for integrating methods (e.g.
-         * runge-kutta.
-         * Because this is a template, you will have to explicity instantiate this
-         * function to get a pointer to pass into rk or the like.
-         * Also, this function will have to be correctly cast to the rk type
-         * (where bcP is a void *).
-         */
-        static void derivs(const double p[VZ+1], const double * time, double rkf[VZ+1], BC * bcP) {
-            rkf[X]  = p[VX];
-            rkf[Y]  = p[VY];
-            rkf[Z]  = p[VZ];
-            bcP->accel(V3C(rkf+VX), V3C(p));
-        }
-    };
+
+    /* ************* FORCES *********** */
 
     /** Container for several calculations to be performed using a B-field
      * source.  Doing this all in a template fashion allows for function
      * inheritance and interface specification with compile-time optimizations
      * enabled (no v-table for virtual functions).
      * A user can use this class as an implementation for gradient, accel,
-     * potential, potentialNoG.  For example, the accel function (or similar)
+     * potential.  For example, the accel function (or similar)
      * is required for Bderivs::derivs.
      *
      * The user can certainly also implement smarter replacements for these
      * functions for some cases (using a lookup-table for example).
      *
-     * @see Bderivs::derivs.
+     * @param BSrc
+     *     Magnetic field; must be a derivation of the BaseField class.
+     *
+     * @see Derivs::derivs.
      */
     template <class BSrc>
-    class BCalcs : public virtual BaseSrc, public BSrc {
+    class BCalcs : public virtual BaseForce, public BSrc {
       public:
-        typedef BaseSrc super0;
-        typedef BSrc    super1;
+        typedef BaseForce super0;
+        typedef BSrc      super1;
 
-        inline void gradient(Vector<double,3> & GradB, const Vector<double,3> & r) const {
-            Vector<double,3> B1, B2, dr;
-            register double dxh = 0.5 * super0::delta;
-            for (int j=X; j <= Z; j++) {
-                dr = r;
-
-                dr[j] = r[j] - dxh;
-                super1::getb(B1, dr);
-
-                dr[j] = r[j] + dxh;
-                super1::getb(B2, dr);
-
-                /* now calculate the field gradient centered at the specified location. */
-                GradB[j] = (B2.abs() - B1.abs()) / super0::delta;
-            }/* for */
+        /** Default constructor of BCalcs. */
+        inline BCalcs() : super0(), super1() {
+            mu = (-0.5) * (-1) * physical::constant::mu_B;
         }
 
-        inline void accel(Vector<double,3> & a, const Vector<double,3> & r) const {
-            gradient(a, r);
-
-            a *= -super0::mu / super0::mass;
-            a +=  super0::gravity;
+        inline const BCalcs & operator=(const BCalcs & that) {
+            mu = that.mu;
+            return *this;
         }
-
-        /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1>.
-         * Note that gF = -1/2
-         * and that V = \f$\mu\f$ . B + m(g . r)
-         * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
-         * and gravitational energy is referenced to (0,0,0).
-         *
-         * @see potentialNoG(const Vector<double,3> & r).
-         */
-        inline double potential(const Vector<double,3> & r) const {
-            return potentialNoG(r) - super0::mass * (super0::gravity * r);
+    
+        inline void accel(      Vector<double,3> & a,
+                          const Vector<double,3> & r,
+                          const Vector<double,3> & v = V3(0,0,0),
+                          const double & t = 0.0,
+                          const double & dt = 0.0 ) const {
+            //gradient(a, magnitude_of<super1>((const super1&)*this), r);
+            gradient_of_magnitude(a, (super1&)*this, r);
+            a *= - mu / super0::mass;
         }
-
-        /** Calculate the potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1> ignoring the
-         * gravitational component.
+    
+        /** Calculate the magnetic potential of \f$^{87}{\rm Rb}\f$ |F=1,mF=-1>.
          * Note that gF = -1/2
          * and that V = \f$\mu\f$ . B
          * where \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$
          *
-         * @see potential(const Vector<double,3> & r).
          */
-        inline double potentialNoG(const Vector<double,3> & r) const {
+        inline double potential(const Vector<double,3> & r,
+                                const Vector<double,3> & v = V3(0,0,0),
+                                const double & t = 0.0) const {
             Vector<double,3> B;
-            super1::getb(B, r);
-            return super0::mu * B.abs();
+            super1::operator()(B, r);
+            return mu * B.abs();
         }
-    };
 
+        /**  \f$\mu\f$  == gF * mF * \f$ mu_{B} \f$.
+         * Note that V = \f$\mu\f$ . B
+         * and for dark trapped state (\f$ \left|F=1,m_{F}=-1\right> \f$)
+         *  of \f$^{87}{\rm Rb} \f$,  gF = -1/2.
+         * This defaults to \f$F=1\f$ and \f$m_{F}=-1\f$
+         */
+        double mu;
+    };
 
 } /* namespace */
 

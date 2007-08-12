@@ -4,6 +4,7 @@
 
 #include <olson-tools/bfield.h>
 #include <olson-tools/physical.h>
+#include <olson-tools/force-lookup.h>
 
 using namespace physical::constants;
 using namespace physical::units;
@@ -30,7 +31,9 @@ inline void addwires(ThinWireBSrc & bsrc) {
     for (int i = 0; fabs(wires[i].I) > 0; bsrc.currents.push_back(wires[i++]));
 }
 
-typedef BField::BCalcs< BField::ThinWireSrc > BFieldSrc;
+typedef AddForce< BField::BCalcs< BField::ThinWireSrc >, Gravity > BFieldForce;
+
+typedef ForceTableWrapper< BFieldForce > BFieldForceTableSrc;
 
 #define FIELD_FILENAME "field.dat"
 

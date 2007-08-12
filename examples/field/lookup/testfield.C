@@ -30,18 +30,16 @@ static const double seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
 
 int main() {
     /* Dynamic Field Calc */
-    BFieldSrc bsrc;
+    BFieldForce bsrc;
     addwires(bsrc);
     bsrc.mass = mass;
-    bsrc.gravity[Z] = -physical::unit::gravity;
+    bsrc.Gravity::bg[Z] = -physical::unit::gravity;
     bsrc.delta = delta_B;
 
 
     /* Static Field Calc (interpolated from lookup table) */
-    BFieldLookup blookup;
-    blookup.readindata(FIELD_FILENAME);
-    blookup.mass = mass;
-    blookup.gravity[Z] = -physical::unit::gravity;
+    ForceLookup<> flookup;
+    flookup.readindata(FIELD_FILENAME);
 
 
     std::ofstream errout(ERR_FILE);
@@ -49,25 +47,17 @@ int main() {
     errout << std::scientific;
     /* print header in file */
     errout << "# x[3] error a_calc[3] a_lookup[3] Verr V_calc V_lookup\n";
-    testfield(errout, bsrc, blookup, X_MIN, X_MAX, dx_test);
+    testfield(errout, bsrc, flookup, X_MIN, X_MAX, dx_test);
     errout.close();
     std::cout << "Finished field test.\nDoing timed test" << std::endl;
 
     std::cout
-            << "1. BSrc Time    : "
+            << "BSrc Time    : "
             << timefield(bsrc,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     std::cout
-            << "1. Blookup Time : "
-            << timefield(blookup,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
-
-    std::cout
-            << "2. BSrc Time    : "
-            << timefield(bsrc,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
-
-    std::cout
-            << "2. Blookup Time : "
-            << timefield(blookup,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
+            << "flookup Time : "
+            << timefield(flookup,X_MIN, X_MAX, dx_timed) << " s" << std::endl;
 
     return 0;
 }

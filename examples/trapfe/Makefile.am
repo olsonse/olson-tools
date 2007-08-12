@@ -26,3 +26,6 @@ testtrapfe_opt_SOURCES = testtrapfe.C
 testtrapfe_opt_CXXFLAGS = $(OPTIM_CXX_COPY)
 testtrapfe_debug_SOURCES = testtrapfe.C
 testtrapfe_debug_CXXFLAGS = -g
+
+all-local:
+	@cat $(srcdir)/README

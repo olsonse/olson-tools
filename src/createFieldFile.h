@@ -25,15 +25,15 @@
 #include "indices.h"
 
 
-template <class FieldSrc>
+template <class FieldTable>
 int spitfieldout(std::ostream & output,
-                 const FieldSrc & fsrc,
+                 const FieldTable & ftable,
                  const Vector<double,3> & xi,
                  const Vector<double,3> & xf,
                  const Vector<double,3> & dx );
 
 /** Create the field file from the given parameters.
- * @param fsrc
+ * @param ftable
  *     The source of field calculation.
  * @param X_MINc
  *     The core minima.
@@ -52,8 +52,8 @@ int spitfieldout(std::ostream & output,
  * @param comments
  *     A set of lines that begin with '#' each [Default ""].
  */
-template <class FieldSrc>
-void createFieldFile(const FieldSrc & fsrc,
+template <class FieldTable>
+void createFieldFile(const FieldTable & ftable,
                 const Vector<double,3> & X_MINc,
                 const Vector<double,3> & X_MAXc,
                 const Vector<double,3> & dxc,
@@ -85,27 +85,28 @@ void createFieldFile(const FieldSrc & fsrc,
 
 
     try {
+        /** do core data first */
         int N = 0;
-        if ( (N =spitfieldout(fieldout, fsrc, X_MINc, X_MAXc, dxc)) != Nc.prod()) {
+        if ( (N =spitfieldout(fieldout, ftable, X_MINc, X_MAXc, dxc)) != Nc.prod()) {
             THROW(std::runtime_error,"wrote out " + to_string(N) + ", should have been " + to_string(Nc.prod()));
         }
         fieldout << '\n';
-        if ( (N=spitfieldout(fieldout, fsrc, X_MINs, X_MAXs, dxs)) != Ns.prod()) {
-            THROW(std::runtime_error,"didn't wrote out " + to_string(N) + ", should have been " + to_string(Ns.prod()));
+        /** do shell data second */
+        if ( (N=spitfieldout(fieldout, ftable, X_MINs, X_MAXs, dxs)) != Ns.prod()) {
+            THROW(std::runtime_error,"didn't write out " + to_string(N) + ", should have been " + to_string(Ns.prod()));
         }
     } catch (std::exception & e) {
         std::cout << "failed:  " << e.what() << std::endl;
     }
-
 
     fieldout.flush();
     fieldout.close();
 }
 
 
-template <class FieldSrc>
+template <class FieldTable>
 int spitfieldout(std::ostream & output,
-                 const FieldSrc & fsrc,
+                 const FieldTable & ftable,
                  const Vector<double,3> & xi,
                  const Vector<double,3> & xf,
                  const Vector<double,3> & dx ) {
@@ -115,28 +116,7 @@ int spitfieldout(std::ostream & output,
         for (x[X] = xi[X]; x[X] <= xf[X]; x[X]+= dx[X]) {
             Ny = 0;
             for (x[Y] = xi[Y]; x[Y] <= xf[Y]; x[Y] += dx[Y]) {
-#if defined (DEBUG_FIELD)
-                Vector<double,3> B;
-                fsrc.field(B, x);
-
-                Vector<double,3> dBdx;
-                fsrc.gradient(dBdx, x);
-#endif
-
-                Vector<double,3> a;
-                fsrc.accel(a, x);
-
-                output
-#if defined (DEBUG_FIELD)
-                         << x << '\t'
-                       /*<< B << '\t' */
-#endif
-                         << a << '\t'
-                         << fsrc.potentialNoG(x)
-#if defined (DEBUG_FIELD)
-                       /*<< '\t' << dBdx */
-#endif
-                         << '\n';
+                output << ftable.getRecord(x) << '\n';
                 N++;
                 Ny++;
             }

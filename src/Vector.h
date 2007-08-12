@@ -33,6 +33,7 @@
 #include <math.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include "m_eps.h"
 
 /** A simple define to help make it easier and cleaner to initialize
  * 3-Vectors (of a certain type).
@@ -259,8 +260,11 @@ class Vector {
     /* ************** COMPARISION OPERATORS *************** */
 
     /** Cummulative comparison (gt) between Vector and a scalar.
-    */
-    inline bool operator>(const T& that) {
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     */
+    template <class T2>
+    inline bool operator>(const T2& that) {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] > that);
@@ -269,20 +273,26 @@ class Vector {
     }
 
     /** Cummulative comparison (gt) between Vector and a Vector.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
      * @return cummulative expression of component-wise comparision.
-    */
+     */
     template <class T2>
     inline bool operator>(const Vector<T2,L>& that) {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
-            retval = retval && (this->val[i] > (T)that.val[i]);
+            retval = retval && (this->val[i] > that.val[i]);
 
         return retval;
     }
 
     /** Cummulative comparison (lt) between Vector and a scalar.
-    */
-    inline bool operator<(const T& that) {
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     * @return cummulative expression of component-wise comparision.
+     */
+    template <class T2>
+    inline bool operator<(const T2& that) {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] < that);
@@ -291,13 +301,15 @@ class Vector {
     }
 
     /** Cummulative comparison (lt) between Vector and a Vector.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
      * @return cummulative expression of component-wise comparision.
     */
     template <class T2>
     inline bool operator<(const Vector<T2,L>& that) {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
-            retval = retval && (this->val[i] < (T)that.val[i]);
+            retval = retval && (this->val[i] < that.val[i]);
 
         return retval;
     }
@@ -328,6 +340,41 @@ class Vector {
         return *this;
     }
 };
+
+/** Cumulative '==' comparison of Vector types.
+ * Comparison between Vectors of different types are allowed to use default
+ * promotion of types.
+ */
+template <class T1, class T2, unsigned int L>
+inline bool operator==(const Vector<T1,L>& v1, const Vector<T2,L>& v2) {
+    bool retval = true;
+    for (unsigned int i = 0; i < L; i++)
+        retval = retval && (v1.val[i] == v2.val[i]);
+
+    return retval;
+}
+
+/** Cumulative '!=' comparison of Vector types.
+ * Comparison between Vectors of different types are allowed to use default
+ * promotion of types.
+ */
+template <class T1, class T2, unsigned int L>
+inline bool operator!=(const Vector<T1,L>& v1, const Vector<T2,L>& v2) {
+    return !(v1 == v2);
+}
+
+/** Cumulative '==' comparison of Vector types.
+ * Specialization:  Comparison between Vectors of doubles.  Equivelance is
+ * defined by less than 4*M_EPS.
+ */
+template <unsigned int L>
+inline bool operator==(const Vector<double,L>& v1, const Vector<double,L>& v2) {
+    bool retval = true;
+    for (unsigned int i = 0; i < L; i++)
+        retval = retval && ( fabs(v1.val[i] - v2.val[i]) < (4*M_EPS*v1.val[i]) ) ;
+
+    return retval;
+}
 
 template <class T, unsigned int L>
 inline Vector<T,L> operator*(const T & that, const Vector<T,L> & v) {
@@ -390,9 +437,15 @@ inline T max (const Vector<T,L> & v) {
     return retval;
 }
 
+/** Calculate the mean value of this vector.
+ * Because of truncation, this function doesn't really mean anything unless
+ * the calculation is done with at least floating point precision.  Therefore,
+ * this function returns a double (doing everything with double precision).
+ * The user should round and cast back appropriately.
+ */
 template <class T, unsigned int L>
-inline T mean (const Vector<T,L> & v) {
-    return sum(v) / ((T)L);
+inline double mean (const Vector<T,L> & v) {
+    return ((double)sum(v)) / ((double)L);
 }
 
 template <class T, unsigned int L>
@@ -402,6 +455,11 @@ inline T sum (const Vector<T,L> & v) {
         retval += v[i];
     }
     return retval;
+}
+
+template <class T, unsigned int L>
+inline T SQR(const Vector<T,L> & v) {
+    return v*v;
 }
 
 template <class T, unsigned int L>

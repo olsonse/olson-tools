@@ -60,25 +60,25 @@ subroutine rk4step (x, n, t, dt, derivs, derivsArgs)
     th = t + dth
 
     ! find D1
-    call derivs(x, t, D1, derivsArgs)
+    call derivs(x, t, dt, D1, derivsArgs)
 
     ! find D2
     do i=1,n
         x_tmp(i)    = x(i)    + dth * D1(i)
     end do
-    call derivs(x_tmp, th, D2, derivsArgs)
+    call derivs(x_tmp, th, dt, D2, derivsArgs)
 
     ! find D3
     do i=1,n
         x_tmp(i)    = x(i)    + dth * D2(i)
     end do
-    call derivs(x_tmp, th, D3, derivsArgs)
+    call derivs(x_tmp, th, dt, D3, derivsArgs)
 
     ! and find D4
     do i=1,n
         x_tmp(i)    = x(i)    + dt * D3(i)
     end do
-    call derivs(x_tmp, t+dt, D4, derivsArgs)
+    call derivs(x_tmp, t+dt, dt, D4, derivsArgs)
 
     ! now weight the sum
     do i=1,n
@@ -102,13 +102,13 @@ subroutine rk2step (x, n, t, dt, derivs, derivsArgs)
     ! DO NOT TOUCH derivsArgs contents here because it could result in SEGV
 
     ! find D1
-    call derivs(x, t, D1, derivsArgs)
+    call derivs(x, t, dt, D1, derivsArgs)
 
     ! find D2
     do i=1,n
         x_tmp(i)    = x(i)    + dt * D1(i)
     end do
-    call derivs(x_tmp, t+dt, D2, derivsArgs)
+    call derivs(x_tmp, t+dt, dt, D2, derivsArgs)
 
     ! now weight the sum
     do i=1,n
@@ -140,7 +140,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
     t = ti
     tf = ti + dt
     do while ((t*dir) .lt. (tf*dir))
-        call derivs(x, t, dxdt, derivsArgs)
+        call derivs(x, t, dt_step, dxdt, derivsArgs)
 
         do i=1,n
             ! Scaling used to monitor accuracy. This
@@ -288,7 +288,7 @@ subroutine rkck(x,n,D1,t,dt,xout,xerr,derivs, derivsArgs)
     ! Cash-Karp Runge-Kutta method to advance the solution over an interval h and return
     ! the incremented variables as yout. Also return an estimate of the local truncation er-
     ! ror in yout using the embedded fourth-order method. The user supplies the subroutine
-    ! derivs(x,y,dxdt), which returns derivatives dxdt at x.
+    ! derivs(x,t,dt,dxdt), which returns derivatives dxdt at x.
 
     ! NOTE that this code does NOT work with f95 (NAGWare) IF you compile with
     ! -C=array or -C=call as this does not allow passing arbitrarily sized
@@ -325,31 +325,31 @@ subroutine rkck(x,n,D1,t,dt,xout,xerr,derivs, derivsArgs)
     do i=1,n
         xtemp(i) = x(i) + dt*( b21*D1(i) )
     end do
-    call derivs(xtemp, t + a2*dt, D2, derivsArgs)
+    call derivs(xtemp, t + a2*dt, dt, D2, derivsArgs)
 
     ! get D3
     do i=1,n
         xtemp(i) = x(i) + dt*( b31*D1(i) + b32*D2(i) )
     end do
-    call derivs(xtemp, t + a3*dt, D3, derivsArgs)
+    call derivs(xtemp, t + a3*dt, dt, D3, derivsArgs)
 
     ! get D4
     do i=1,n
         xtemp(i) = x(i) + dt*( b41*D1(i) + b42*D2(i) + b43*D3(i) )
     end do
-    call derivs(xtemp, t + a4*dt, D4, derivsArgs)
+    call derivs(xtemp, t + a4*dt, dt, D4, derivsArgs)
 
     ! get D5
     do i=1,n
         xtemp(i) = x(i) + dt*( b51*D1(i) + b52*D2(i) + b53*D3(i) + b54*D4(i) )
     end do
-    call derivs(xtemp, t + a5*dt, D5, derivsArgs)
+    call derivs(xtemp, t + a5*dt, dt, D5, derivsArgs)
 
     ! get D6
     do i=1,n
         xtemp(i) = x(i) + dt*( b61*D1(i) + b62*D2(i) + b63*D3(i) + b64*D4(i) + b65*D5(i))
     end do
-    call derivs(xtemp, t + a6*dt, D6, derivsArgs)
+    call derivs(xtemp, t + a6*dt, dt, D6, derivsArgs)
 
     ! Accumulate increments with proper weights.
     do i=1,n

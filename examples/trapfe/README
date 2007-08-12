@@ -1,18 +1,25 @@
-Testing instructions for libtrapfe$(EXT).a:
+This example demonstrates the use of the libtrapfe.a library.  The trapfe
+library enables trapping floating point exceptions (FPE) that often cause problems
+in computational code.  This library allows code to be executed without
+alteration but stalls the program as soon as a FPE is met.
 
-1.  do 'make' and you will get a program that does cause a floating point
-exception.  The problem is that gcc, by default, disables the trapping of
-these floating point exceptions.
+To use the trapfe library, you simply have to link the library at compile
+time.  It is also necessary to not perform any optimizations and use the '-g'
+compile flag.  This is for two reasons:  first, the compilers that I've used
+disable the trapping of the FPE if any optimization is used or if '-g' is not
+used; second, if you are debugging, you will most likely want to attach with a
+debugger and see where there FPE was trapped.  
 
-2.  do 'make TRAPFE=1' and you will still get a bad program that doesn't trap
-the exceptions.
+Doing 'make' in this directory will build two versions of a program which
+causes a FPE by dividing by zero:
+    testtrapfe_opt:
+        Compiled with '$(OPTIM_CXX)' and linked by '-ltrapfe'.
+        Causes FPE but does not trap FPE.  The program will continue without
+        stopping.
 
-2.  do 'make DEBUG=-g TRAPFE=1' and you will get a program that not only causes a
-floating point error, but also traps it.  The program will emit an error and
-go into an infinite loop, waiting for you to investigate its cause.
+    testtrapfe_debug:
+        compiled with '-g' (and no optimization) and linked by '-ltrapfe'
+        causes FPE and does trap FPE.  The program will emit an error and go
+        into an infinite loop, waiting for you to investigate its cause with a
+        debugger. 
 
-
-These DEBUG= and TRAPFE= make flags are are available and automatically
-applied to all code that uses my olson-tools Makeconf.  By 'uses', I mean that
-you Makefile must not only include it, but also use the CFLAGS, LDFLAGS, LIBS,
-etc when compiling.

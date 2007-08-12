@@ -31,18 +31,20 @@ inline void addwires(ThinWireBSrc & bsrc) {
 }
 
 typedef BField::BCalcs<
-    BField::AddSrc<
+    AddField<
         BField::ThinWireSrc,
-        BField::BgSrc
+        BgField< Vector<double,3> >
     >
-> BFieldSrc;
+> BForce;
+
+typedef AddForce< BForce, Gravity > BFieldSrc;
 
 
 typedef InvCylindricalDist<
-            BField::BTrapDistribution2D<BFieldSrc>,
+            BField::BTrapDistribution2D<BForce>,
             FlatDistribution,
             1u,
-            BField::BTrap2DInit<BFieldSrc>
+            BField::BTrap2DInit<BForce>
 > P_xyz;
 
 int main() {
@@ -50,11 +52,11 @@ int main() {
     BFieldSrc bsrc;
     addwires(bsrc);
     bsrc.delta = 1e-6;
-    bsrc.bg[X] = 0;
-    bsrc.bg[Y] = 0;
-    bsrc.bg[Z] = 1.0*Gauss;
+    bsrc.BForce::bg[X] = 0;
+    bsrc.BForce::bg[Y] = 0;
+    bsrc.BForce::bg[Z] = 1.0*Gauss;
     bsrc.mass = 87.0*amu;
-    bsrc.gravity = 0.0;
+    bsrc.Gravity::bg = 0.0;
 
     P_xyz  pos_distrib;
     const double temperature = 150. * uK;

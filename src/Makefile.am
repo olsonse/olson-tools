@@ -20,7 +20,8 @@ libolson_tools_a_SOURCES = \
         fit/GeneticAlgArgs.C \
         fit/Individual.C \
         fit/io.C \
-        util.C
+        util.C \
+        m_eps.C
 
 # Make it easy to install the headers
 libolson_tools_a_includedir = $(includedir)/olson-tools
@@ -48,6 +49,8 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./physical.h \
         ./InvCylindricalDist.h \
         ./bfield.h \
+        ./Fields.h \
+        ./Forces.h \
         ./info.h \
         ./listutil.h \
         ./indices.h \
@@ -61,10 +64,13 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./fmacros.h \
         ./Distribution.h \
         ./field-lookup.h \
+        ./force-lookup.h \
         ./power.h \
         ./RKIntegrator.h \
         ./memory.h \
         ./ompexcept.h \
+        ./m_eps.h \
+        ./nothing.h \
         ./$(PACKAGE)-config.h
 
 

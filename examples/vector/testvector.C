@@ -29,7 +29,7 @@ int main () {
     SquareMatrix<double,3> rz ( (const double [3][3])
                          {{ 1,    1,    0   },
                           {-1,    1,    0   },
-                          {   0,         0,       1   }}
+                          { 0,    0,    1   }}
     );
 
     i[0]  = 1*h*(m3*r);
