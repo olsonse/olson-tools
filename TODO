@@ -1,0 +1,11 @@
+1.  Make another rk example for using impulse forces.  Perhaps I could use the
+    optical force simulation as an example(?).
+
+
+2.  Perhaps document this in the field-lookup file:
+    These do not NEED to be converted to cylindrical coords, but can be sped up by
+    a factor of 2 doing so.
+        inline double scalar_lookup(r, i);
+        inline void vector_lookup(retval, r, i);
+
+        DONE
