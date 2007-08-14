@@ -68,7 +68,7 @@ class Distribution {
   public:
 
     /** copy constructor. */
-    inline Distribution(const Distribution & that) {
+    inline Distribution(const Distribution & that) : q(NULL), L(0) {
         *this = that;
     }
 
@@ -88,6 +88,8 @@ class Distribution {
      * @param distro
      *     Distribution class reference; the distribution class must have a
      *     function of type:  double distrib(const double & x) const.
+     *     distro(...) will be monotonically sampled from min to max (nbins+1)
+     *     times.
      * @param min
      *     Minimum of independent variable to include in distribution
      *     inversion.
@@ -159,19 +161,30 @@ class Distribution {
     ~Distribution();
 
     /** Get a random number from this distribution.
-     * This calls lever().
+     * This calls leverarm(double).  This is now essentially the same function
+     * as lever().
      * @see lever().
+     * @see lever(double).
      */
     inline double operator() (void) const {
-        //return q[(int) rint(MTRNGrand() * (L+0.999999)) ];
-        return lever();
+        return leverarm(MTRNGrand());
     }
 
-    /** Get a random number from this distribution. */
-    inline double lever() const {
-        double r = MTRNGrand() * L * 0.99999999999;
+    /** Sample the inverted distribution.
+     * @param rf
+     *     A fraction in the range [0,1] (inclusive).
+     */
+    inline double leverarm(const double & rf) const {
+        double r = rf * L * 0.99999999999;
         register int ri = int(r);
         return q[ri] + (q[ri+1] - q[ri]) * (r - ri);
+    }
+
+    /** Get a random number from this distribution.
+     * Calls leverarm(double).
+     */
+    inline double lever() const {
+        return leverarm(MTRNGrand());
     }
 
     inline const Distribution & operator=(const Distribution & that) {
