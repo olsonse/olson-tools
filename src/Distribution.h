@@ -68,8 +68,18 @@ class Distribution {
   public:
 
     /** copy constructor. */
-    inline Distribution(const Distribution & that) : q(NULL), L(0) {
+    inline Distribution(const Distribution & that) : L(0), q(NULL) {
         *this = that;
+    }
+
+    /** constructor */
+    inline Distribution(const int & _qLen, const double * _q) : L(0), q(NULL) {
+        struct {
+            int L;
+            const double * q; /* length L + 1 */
+        } D = {_qLen-1, _q};
+
+        *this = (const Distribution &)D;
     }
 
     /** Distribution constructor.
@@ -101,8 +111,8 @@ class Distribution {
      */
     template <class T>
     inline Distribution( const T & distro,
-                  const double & min, const double & max,
-                  const int & nbins = 100 ) : L(nbins) {
+                         const double & min, const double & max,
+                         const int & nbins = 100 ) : L(nbins) {
 
         if (L <= 1) {
             THROW(std::runtime_error,"Distribution needs more than one bin.");
@@ -171,6 +181,9 @@ class Distribution {
     }
 
     /** Sample the inverted distribution.
+     * No bounds checking occurs here.  If you pass in rf>1 or rf<0, then you
+     * will be reading from invalid/unallocated memory.  Therefore, be sure to
+     * keep rf in range. 
      * @param rf
      *     A fraction in the range [0,1] (inclusive).
      */
@@ -187,6 +200,7 @@ class Distribution {
         return leverarm(MTRNGrand());
     }
 
+    /** Copy operator. */
     inline const Distribution & operator=(const Distribution & that) {
         if (q) delete[] q;
 
@@ -195,6 +209,20 @@ class Distribution {
         memcpy (q, that.q, sizeof(double)*(L+1));
 
         return *this;
+    }
+
+    /** Returns the number of sampling points used to create the distribution.
+     * Note that the length of the inverted distribution array is L+1.
+     * */
+    inline const int & nBins() const { return L; }
+
+    /** Return a pointer to the invertedDistribution array.
+     * @param len
+     *     This is an output parameter:  length of the array.
+     */
+    inline const double * invertedDistribution(int & len) const {
+        len = L+1;
+        return q;
     }
 
   private:
