@@ -199,7 +199,7 @@ extern "C" {
      */
 #  define rkqs rkqs_
 #endif // DOXYGEN_SKIP
-    void rkqs(double *x,int *n,double *dxdt,double *t,double *dt_step,const double *ERRMAX,double *x_cal, double *dt_step_did, derivativesFunction derivs, const void * fargs);
+    void rkqs(double *x,int *n,double *dxdt,double *t,double *dt_step,const double *ERRMAX,double *x_cal, double *dt_step_did, double *tf, derivativesFunction derivs, const void * fargs);
 
 #    ifdef __cplusplus
 }

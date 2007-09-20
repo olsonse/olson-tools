@@ -153,7 +153,7 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
 
             // time is accumulated in this function
             double told = t;
-            rkqs(x.val,&ndim,dxdt,&t,&dt_step,&errmax,x_cal,&dt_step_current, derivs, derivsArgs);
+            rkqs(x.val,&ndim,dxdt,&t,&dt_step,&errmax,x_cal,&dt_step_current, &tf, derivs, derivsArgs);
             // write (*,'(X,F15.8,1X,F15.8,1X,F15.8,1X,F15.8)') x(1:3), dt_step_current
 
             /* Allow user to provide a call back to adjust the next time step if

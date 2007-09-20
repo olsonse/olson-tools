@@ -158,7 +158,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
         endif
 
         ! time is accumulated in this function
-        call rkqs(x,n,dxdt,t,dt_step,ERRMAX,x_cal,dt_step_did, derivs, derivsArgs)
+        call rkqs(x,n,dxdt,t,dt_step,ERRMAX,x_cal,dt_step_did, tf, derivs, derivsArgs)
         ! write (*,'(X,F15.8,1X,F15.8,1X,F15.8,1X,F15.8)') x(1:3), dt_step_did
 
         if ( truncated_step .eq. 0 .or. abs(dt_step).lt.abs(dt_step_did)) then
@@ -185,8 +185,9 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
 end subroutine
 
 ! Modified routine from Numerical Recipies in Fortran
-subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
+subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, tf, derivs, derivsArgs)
     implicit none
+    double precision  tf
     integer           n
     double precision  x(1:n), dxdt(1:n), xscal(1:n), xtemp(1:n), xerr(1:n), errmax
     double precision  t, dt_try, eps, dt_did, dt, dt_temp
@@ -249,6 +250,7 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
         if (tnew .eq. t) then
             !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
             call log_severe("stepsize (%g = %g + %g) underflow in rkqs at:"//char(0), %val(tnew), %val(t), %val(dt))
+            call log_severe("trying to reach t_f = %g"//char(0), %val(tf))
             do i=1,n
                 call log_severe("x[%d]  =  %g"//char(0), %val(i), %val(x(i)))
             end do
