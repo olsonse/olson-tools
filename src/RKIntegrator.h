@@ -30,6 +30,8 @@
 #ifndef RKINTEGRATOR_H
 #define RKINTEGRATOR_H
 
+#include <sstream>
+#include <stdexcept>
 #include "rk.h"
 
 class RKIntegrator {
@@ -182,11 +184,14 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
             }
 
             if(fabs(t - told) <= fabs(1.5*t*M_EPS)) {
-                log_severe("stepsize underrun (%g)", dt_step);
+                std::stringstream pos;
+                pos << x;
+                log_severe("stepsize underrun (%g) at pos (%s) at t (%g)", dt_step, pos.str().c_str(), t);
                 throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
             }
         }
         log_severe("This code (in rk_driver_adapt) is supposed to be unreachable");
+        throw std::runtime_error("unreachable code reached");
     }
 
     /** Error tolerance used for adaptive Runge-Kutta.

@@ -247,8 +247,11 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, derivs, derivsArgs)
         ! now set the absolute time
         tnew = t + dt
         if (tnew .eq. t) then
-            call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
-            !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), %val(tnew), %val(t), %val(dt))
+            !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
+            call log_severe("stepsize (%g = %g + %g) underflow in rkqs at:"//char(0), %val(tnew), %val(t), %val(dt))
+            do i=1,n
+                call log_severe("x[%d]  =  %g"//char(0), %val(i), %val(x(i)))
+            end do
             call killMe()
         endif
         nredone = nredone + 1
