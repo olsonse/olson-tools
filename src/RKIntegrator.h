@@ -114,7 +114,7 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
         dt_step = copysign(dt_step,dt);
 
         double  t = ti;
-        const double tf = ti + dt;
+        double tf = ti + dt;
 
         /* direction of integration. */
         const double dir = copysign(1.0,dt);
@@ -186,7 +186,9 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
             if(fabs(t - told) <= fabs(1.5*t*M_EPS)) {
                 std::stringstream pos;
                 pos << x;
-                log_severe("stepsize underrun (%g) at pos (%s) at t (%g)", dt_step, pos.str().c_str(), t);
+                log_severe(
+                    "stepsize underrun (%g) at pos (%s) at t (%g) to tf (%g)",
+                    dt_step, pos.str().c_str(), t, tf);
                 throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
             }
         }
