@@ -126,11 +126,19 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
         int     truncated_step = 0;
         const double TINY = 1e-30;
 
+        /** The 1.0 + minimum fraction of total current time to allow stepping. */
+        const double TIME_COMP_EPS = 1.0 + (10. * M_EPS);
+
         /* to call the fortran rqks, we need to use an address for ndim */
         int     ndim = ndim_;
 
 
-        while ( (t*dir) < (tf*dir) ) {
+        /* In this while-loop test, we are trying to avoid having time-steps
+         * that are too small.  This might occur if the integration is nearly
+         * complete and the truncated_step will cause a very very tiny
+         * timestep that causes timestep underrun.  We are just going to throw
+         * away anytiming that is as close as 10*M_EPS*t. */
+        while ( (t*dir*TIME_COMP_EPS) <  (tf*dir) ) {
             if ( ((t+dt_step)*dir) > (tf*dir) ) {
                  // If stepsize can overshoot, decrease.
                 dt_step = copysign(tf-t,dt);
@@ -177,23 +185,19 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
                 dt_step_next = dt_step;
             }
 
-            if((t*dir) >= (tf*dir)) {
-                // We are now finished, so return
-                dt_step = dt_step_next;
-                return; // Normal exit.
-            }
-
-            if(fabs(t - told) <= fabs(1.5*t*M_EPS)) {
+            if(fabs(t - told) <= fabs(t*1.5*M_EPS)) {
                 std::stringstream pos;
                 pos << x;
                 log_severe(
-                    "stepsize underrun (%g) at pos (%s) at t (%g) to tf (%g)",
-                    dt_step, pos.str().c_str(), t, tf);
+                    "stepsize underrun (%g, tried %g) at pos (%s) at t (%g) to tf (%g)",
+                    dt_step_current, dt_step, pos.str().c_str(), t, tf);
                 throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
             }
         }
-        log_severe("This code (in rk_driver_adapt) is supposed to be unreachable");
-        throw std::runtime_error("unreachable code reached");
+
+        // We are now finished, so return
+        dt_step = dt_step_next;
+        //return;
     }
 
     /** Error tolerance used for adaptive Runge-Kutta.
