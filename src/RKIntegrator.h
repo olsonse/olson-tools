@@ -168,8 +168,8 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
                 std::stringstream pos;
                 pos << x;
                 log_severe(
-                    "stepsize underrun (%g truncated==%d, tried %g, next %g)
-                    at pos (%s) at t (%g; old:%g) to tf (%g)",
+                    "stepsize underrun (%g truncated==%d, tried %g, next %g)"
+                    "at pos (%s) at t (%g; old:%g) to tf (%g)",
                     dt_step_current, truncated_step, dt_step, dt_step_next,
                     pos.str().c_str(), t, told, tf);
                 throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
