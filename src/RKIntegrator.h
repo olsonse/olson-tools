@@ -164,6 +164,17 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
             rkqs(x.val,&ndim,dxdt,&t,&dt_step,&errmax,x_cal,&dt_step_current, &tf, derivs, derivsArgs);
             // write (*,'(X,F15.8,1X,F15.8,1X,F15.8,1X,F15.8)') x(1:3), dt_step_current
 
+            if(fabs(t - told) <= fabs(t*1.5*M_EPS)) {
+                std::stringstream pos;
+                pos << x;
+                log_severe(
+                    "stepsize underrun (%g truncated==%d, tried %g, next %g)
+                    at pos (%s) at t (%g; old:%g) to tf (%g)",
+                    dt_step_current, truncated_step, dt_step, dt_step_next,
+                    pos.str().c_str(), t, told, tf);
+                throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
+            }
+
             /* Allow user to provide a call back to adjust the next time step if
              * needed.
              * The user should be WARNED that any increases could cause the next
@@ -183,15 +194,6 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
                  * if we've truncated this last step.  This will likely occur after
                  * EVERY set of dt time steps. */
                 dt_step_next = dt_step;
-            }
-
-            if(fabs(t - told) <= fabs(t*1.5*M_EPS)) {
-                std::stringstream pos;
-                pos << x;
-                log_severe(
-                    "stepsize underrun (%g, tried %g) at pos (%s) at t (%g) to tf (%g)",
-                    dt_step_current, dt_step, pos.str().c_str(), t, tf);
-                throw std::runtime_error("stepsize underrun ("+to_string(dt_step)+")");
             }
         }
 
