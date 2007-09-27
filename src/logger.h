@@ -162,6 +162,8 @@ void vlog(LogLevel_t level, int err, const char *fmt, va_list args);
  * messages.
  * */
 void setLogProgramName(const char * prog);
+
+/** Explicitly log a message to the syslog sub-system. */
 void logToSystemLog(LogLevel_t level, char *msg);
 
 /** The size of the char array that must be given to timestamp.
@@ -204,7 +206,9 @@ extern int TimestampLog;
 /** File handle for log file (NULL => stderr). */
 extern FILE *LogFileP;
 
-/** Type of log file. */
+/** Type of log file.
+ * @see LogType_t
+ */
 extern LogType_t LogFileType;
 
 /** Message verbosity level.
@@ -212,6 +216,15 @@ extern LogType_t LogFileType;
  * */
 extern LogLevel_t LogLevel;
 
+/** Set log file.
+ * @param logfile
+ *    The name of the file to set log output to.  There are three special
+ *    values: <br>
+ *        NULL          : do not log any messages. <br>
+ *        ":syslog:"    : send messages to syslog. <br>
+ *        ":stderr:"    : send messages to stderr. <br>
+ */
+void setLogFile(const char * logfile);
 
 #ifdef __cplusplus
 }

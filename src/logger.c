@@ -395,7 +395,6 @@ log_error(LogLevel_t level, int err, const char *fmt, ...)
 void
 vlog(LogLevel_t level, int err, const char *fmt, va_list args)
 {
-    FILE *fp = LogFileP;
     char timeBuf[TIMESTAMP_SIZE];
     char *timePtr = NULL;
     /* hope that there are no longer messages */
@@ -403,11 +402,6 @@ vlog(LogLevel_t level, int err, const char *fmt, va_list args)
 
 
     if (level > LogLevel || LogFileType == LOGFILE_NULL) return;
-
-    if (fp == NULL)
-    {
-	fp = stderr;
-    }
 
     if (TimestampLog)
     {
@@ -444,9 +438,12 @@ vlog(LogLevel_t level, int err, const char *fmt, va_list args)
     switch (LogFileType)
     {
     case LOGFILE_LOCAL:
+    {
+        FILE *fp = LogFileP != NULL ? LogFileP : stderr;
 	fprintf(fp, "%s\n", msgBuf);
 	fflush(fp);
 	break;
+    }
 
 #if !defined(N_PLAT_NLM)
     case LOGFILE_SYSLOG:
@@ -462,4 +459,37 @@ vlog(LogLevel_t level, int err, const char *fmt, va_list args)
 
 }
 
+
+/** Set log file. */
+void setLogFile(const char * logfile) {
+    FILE * lfp = NULL;
+
+    if (logfile == NULL) {
+        if (LogFileP != NULL) fclose(LogFileP);
+        LogFileP = NULL;
+        LogFileType = LOGFILE_NULL;
+        return;
+    } else if (strncmp(logfile, ":stderr:", 8) == 0) {
+        if (LogFileP != NULL) fclose(LogFileP);
+        LogFileP = NULL;
+        LogFileType = LOGFILE_LOCAL;
+        return;
+    } else if (strncmp(logfile, ":syslog:", 8) == 0) {
+        if (LogFileP != NULL) fclose(LogFileP);
+        LogFileP = NULL;
+        LogFileType = LOGFILE_SYSLOG;
+        return;
+    }
+
+    lfp = fopen(logfile, "a");
+
+    if (!lfp) {
+        log_severe("cannot open log file '%s'", logfile);
+        return;
+    }
+
+    if (LogFileP != NULL) fclose(LogFileP);
+    LogFileP = lfp;
+    LogFileType = LOGFILE_LOCAL;
+}
 
