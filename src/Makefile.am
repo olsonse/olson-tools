@@ -71,6 +71,7 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./ompexcept.h \
         ./m_eps.h \
         ./nothing.h \
+        ./Timing.h \
         ./$(PACKAGE)-config.h
 
 

@@ -264,10 +264,23 @@ class Vector {
      * promotion of types.
      */
     template <class T2>
-    inline bool operator>(const T2& that) {
+    inline bool operator>(const T2& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] > that);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (gteq) between Vector and a scalar.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     */
+    template <class T2>
+    inline bool operator>=(const T2& that) const {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] >= that);
 
         return retval;
     }
@@ -278,10 +291,24 @@ class Vector {
      * @return cummulative expression of component-wise comparision.
      */
     template <class T2>
-    inline bool operator>(const Vector<T2,L>& that) {
+    inline bool operator>(const Vector<T2,L>& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] > that.val[i]);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (gteq) between Vector and a Vector.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     * @return cummulative expression of component-wise comparision.
+     */
+    template <class T2>
+    inline bool operator>=(const Vector<T2,L>& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] >= that.val[i]);
 
         return retval;
     }
@@ -300,6 +327,20 @@ class Vector {
         return retval;
     }
 
+    /** Cummulative comparison (leq) between Vector and a scalar.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     * @return cummulative expression of component-wise comparision.
+     */
+    template <class T2>
+    inline bool operator<=(const T2& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] <= that);
+
+        return retval;
+    }
+
     /** Cummulative comparison (lt) between Vector and a Vector.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
@@ -310,6 +351,20 @@ class Vector {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] < that.val[i]);
+
+        return retval;
+    }
+
+    /** Cummulative comparison (leq) between Vector and a Vector.
+     * Comparison between Vectors of different types are allowed to use default
+     * promotion of types.
+     * @return cummulative expression of component-wise comparision.
+    */
+    template <class T2>
+    inline bool operator<=(const Vector<T2,L>& that) {
+        bool retval = true;
+        for (unsigned int i = 0; i < L; i++)
+            retval = retval && (this->val[i] <= that.val[i]);
 
         return retval;
     }
