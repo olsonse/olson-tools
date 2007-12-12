@@ -286,6 +286,9 @@ AC_CONFIG_FILES([Makeconf
                  examples/bin/Makefile
                  examples/bin/generic/Makefile
                  examples/bin/keyed/Makefile
+                 examples/bin/extended_2d/Makefile
+                 examples/bin/extended_2d/generic/Makefile
+                 examples/bin/extended_2d/keyed/Makefile
                  examples/fast_pow/Makefile
                  examples/fast_pow/c/Makefile
                  examples/fast_pow/fortran/Makefile

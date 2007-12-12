@@ -104,7 +104,7 @@ class GenericBin {
     inline std::ostream & print(std::ostream & output, const std::string & prefix = "") const {
         for (unsigned int i = 0; i < nbins; i++) {
             output << prefix
-                   << ( (TKey) (min + (((double)i)/scale)) ) << '\t'
+                   << ( (TKey) (min + ((((double)i) + 0.5)/scale)) ) << '\t'
                    << bins[i] << '\n';
         }/* for */
         return output;

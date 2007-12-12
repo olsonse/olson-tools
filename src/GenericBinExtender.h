@@ -27,7 +27,7 @@
 #include <cfloat>
 
 /** A histogramming dimension extender.
- * @param T
+ * @param TKey
  *     The type of the key to base histogram (double, int, ...).
  *
  * @param T2
@@ -41,14 +41,14 @@
  * @see GenericBin for a generic histogramming only class.
  * @see KeyedBin for a keyed histogramming class.
  */
-template <class T, class T2, unsigned int nbins>
+template <class TKey, class T2, unsigned int nbins>
 class GenericBinExtender {
 
     /** The maximum of the data range within which to histogram. */
-    T max;
+    double max;
 
     /** The minimum of the data range within which to histogram. */
-    T min;
+    double min;
 
     double scale;
   public:
@@ -68,8 +68,8 @@ class GenericBinExtender {
      *     Expected minimum of data used for child-bins.  This helps with n-D
      *     application.
      */
-    inline GenericBinExtender(const T & mn  = (T)0, const T & mx  = (T)0,
-                              const T & mn2 = (T)0, const T & mx2 = (T)0) {
+    inline GenericBinExtender(const double & mn  = 0.0, const double & mx  = 0.0,
+                              const double & mn2 = 0.0, const double & mx2 = 0.0) {
         init(mn,mx);
         if (mx2 != mn2) {
             initChildBins(mn2,mx2);
@@ -77,7 +77,7 @@ class GenericBinExtender {
     }
 
     /** Initialize the binning. */
-    inline void init(const T & mn, const T & mx) {
+    inline void init(const double & mn, const double & mx) {
         max = mx;
         min = mn;
         scale = (mn==0 && mx==0 ? DBL_MAX : double(nbins)/(max - min) * 0.999999);
@@ -85,7 +85,7 @@ class GenericBinExtender {
     }
 
     /** Call init of all child bins with the same arguments. */
-    inline void initChildBins(const T & mn, const T & mx) {
+    inline void initChildBins(const double & mn, const double & mx) {
         for(unsigned int i = 0; i < nbins; bins[i++].init(mn,mx));
     }
 
@@ -104,14 +104,22 @@ class GenericBinExtender {
      * interface similar to KeyedBin.
      */
     template <class T3,unsigned int L>
-    inline void bin(const T & key, const T & key2, const Vector<T3,L> & v) {
+    inline void bin(const TKey & key, const TKey & key2, const Vector<T3,L> & v) {
         getBin(key).bin(key2,v);
+    }
+
+    /** Add a predetermined value to the histogram.
+     * This function will only compile if the child bin type has a bin()
+     * interface similar to GenericBin.
+     */
+    inline void bin(const TKey & key, const TKey & key2) {
+        getBin(key).bin(key2);
     }
 
     /** Gets the appropriate child bin.
      * This generic bin extender will allow an arbitrary dimension of bins.
      */
-    inline T2 & getBin(const T & key) {
+    inline T2 & getBin(const TKey & key) {
         register int i = int( ( (key<max?(key>min?key:min):max) - min) * scale);
         return bins[i];
     }
@@ -139,7 +147,7 @@ class GenericBinExtender {
      */
     inline std::ostream & print(std::ostream & output, const std::string & prefix = "") const {
         for (unsigned int i = 0; i < nbins; i++) {
-            std::string pref = prefix + to_string( (T) (min + (((double)i)/scale)) ) + '\t';
+            std::string pref = prefix + to_string( (TKey) (min + ((((double)i) + 0.5)/scale)) ) + '\t';
             bins[i].print(output, pref) << '\n';
         }
         return output;
