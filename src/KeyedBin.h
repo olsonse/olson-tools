@@ -120,6 +120,12 @@ class KeyedBin {
         }/* for */
         return output;
     }
+
+    /** The minimum range of this histogrammer. */
+    const double & getMin() const { return min; }
+
+    /** The maximum range of this histogrammer. */
+    const double & getMax() const { return max; }
 };
 
 #endif //KEYEDBIN_H

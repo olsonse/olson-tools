@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include "m_eps.h"
+#include "power.h"
 
 /** A simple define to help make it easier and cleaner to initialize
  * 3-Vectors (of a certain type).
@@ -458,7 +459,7 @@ inline void cross (Vector<T,3> &retval, const Vector<T,3> & a, const Vector<T,3>
  * type of this.
  * @return reference to this (type Vector<T,L>).
  *
- * @see Vector::compMult.
+ * @see Vector::compDiv.
  */
 template <class T1, class T2, unsigned int L>
 inline const Vector<T1,L> compMult(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
@@ -472,13 +473,41 @@ inline const Vector<T1,L> compMult(const Vector<T1,L> & v1, const Vector<T2,L>& 
  * type of this.
  * @return reference to (type Vector<T,L>).
  *
- * @see Vector::compDiv.
+ * @see Vector::compMult.
  */
 template <class T1, class T2, unsigned int L>
 inline const Vector<T1,L> compDiv(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
     Vector<T1,L> retval;
     for (unsigned int i = 0; i < L; i++)
         retval.val[i] = v1.val[i] / (T1)v2.val[i];
+    return retval;
+}
+
+/** component by component power after type of that is converted
+ * type of this.
+ * @return reference to (type Vector<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T1, class T2, unsigned int L>
+inline const Vector<T1,L> compPow(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
+    Vector<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        retval.val[i] = fast_pow(v1.val[i], (T1)v2.val[i]);
+    return retval;
+}
+
+/** component by component power after type of that is converted
+ * type of this.
+ * @return reference to (type Vector<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T,unsigned int L>
+inline const Vector<T,L> compPow(const Vector<T,L> & v1, const T & e) {
+    Vector<T,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        retval.val[i] = fast_pow(v1.val[i], e);
     return retval;
 }
 
