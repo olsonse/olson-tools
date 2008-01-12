@@ -72,6 +72,7 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./m_eps.h \
         ./nothing.h \
         ./Timing.h \
+        ./version.h \
         ./$(PACKAGE)-config.h
 
 
