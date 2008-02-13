@@ -5,21 +5,32 @@
 #include <vector>
 #include <stdexcept>
 
+/** Abstract timing element class. */
 class TimingElement {
   public:
     double dt;
+    TimingElement( const double & _dt   = 0.0 ) : dt(_dt) { }
+    virtual ~TimingElement() {}
+    virtual double getValue(const double & t_rel) const = 0;
+};
+
+/** Exponential rise/fall timing element. */
+class ExpTimingElement : public TimingElement {
+  public:
+    typedef TimingElement super;
     double exponent;
     bool reverse;
     double val_i;
     double val_f;
 
-    TimingElement( const double & _dt   = 0.0,
+    ExpTimingElement( const double & _dt   = 0.0,
                    const double & exp   = 1.0,
                    const double & vi    = 0.0,
                    const double & vf    = 1.0 ) :
-        dt(_dt), exponent(fabs(exp)), reverse(exp < 0.0), val_i(vi), val_f(vf) { }
+        super(_dt), exponent(fabs(exp)), reverse(exp < 0.0), val_i(vi), val_f(vf) { }
+    virtual ~ExpTimingElement() {}
 
-    double getValue(const double & t_rel) const {
+    virtual double getValue(const double & t_rel) const {
         const double eps10 = 1e-14; /* to avoid imaginary numbers */
         const double tau = (t_rel / dt);
 
@@ -43,7 +54,7 @@ class Timing {
         double t_i = 0.0, t_f = 0.0;
         int i = 0;
         for (; i < timings.size(); i++) {
-            TimingElement & te = timings[i];
+            TimingElement & te = *timings[i];
             t_f = t_i + te.dt;
 
             if (t_absolute <= t_f) {
@@ -54,11 +65,11 @@ class Timing {
         i--;
         if (i < 0) throw std::runtime_error("There are no timing elements!");
 
-        current_val = timings[i].getValue(t_absolute);
+        current_val = timings[i]->getValue(t_absolute);
     }
 
     double current_val;
-    std::vector<TimingElement> timings;
+    std::vector<TimingElement *> timings;
 };
 
 #endif // TIMING_H
