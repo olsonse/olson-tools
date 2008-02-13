@@ -23,7 +23,7 @@ class TimingElement {
     /** return the value of this interval at t_rel relative time.
      * @param t_rel relative time.
      */
-    virtual double getValue(const double & t_rel) const = 0;
+    virtual double getValue(const double & t_rel) = 0;
 };
 
 /** Exponential rise/fall timing element. 
@@ -52,7 +52,7 @@ class ExpTimingElement : public TimingElement {
         super(_dt), exponent(fabs(exp)), reverse(exp < 0.0), val_i(vi), val_f(vf) { }
     virtual ~ExpTimingElement() {}
 
-    virtual double getValue(const double & t_rel) const {
+    virtual double getValue(const double & t_rel) {
         const double eps10 = 1e-14; /* to avoid imaginary numbers */
         const double tau = (t_rel / dt);
 
