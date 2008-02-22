@@ -73,6 +73,8 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./nothing.h \
         ./Timing.h \
         ./version.h \
+        ./ScaleField.h \
+        ./ScaleForce.h \
         ./$(PACKAGE)-config.h
 
 

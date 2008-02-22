@@ -211,7 +211,10 @@ class AddScalarField : public virtual BaseField, public SF0, public SF1 {
     }
 };
 
-/** Adds Fields from two different sources. */
+/** Adds Fields from two different sources. 
+ * I'm pretty sure that this class supersedes AddScalerField and
+ * AddVectorField, so don't use those if possible.
+ */
 template <class F0, class F1>
 class AddField : public virtual BaseField, public F0, public F1 {
   public:
@@ -227,7 +230,7 @@ class AddField : public virtual BaseField, public F0, public F1 {
     }
 
     /** Adds two fields together. This should really be used by Scalar Fields.
-     * This will not instansiate with Vector Fields. */
+     * This will not instantiate with Vector Fields. */
     inline double operator()(const Vector<double,3> & r) const {
         return F0::operator()(r) + F1::operator()(r);
     }
