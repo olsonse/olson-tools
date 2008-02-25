@@ -305,6 +305,7 @@ AC_CONFIG_FILES([Makeconf
                  examples/random/Makefile
                  examples/readdata/Makefile
                  examples/rk/Makefile
+                 examples/timing/Makefile
                  examples/trapfe/Makefile
                  olson-tools.pc])
 AC_OUTPUT
