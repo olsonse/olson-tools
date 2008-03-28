@@ -427,7 +427,7 @@ template <unsigned int L>
 inline bool operator==(const Vector<double,L>& v1, const Vector<double,L>& v2) {
     bool retval = true;
     for (unsigned int i = 0; i < L; i++)
-        retval = retval && ( fabs(v1.val[i] - v2.val[i]) < fabs(4*M_EPS*v1.val[i]) ) ;
+        retval = retval && ( fabs(v1.val[i] - v2.val[i]) <= fabs(4*M_EPS*v1.val[i]) ) ;
 
     return retval;
 }
