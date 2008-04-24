@@ -13,6 +13,21 @@
  * file.
  */
 
+/** \example field/lookup/testfield.C
+ * \input field/lookup/common.h
+ *
+ * Demonstrates the field lookup code by using a set of field/force data from
+ * a previously calculated field file.  The data pertains to magnetic forces
+ * on an atom in the trapping hyperfine ground-state.
+ */
+
+/** \example field/lookup/createfieldfile.C
+ * \input field/lookup/common.h
+ *
+ * Demonstrates the field field writing utility that produces a file that can
+ * be read in by the field-lookup code.  The data pertains to magnetic forces
+ * on an atom in the trapping hyperfine ground-state.
+ */
 
 
 #ifndef __FORCE_LOOKUP_H

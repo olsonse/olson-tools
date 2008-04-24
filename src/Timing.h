@@ -5,6 +5,13 @@
 #include <vector>
 #include <stdexcept>
 
+/**
+ * \example timing/testtiming.C
+ * An example of how use the timing code.  This code mimics the functionality
+ * of the timing in my Arbitrary Waveform Generator program.  
+ @see Timing,TimingElement,ExpTimingElement
+ */
+
 /** Abstract timing element class. 
  * In general, each timing element only operates in relative time.  An array
  * of these elements will then describe how a particular value (of something)

@@ -16,6 +16,20 @@
  * @see GenericBin and KeyedBin.
  */
 
+/** \example bin/extended_2d/generic/testbin.C
+ * Demonstrates the binning extender so that two-dimensional data can be
+ * binned.  This demonstration extends the simple GenericBin to two dimensions.  
+ *
+ * @see GenericBinExtender,GenericBin
+ */
+
+/** \example bin/extended_2d/keyed/testbin.C
+ * Demonstrates the binning extender so that two-dimensional data can be
+ * binned.  This demonstration extends the KeyedBin to two dimensions.  
+ *
+ * @see GenericBinExtender,KeyedBin
+ */
+
 
 #ifndef GENERICBINEXTENDER_H
 #define GENERICBINEXTENDER_H

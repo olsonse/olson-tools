@@ -53,6 +53,9 @@
  *
  */
 
+/** \example fit/ga/testGA.C
+ * Example use of the genetic algorithm for finding global optima.
+ */
 
 
 #ifndef GENETICALG_H

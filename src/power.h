@@ -17,20 +17,27 @@
  * Initial import
  *
  */
+#endif /* DUMMY_IFDEF_FOR_FORTRAN */
 
 /** \file
- * Insanity drove me to write my own pow function.  (Actually, this was my
- * first assembly project.)
- *
+ * pow(x,y) == \f$ x^{y} \f$.
  * Copyright Spencer Olson 2004 -- All rights reserved.
- * 
- * Because of my own insanity, I wrote my own pow function.
- * pow(x,y) == \f$ x^{y} \f$
+ *
+ * Insanity drove me to write my own pow function.
+ * This was actually my first assembly project.
  *
  * Note that this does not necessarily perform exactly according to ieee754 standards,
- * but oh well; it is at least twice as fast though.
+ * but oh well. 
  * 
- * doing the following showed a total error of ~1.0e-12:
+ * Timing: the examples compare the timing for my own pow() function with the
+ * pow() function that is built in with whatever compiler is used.  In my own
+ * experience, I haven't yet found an implementation that beats my with
+ * respect to execution time.  As an example, I typically observe that my
+ * routine is several times faster than the one provided by GCC. Although
+ * better, the Portland Group compiler does not close the gap much.  The
+ * closest comparison I've found is from Intel's compiler suite.  
+ * 
+ * Doing the following showed a total error of ~1.0e-12:
  * \verbatim
    x = 1.9
    for y = -1000:.01:1000
@@ -48,7 +55,15 @@
    \endverbatim
  *
  */
-#endif /* DUMMY_IFDEF_FOR_FORTRAN */
+
+/** \example fast_pow/c/testfast_pow.c
+ * fast_pow timing and tests in c. */
+
+/** \example fast_pow/fortran/testfast_pow.F
+ * fast_pow timing and tests in F77.
+ *
+ * \include fast_pow/fortran/stdpow.c
+ */
 
 #ifndef MY_OWN_POW
 #define MY_OWN_POW
@@ -91,10 +106,10 @@
 extern "C" {
 #    endif 
 
-#ifdef OLSON_TOOLS_USE_SPENCERS_FAST_POW
+#if defined(OLSON_TOOLS_USE_SPENCERS_FAST_POW) || defined(DOXYGEN_SKIP)
 
-/** Because of my own insanity, I wrote my own pow function.
- * Call this one for c/c++ code.  It will be every so infinitesimally faster
+/** My own pow function.
+ * Call this one for c/c++ code.  It will be ever so infinitesimally faster
  * than fast_pow__ which is resolved to if "fast_pow" is used in fortran.
  * @param x The base.
  * @param y The exponent.

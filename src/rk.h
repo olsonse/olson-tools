@@ -42,6 +42,10 @@
  *
  */
 
+/** \example rk/testrk.C
+ * Example use of Runge-Kutta routines.
+ *?
+
 #ifndef RK_H
 #define RK_H
 

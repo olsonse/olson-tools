@@ -30,8 +30,11 @@
  * operators to manage memory usage.  This file provides a way to create a
  * cache of memory chunks so-as to avoid using the system alloc() and free()
  * functions.
- * 
  * */
+
+/** \example testmemory.C
+ * An example of how to use the memory cache.
+ */
 
 #ifndef MEMORY_GOO
 #define MEMORY_GOO

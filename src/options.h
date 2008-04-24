@@ -30,6 +30,10 @@
  * Copyright 2000-2004 Spencer Olson.
  */
 
+/** \example options/main.C
+ * Demonstrates the use of the option processor class.
+ */
+
 #ifndef OPTIONS_H
 #define OPTIONS_H
 

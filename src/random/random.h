@@ -49,6 +49,11 @@
  * @see MersenneTwister.h.
  * */
 
+/** \example random/testrand.C
+ * Demonstrates (primarily) the normal distribution functions (without using
+ * the Distribution inverter).
+ */
+
 #  ifdef __cplusplus
    /* include this here in case some c++ module wants to directly access the
     * RNG class. 

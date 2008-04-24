@@ -25,8 +25,8 @@ ABBREVIATE_BRIEF       = "The $name class" \
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = $(SRCDIR)
-STRIP_FROM_INC_PATH    = $(SRCDIR)
+STRIP_FROM_PATH        = $(SRCDIR)/src
+STRIP_FROM_INC_PATH    = $(SRCDIR)/src
 SHORT_NAMES            = YES
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
@@ -82,7 +82,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = $(SRCDIR)
+INPUT                  = $(SRCDIR)/src
 FILE_PATTERNS          = *.d \
                          *.java \
                          *.ii \
@@ -109,9 +109,9 @@ RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
-EXAMPLE_PATH           = $(SRCDIR)/../examples
+EXAMPLE_PATH           = $(SRCDIR)/examples
 EXAMPLE_PATTERNS       =
-EXAMPLE_RECURSIVE      = NO
+EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = 
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
@@ -209,7 +209,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = $(SRCDIR)
+INCLUDE_PATH           = $(SRCDIR)/src
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = _MSC_VER \
                          DOXYGEN_SKIP

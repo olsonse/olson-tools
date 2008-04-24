@@ -17,6 +17,14 @@
  * @see GenericBin.
  */
 
+/** \example bin/keyed/testbin.C
+ * Demonstrates binning a set of data according to a specific single key value.
+ * Instead of just incrementing a counter for each bin() operation as done in
+ * GenericBin, the data is accumulated (summed).
+ *
+ * @see KeyedBin,GenericBin
+ */
+
 
 #ifndef KEYEDBIN_H
 #define KEYEDBIN_H

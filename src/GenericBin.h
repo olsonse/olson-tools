@@ -13,6 +13,11 @@
  * Copyright 2004-2005 Spencer Olson.
  */
 
+/** \example bin/generic/testbin.C
+ * Demonstrates the simple binning utility class. 
+ * @see GenericBin
+ */
+
 
 #ifndef GENERICBIN_H
 #define GENERICBIN_H

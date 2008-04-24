@@ -13,5 +13,17 @@ DIST_SUBDIRS = src examples
 tests :
 	cd examples; make
 
-doc :
-	cd src; doxygen tools.doxy
+
+
+
+include doxygen.am
+
+MOSTLYCLEANFILES = $(DX_CLEANFILES)
+
+if DX_COND_doc
+all-local: doxygen-doc
+APIDOCS = doc/api
+endif
+
+EXTRA_DIST = $(DX_CONFIG) $(APIDOCS)
+

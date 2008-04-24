@@ -33,6 +33,11 @@
  * Copyright 2004 Spencer Olson
  */
 
+/** \example readdata/testreadData.C
+ * Demonstrates using the templated readData function to read a set of data
+ * from file, with allowed comments in the data file.
+ */
+
 #ifndef READDATA_H
 #define READDATA_H
 

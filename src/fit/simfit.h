@@ -18,6 +18,11 @@
  * and some is not.  Not yet sure which is.  Can't remember.
  */
 
+/** \example fit/simplex/testSimplex.C
+ * Simple test to show local optimization using the simplex.
+ * @see Simplex,Fit
+*/
+
 #ifndef SIMFIT_H
 #define SIMFIT_H
 

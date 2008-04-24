@@ -4,8 +4,6 @@
 #include <math.h>
 #include <olson-tools/power.h>
 
-#define CUBE(x)  ((x)*(x)*(x))
-
 
 double difftms(struct tms tf, struct tms ti) {
     double seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);

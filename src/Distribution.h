@@ -45,6 +45,13 @@
  * Copyright 2004 Spencer Olson.
  */
 
+/** \example invertdistro/1D/testdist.C
+ * Example of using the distribution inverter for a one-dimensional
+ * distribution. */
+
+/** \example invertdistro/2D/testdist.C
+ * Example of using the distribution inverter for a two-dimensional
+ * distribution. */
 
 #ifndef DISTRIBUTION_H
 #define DISTRIBUTION_H
