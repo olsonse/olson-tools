@@ -4,8 +4,8 @@
 # This is $Revision$ of olson-tools.
 
 AC_PREREQ(2.59)
-AC_INIT(olson-tools, r458, olsonse@umich.edu)
-AM_INIT_AUTOMAKE(olson-tools,r458)
+AC_INIT(olson-tools, r460, olsonse@umich.edu)
+AM_INIT_AUTOMAKE(olson-tools,r460)
 AC_CONFIG_SRCDIR([src/config.h.in])
 AC_CONFIG_HEADER([src/config.h])
 AX_PREFIX_CONFIG_H([src/$PACKAGE-config.h])
