@@ -18,3 +18,12 @@ plot \
     'gravity-force.dat' u 1:4 w l axes x1y2 t 'g'
 
 pause -1;
+
+plot \
+     'timing.dat' u 1:2 w l t 'v[X:Z]', \
+     '' u 1:3 w l t 'scalar', \
+     '' u 1:4 w l t 'g'
+
+pause -1;
+reread
+

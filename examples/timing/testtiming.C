@@ -77,5 +77,11 @@ int main() {
             << a << '\n'
             << std::flush;
     }
+
+    TimingPrinter tp;
+    tp.timers.push_back(&vfield.timing);
+    tp.timers.push_back(&sfield.timing);
+    tp.timers.push_back(&gravity.timing);
+    tp.printTimings("timing.dat", 0.0, dt, t_max);
 }
 

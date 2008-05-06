@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include "m_eps.h"
 
 /**
  * \example timing/testtiming.C
@@ -114,6 +115,46 @@ class Timing {
 
     double current_val;
     std::vector<TimingElement *> timings;
+};
+
+
+/** Generic timing print class.  
+ * This class prints a set of timings out to file.
+ *
+ * @see Timing
+ * @see TimingElement
+ */
+class TimingPrinter {
+  public:
+    TimingPrinter() {}
+
+    void printTimings(const std::string & filename,
+                      const double & ti,
+                      const double & dt,
+                      const double & tf) {
+        std::ofstream fout(filename.c_str());
+
+        double t_max = tf * (1.0 + 10.0 * M_EPS);
+        for (double t = ti; t <= t_max ; t+=dt) {
+            fout << t << '\t';
+
+            for (unsigned int i = 0; i < timers.size(); i++) {
+                timers[i]->set_timing(t);
+                fout << timers[i]->current_val << '\t';
+            }
+
+            fout << '\n';
+        }
+
+        fout << std::flush;
+        fout.close();
+
+        for (unsigned int i = 0; i < timers.size(); i++) {
+            timers[i]->set_timing(0.0);
+        }
+    }
+
+    std::vector<Timing *> timers;
 };
 
 #endif // TIMING_H
