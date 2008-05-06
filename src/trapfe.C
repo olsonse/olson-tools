@@ -37,7 +37,10 @@ extern "C" {
 #  include <signal.h>
 #endif
 #  include <stdio.h>
+#  include <sys/types.h>
 #  include <unistd.h>
+
+static int fpe_pause = 1;
 
 void fpesig(
             int sig
@@ -45,16 +48,22 @@ void fpesig(
             , fex_info_t *info
 #endif
 ){
-    int stop_now = 0;
+    fpe_pause = 1;
     fprintf(stderr,
            "A math exception was trapped\n"
            "Attach to the debugger and find out where/why.\n"
            "This function will pause here until otherwise interrupted.\n"
-           "Address of 'stop_now' variable:  (int*)%p\n"
-           "Set stop_now to false to continue\n", &stop_now
-          );
+           "Address of 'fpe_pause' variable:  (int*)%p\n"
+           "To debug:\n"
+           "1.  Attach to process (with pid = %d) in debugger\n"
+           "2.  Set fpe_pause to 0 to continue\n"
+           "    (e.g. in gdb:  print *((int*)%p) = 0)\n"
+           "3.  Single step in debugger until fpe signal handler is exited\n"
+           "    and your own code is entered.\n"
+           , &fpe_pause, getpid(), &fpe_pause
+    );
 
-    while (!stop_now) {
+    while (fpe_pause) {
         sleep(1);
     }
 }

@@ -176,8 +176,7 @@ subroutine rk_adapt_driver(x, n, ti, dt, dt_step, derivs, derivsArgs, ERRMAX)
 
         if(abs(dt_step).le.TINY) then
             ! This code should NEVER be reached for a physical guide!
-            ! call log_severe('stepsize (%g) smaller than TINY'//char(0), %val(dt_step),0d0,0d0)
-            call log_severe('stepsize (%g) smaller than TINY'//char(0), dt_step, 0d0, 0d0)
+            call log_severe('stepsize (%g) smaller than TINY'//char(0), %val(dt_step),0d0,0d0)
             call killMe()
         endif
     end do
@@ -248,7 +247,6 @@ subroutine rkqs(x, n, dxdt, t, dt_try, eps, xscal, dt_did, tf, derivs, derivsArg
         ! now set the absolute time
         tnew = t + dt
         if (tnew .eq. t) then
-            !call log_severe("stepsize (%g = %g + %g) underflow in rkqs"//char(0), tnew, t, dt)
             call log_severe("stepsize (%g = %g + %g) underflow in rkqs at:"//char(0), %val(tnew), %val(t), %val(dt))
             call log_severe("trying to reach t_f = %g"//char(0), %val(tf))
             do i=1,n
