@@ -80,6 +80,12 @@
 typedef struct { int dontbugme; } VInit_t;
 #define VInit   ((VInit_t *)NULL)
 
+
+/** Vector class of arbitrary type.  The idea here is to provide a clean
+ * interface to vector calculations that are not too slow.  The size is
+ * compile time and the compiler may opt to unroll loops and perform other
+ * optimizations.   
+ */
 template <class T, unsigned int L>
 class Vector {
   public:
@@ -120,6 +126,9 @@ class Vector {
         for (unsigned int i = 0; i < L; i++) this->val[i] = (T)va_arg(ap,TP);
         va_end(ap);
     }
+
+    /** The length of the val array. */
+    inline unsigned int length() const { return L;}
 
     inline void zero () {
         memset (&this->val[0], 0, sizeof(T)*L);
@@ -558,6 +567,10 @@ inline std::istream & operator>>(std::istream & input, Vector<T,L> & v) {
     return input;
 }
 
+/** Square matrix class.  The idea here is to provide a clean interface to
+ * matrix calculations that are not too slow.  The size is compile time and
+ * the compiler may opt to unroll loops and perform other optimizations.  
+ */
 template <class T, unsigned int L>
 class SquareMatrix {
   public:
@@ -572,6 +585,16 @@ class SquareMatrix {
     inline SquareMatrix(const T that[L][L]) {
         *this = that;
     }
+
+    /** The side length of the val matrix. */
+    inline unsigned int side_length() const { return L;}
+
+    inline void zero () {
+        memset (&this->val[0][0], 0, sizeof(T)*L*L);
+    }
+
+    inline T & operator()(const int & i, const int & j) { return val[i][j]; }
+    inline const T & operator()(const int & i, const int & j) const { return val[i][j]; }
 
     inline const SquareMatrix & operator=(const SquareMatrix & that) {
         memcpy (&this->val[0][0], &that.val[0][0], sizeof(T)*L*L);
