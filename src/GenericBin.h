@@ -26,7 +26,17 @@
 #include <string.h>
 #include <cfloat>
 
+#ifdef USE_MPI
+#  include "mpi_init.h"
+#endif
+
 /** A generic histogramming class.
+ *
+ * If MPI is used, this class supplies its own SUM operator for MPI::Reduce
+ * operations.  If a non standard bin type is used (i.e. not double, float,
+ * int), then the user will have to specialize BlockAdder::* for GenericBin
+ * using the standard specializations below.  
+ *
  * @param TKey
  *     The type of the histogram key (double, int, ...).
  *
@@ -48,6 +58,9 @@ class GenericBin {
     double scale;
   public:
 
+    /** The actual histogram. */
+    TBin bins[nbins];
+
     /** Constructor.
      * @param mn
      *     Expected minimum of the data.
@@ -57,6 +70,12 @@ class GenericBin {
      */
     inline GenericBin(const double & mn = 0.0, const double & mx = 0.0) {
         init(mn,mx);
+
+#ifdef USE_MPI
+        /* just to ensure that this is not optimized away. */
+        int * a = &added_mpi_init;
+        (void) ((*a)*1);
+#endif
     }
 
     /** Initialize the binning. */
@@ -66,9 +85,6 @@ class GenericBin {
         scale = (mn==0 && mx==0 ? DBL_MAX : double(nbins)/(max - min) * 0.999999);
         clearBins();
     }
-
-    /** The actual histogram. */
-    TBin bins[nbins];
 
     /** Gets the appropriate child bin.
      * This generic bin extender will allow an arbitrary dimension of bins.
@@ -120,6 +136,192 @@ class GenericBin {
 
     /** The maximum range of this histogrammer. */
     const double & getMax() const { return max; }
+
+    /** Add in the histogram values.  Note that only the histogram
+     * and associated data is SUMMED. This function relies on the TBin
+     * class having an appropriate TBin::operator+=(const TBin &) defined.
+     */
+    GenericBin & operator+=(const GenericBin & that) {
+        for (unsigned int j = 0; j < nbins; j++) {
+            bins[j] += that.bins[j];
+        }
+        return *this;
+    }
+
+#ifdef USE_MPI
+    typedef struct {
+        MPI::Op SUM;
+        MPI::Datatype TYPE;
+
+        static void init() {
+            MPI.SUM.Init(reinterpret_cast<MPI::User_function*>(&MPISUM), true);
+
+            olson_tools::MPIStructBuilder msb;
+            msb.addBlocks<GenericBin>();
+            MPI.TYPE = msb.Create_struct();
+        }
+
+        static void finish() {
+            MPI.SUM.Free();
+            MPI.TYPE.Free();
+        }
+
+        /** Provide the equivalent of MPI::SUM.  
+         * @see GenericBin::operator+=(const GenericBin &).
+         */
+        static void MPISUM(const GenericBin* in, GenericBin* inout, int len, const MPI::Datatype & typ) {
+            for (int i = 0; i < len; i++) {
+                inout[i] += in[i];
+            }
+        }
+
+        static int add_init() {
+            olson_tools::MPIInit::add_init(init);
+            olson_tools::MPIInit::add_finish(finish);
+            return 1;
+        }
+
+    } MPI_INFO;
+
+    static MPI_INFO MPI;
+
+    static int added_mpi_init;
+#endif // USE_MPI
 };
+
+
+#ifdef USE_MPI
+template <class TKey, unsigned int nbins, class TBin>
+typename GenericBin<TKey,nbins,TBin>::MPI_INFO GenericBin<TKey,nbins,TBin>::MPI = {
+    MPI::OP_NULL,       /* SUM */
+    MPI::DATATYPE_NULL  /* TYPE */
+};
+
+
+template <class TKey, unsigned int nbins, class TBin>
+int GenericBin<TKey,nbins,TBin>::added_mpi_init = GenericBin<TKey,nbins,TBin>::MPI.add_init();
+
+
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = double>. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,double> * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(nbins,sizeof(double),MPI::DOUBLE));
+    /* shouldn't have to worry about alignment issues for doubles (yet) */
+}
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = Vector<double,L> >. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block, unsigned int L>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,Vector<double,L> > * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(L*nbins,sizeof(double),MPI::DOUBLE));
+    /* shouldn't have to worry about alignment issues for doubles (yet) */
+}
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = float>. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,float> * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(nbins,sizeof(float),MPI::FLOAT));
+
+    /* now we'll add any remaining padding necessary--helpful for arrays */
+    int pad = sizeof(GenericBin<TKey,nbins,float>)
+            - (3*sizeof(double) + nbins*sizeof(float));
+    if (pad) blocks.push_back(Block(1,pad));    /* pad */
+}
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = Vector<float,L> >. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block, unsigned int L>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,Vector<float,L> > * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(L*nbins,sizeof(float),MPI::FLOAT));
+
+    /* now we'll add any remaining padding necessary--helpful for arrays */
+    int pad = sizeof(GenericBin<TKey,nbins,Vector<float,L> >)
+            - (3*sizeof(double) + L*nbins*sizeof(Vector<float,L>));
+    if (pad) blocks.push_back(Block(1,pad));    /* pad */
+}
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = int>. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,int> * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(nbins,sizeof(int),MPI::INT));
+
+    /* now we'll add any remaining padding necessary--helpful for arrays */
+    int pad = sizeof(GenericBin<TKey,nbins,int>)
+            - (3*sizeof(double) + nbins*sizeof(int));
+    if (pad) blocks.push_back(Block(1,pad));    /* pad */
+}
+
+/** blockAdder for GenericBin<Tkey,nbins,TBin = Vector<int,L> >. 
+ * reference layout:
+    struct GenericBin {
+        double max;
+        double min;
+        double scale;
+        TBin bins[nbins];
+    }
+*/
+template <class TKey, unsigned int nbins, class Block, unsigned int L>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBin<TKey,nbins,Vector<int,L> > * null_ptr ) {
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    blocks.push_back(Block(L*nbins,sizeof(int),MPI::INT));
+
+    /* now we'll add any remaining padding necessary--helpful for arrays */
+    int pad = sizeof(GenericBin<TKey,nbins,Vector<int,L> >)
+            - (3*sizeof(double) + L*nbins*sizeof(Vector<int,L>));
+    if (pad) blocks.push_back(Block(1,pad));    /* pad */
+}
+#endif // USE_MPI
+
+
 
 #endif //GENERICBIN_H

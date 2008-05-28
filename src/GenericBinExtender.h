@@ -40,7 +40,16 @@
 #include "strutil.h"
 #include <cfloat>
 
+#ifdef USE_MPI
+#  include "mpi_init.h"
+#endif
+
 /** A histogramming dimension extender.
+ *
+ * If MPI is used, this class supplies its own SUM operator for MPI::Reduce
+ * operations.  This class assumes that the subclass T2 has its own
+ * specialization of BlockAdder::*.  
+ *
  * @param TKey
  *     The type of the key to base histogram (double, int, ...).
  *
@@ -67,6 +76,9 @@ class GenericBinExtender {
     double scale;
   public:
 
+    /** The actual bin containers holding the data. */
+    T2 bins[nbins];
+
     /** Constructor.
      * @param mn
      *     Expected minimum of the data.
@@ -88,6 +100,12 @@ class GenericBinExtender {
         if (mx2 != mn2) {
             initChildBins(mn2,mx2);
         }
+
+#ifdef USE_MPI
+        /* just to ensure that this is not optimized away. */
+        int * a = &added_mpi_init;
+        (void) ((*a)*1);
+#endif
     }
 
     /** Initialize the binning. */
@@ -109,9 +127,6 @@ class GenericBinExtender {
         for(unsigned int i = 0; i < nbins; bins[i++] *= factor );
         return *this;
     }
-
-    /** The actual bin containers holding the data. */
-    T2 bins[nbins];
 
     /** Add a value to the histogram.
      * This function will only compile if the child bin type has a bin()
@@ -172,6 +187,102 @@ class GenericBinExtender {
 
     /** The maximum range of this histogrammer. */
     const double & getMax() const { return max; }
+
+    /** Add in the histogram values.  Note that only the histogram
+     * and associated data is SUMMED. This function relies on the T2
+     * class having an appropriate T2::operator+=(const T2 &) defined.
+     */
+    GenericBinExtender & operator+=(const GenericBinExtender & that) {
+        for (unsigned int j = 0; j < nbins; j++) {
+            bins[j] += that.bins[j];
+        }
+        return *this;
+    }
+
+#ifdef USE_MPI
+    typedef struct {
+        MPI::Op SUM;
+        MPI::Datatype TYPE;
+
+        static void init() {
+            MPI.SUM.Init(reinterpret_cast<MPI::User_function*>(&MPISUM), true);
+
+            olson_tools::MPIStructBuilder msb;
+            msb.addBlocks<GenericBinExtender>();
+            MPI.TYPE = msb.Create_struct();
+        }
+
+        static void finish() {
+            MPI.SUM.Free();
+            MPI.TYPE.Free();
+        }
+
+        /** Provide the equivalent of MPI::SUM.  
+         * @see GenericBinExtender::operator+=(const GenericBinExtender &).
+         */
+        static void MPISUM(const GenericBinExtender* in, GenericBinExtender* inout, int len, const MPI::Datatype & typ) {
+            for (int i = 0; i < len; i++) {
+                inout[i] += in[i];
+            }
+        }
+
+        static int add_init() {
+            olson_tools::MPIInit::add_init(init);
+            olson_tools::MPIInit::add_finish(finish);
+            return 1;
+        }
+
+    } MPI_INFO;
+
+    static MPI_INFO MPI;
+
+    static int added_mpi_init;
+#endif // USE_MPI
 };
+
+
+#ifdef USE_MPI
+template <class TKey, class T2, unsigned int nbins>
+typename GenericBinExtender<TKey,T2,nbins>::MPI_INFO GenericBinExtender<TKey,T2,nbins>::MPI = {
+    MPI::OP_NULL,       /* SUM */
+    MPI::DATATYPE_NULL  /* TYPE */
+};
+
+
+template <class TKey, class T2, unsigned int nbins>
+int GenericBinExtender<TKey,T2,nbins>::added_mpi_init = GenericBinExtender<TKey,T2,nbins>::MPI.add_init();
+
+
+
+/** blockAdder for GenericBinExtender. 
+ * reference layout:
+    struct GenericBinExtender {
+        double max;
+        double min;
+        double scale;
+        T2 bins[nbins];
+    }
+*/
+template <class TKey, class T2, unsigned int nbins, class Block>
+void blockAdder( std::vector<Block> & blocks,
+                 const GenericBinExtender<TKey,T2,nbins> * null_ptr ) {
+    int bi = olson_tools::MPIStructBuilder::total_size(blocks);
+    blocks.push_back(Block(3,sizeof(double))); /* pad */
+    for (unsigned int i = 0; i < nbins; i++) {
+        blockAdder( blocks, (T2*)NULL );
+        /* we assume that any class T2 will take care of its own alignement
+         * problems. */
+    }
+
+    /* now we'll add any remaining padding necessary--helpful for arrays.
+     * This should actually not really be necessary, but we'll do it anyway. */
+    int pad = sizeof(GenericBinExtender<TKey,T2,nbins>)
+            - (olson_tools::MPIStructBuilder::total_size(blocks) - bi);
+    if (pad) blocks.push_back(Block(1,pad));    /* pad */
+}
+#endif // USE_MPI
+
+
+
 
 #endif //GENERICBINEXTENDER_H
