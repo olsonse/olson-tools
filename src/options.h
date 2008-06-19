@@ -278,7 +278,7 @@ class OptionHandler {
     }
 
     /** Standard option handler.
-     * May be called by handlOpt for a specific implementation to handle some
+     * May be called by handleOpt for a specific implementation to handle some
      * standard type options:  bool, double, float, int, uint
      * If an option on the command line is specified in the form of
      * <code>-option=option-value</code>, then opt will be set to "option" and
