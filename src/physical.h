@@ -371,7 +371,7 @@ namespace physical {
         // acceleration
         const double Galileo = centimeters/second/second;
         const double Galileos = Galileo;
-        // standard gavitational acceleration at sea level
+        // standard gravitational acceleration at sea level
         const double gravity = 9.80665*meters/second/second;
         // mass
         const double kilohyl = kilogram*gravity*second*second/meter;
@@ -797,7 +797,7 @@ namespace physical {
         // Planck constant
         const double h = 6.6260755e-34*Joule*seconds;
         const double h_bar = h/(2.0*pi);
-        // standard gavitational acceleration at sea level
+        // standard gravitational acceleration at sea level
         const double g = units::gravity;
         // electron charge
         const double e = 1.60217733e-19*Coulombs;

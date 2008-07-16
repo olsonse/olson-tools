@@ -85,13 +85,40 @@ class ExpTimingElement : public TimingElement {
  */
 class Timing {
   public:
-    Timing() : current_val(0.0) {}
+    Timing() : current_val(0.0),
+               timings(), time_stack(),
+               current_time_absolute(0.0) {}
+
+    /** saves an absolute time on the time stack. */
+    Timing & push_time(const double & t_abs) {
+        time_stack.push_back(t_abs);
+        return *this;
+    }
+
+    /** save current absolute time on the time stack.
+     * @return Reference to self.  
+     */
+    Timing & push_time() {
+        return push_time(current_time_absolute);
+    }
+
+    /** pop and restore an old timing value from the time stack. 
+     * @return Reference to self.
+     */
+    Timing & pop_time() {
+        double t_abs = time_stack.back();
+        this->set_timing(t_abs);
+        time_stack.pop_back();
+        return *this;
+    }
 
     /** Set the current value of the timed change.
      * @param t_absolute The absolute time will define which element in the
      * time interval array is used. 
      */
     void set_timing(const double & t_absolute) {
+        /* set the current time for possible later use. */
+        current_time_absolute = t_absolute;
         double t_i = 0.0, t_f = 0.0;
         int i = 0;
         for (; i < timings.size(); i++) {
@@ -115,6 +142,13 @@ class Timing {
 
     double current_val;
     std::vector<TimingElement *> timings;
+
+    /** vector of saved times.  Useful for printing as a function of t without
+     * messing up with default time settings.  */
+    std::vector<double> time_stack;
+
+    /** Current absolute time:  last set time. */
+    double current_time_absolute;
 };
 
 
@@ -134,6 +168,11 @@ class TimingPrinter {
                       const double & tf) {
         std::ofstream fout(filename.c_str());
 
+        /* save old timing values. */
+        for (unsigned int i = 0; i < timers.size(); i++) {
+            timers[i]->push_time();
+        }
+
         double t_max = tf * (1.0 + 10.0 * M_EPS);
         for (double t = ti; t <= t_max ; t+=dt) {
             fout << t << '\t';
@@ -149,8 +188,9 @@ class TimingPrinter {
         fout << std::flush;
         fout.close();
 
+        /* restore old timing values. */
         for (unsigned int i = 0; i < timers.size(); i++) {
-            timers[i]->set_timing(0.0);
+            timers[i]->pop_time();
         }
     }
 
