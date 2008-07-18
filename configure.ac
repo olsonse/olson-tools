@@ -2,10 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 # This is $Revision$ of olson-tools.
+m4_define([GET_SVNREV], regexp([$Revision$],[\($Revision: *\)\([0-9]*\)],r\2) )
 
 AC_PREREQ(2.59)
-AC_INIT(olson-tools, r539, olsonse@umich.edu)
-AM_INIT_AUTOMAKE(olson-tools,r539)
+AC_INIT(olson-tools, GET_SVNREV, olsonse@umich.edu)
+AM_INIT_AUTOMAKE(olson-tools,GET_SVNREV)
 AC_CONFIG_SRCDIR([src/config.h.in])
 AC_CONFIG_HEADER([src/config.h])
 AX_PREFIX_CONFIG_H([src/$PACKAGE-config.h])
