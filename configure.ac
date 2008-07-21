@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# This is $Revision$ of olson-tools.
+# This is $Revision$ of olson-tools, not revision 578.
 m4_define([GET_SVNREV], regexp([$Revision$],[\($Revision: *\)\([0-9]*\)],r\2) )
 
 AC_PREREQ(2.59)
