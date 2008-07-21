@@ -21,9 +21,11 @@ include doxygen.am
 MOSTLYCLEANFILES = $(DX_CLEANFILES)
 
 if DX_COND_doc
-all-local: doxygen-doc
+all-local: doc doxygen-doc
+doc :
+	mkdir -p doc
 APIDOCS = doc/api
 endif
 
-EXTRA_DIST = $(DX_CONFIG) $(APIDOCS)
+EXTRA_DIST = $(DX_CONFIG) $(APIDOCS) licenses
 

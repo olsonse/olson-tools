@@ -26,6 +26,7 @@
 #define FIELDS_H
 
 #include "Vector.h"
+#include "indices.h"
 
 #if 0
             //Gradient::gradient(a, *static_cast< magnitude_of<super1> *>((super1*)this), r);

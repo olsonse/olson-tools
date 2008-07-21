@@ -89,14 +89,21 @@ typedef struct { int dontbugme; } VInit_t;
 template <class T, unsigned int L>
 class Vector {
   public:
+    /** The internal storage array of the vector elements. */
     T val[L];
 
+    /** Default constructor does not do anything. */
     inline Vector () {}
 
+    /** Copy constructor--from a Vector. */
     inline Vector (const Vector & that) {*this = that;}
 
+    /** Copy constructor--from an array. */
     inline Vector (const T that[L]) {*this = that;}
 
+    /** Assignment constructor.
+     * Assigns all elements of the vector to the given value that.
+     */
     inline Vector (const T that) {*this = that;}
 
     /** Copy list of values into Vector.
@@ -130,112 +137,139 @@ class Vector {
     /** The length of the val array. */
     inline unsigned int length() const { return L;}
 
+    /** Zero the Vector. */
     inline void zero () {
         memset (&this->val[0], 0, sizeof(T)*L);
     }
 
+    /** Apply fabs(double) to all elements and save.  
+     * fabs(double) is called regardless of the actual type of the vector. */
     inline void save_fabs() {
         for (unsigned int i = 0; i < L; i++) this->val[i] = fabs(this->val[i]);
     }
 
+    /** Apply sqrt(double) to all elements and save. */
     inline void save_sqrt() {
         for (unsigned int i = 0; i < L; i++) this->val[i] = sqrt(this->val[i]);
     }
 
+    /** Index operator--non-const version. */
     inline T & operator[](const int & i) { return val[i]; }
+
+    /** Index operator--const version. */
     inline const T & operator[](const int & i) const { return val[i]; }
 
+    /** Assignment operator--from Vector of different type. 
+     * The assignment employs an explicit cast from T2 to T. */
     template <class T2>
     inline const Vector & operator=(const Vector<T2,L>& that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] = (T)that.val[i];
         return *this;
     }
 
+    /** Assignment operator--from Vector of same type. */
     inline const Vector & operator=(const Vector & that) {
         memcpy (&this->val[0], &that.val[0], sizeof(T)*L);
         return *this;
     }
 
+    /** Assignment operator--from array of same type. */
     inline const Vector & operator=(const T that[L]) {
         memcpy (&this->val[0], &that[0], sizeof(T)*L);
         return *this;
     }
 
+    /** Assignment operator--from scalar value.  All elements will be assigned
+     * to this scalar.  */
     inline const Vector & operator=(const T & that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] = that;
         return *this;
     }
 
+    /** Inner product of two Vectors. */
     inline T operator*(const Vector & that) const {
         T retval(0);
         for (unsigned int i = 0; i < L; i++) retval += this->val[i]*that.val[i];
         return retval;
     }
 
+    /** Vector X Scalar  multiplication. */  
     inline Vector operator*(const T & that) const {
         Vector ret;
         for (unsigned int i = 0; i < L; i++) ret.val[i] = this->val[i] * that;
         return ret;
     }
 
+    /** Scalar X Vector multiplication (friend method). */  
     template <class TT, unsigned int LL>
     friend inline Vector operator*(const T & that, const Vector & v);
 
+    /** Vector X Scalar immediate multiplication. */  
     inline const Vector & operator*=(const T & that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] *= that;
         return *this;
     }
 
+    /** Vector X Scalar division. */  
     inline Vector operator/(const T & that) const {
         Vector ret;
         for (unsigned int i = 0; i < L; i++) ret.val[i] = this->val[i] / that;
         return ret;
     }
 
+    /** Vector X Scalar immediate division. */  
     inline const Vector & operator/=(const T & that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] /= that;
         return *this;
     }
 
+    /** Vector - Vector subtraction. */  
     inline Vector operator-(const Vector& that) const {
         Vector retval;
         for (unsigned int i = 0; i < L; i++) retval.val[i] = this->val[i]-that.val[i];
         return retval;
     }
 
+    /** Vector - Scalar subtraction. */  
     inline Vector operator-(const T& that) const {
         Vector retval;
         for (unsigned int i = 0; i < L; i++) retval.val[i] = this->val[i]-that;
         return retval;
     }
 
+    /** Vector - Scalar immediate subtraction. */  
     inline const Vector & operator-=(const T& that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] -= that;
         return *this;
     }
 
+    /** Vector - Vector immediate subtraction. */  
     inline const Vector & operator-=(const Vector& that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] -= that.val[i];
         return *this;
     }
 
+    /** Vector + Vector subtraction. */  
     inline Vector operator+(const Vector& that) const {
         Vector retval;
         for (unsigned int i = 0; i < L; i++) retval.val[i] = this->val[i]+that.val[i];
         return retval;
     }
 
+    /** Vector + Scalar subtraction. */  
     inline Vector operator+(const T& that) const {
         Vector retval;
         for (unsigned int i = 0; i < L; i++) retval.val[i] = this->val[i]+that;
         return retval;
     }
 
+    /** Vector + Vector immediate subtraction. */  
     inline const Vector & operator+=(const Vector& that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] += that.val[i];
         return *this;
     }
 
+    /** Vector + Scalar immediate subtraction. */  
     inline const Vector & operator+=(const T& that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] += that;
         return *this;
@@ -261,15 +295,15 @@ class Vector {
         return *this;
     }
 
-
+    /** Compute the magnitude of this vector. */
     inline T abs () const {
         return sqrt ((*this) * (*this));
     }
 
 
-    /* ************** COMPARISION OPERATORS *************** */
+    /* ************** COMPARISON OPERATORS *************** */
 
-    /** Cummulative comparison (gt) between Vector and a scalar.
+    /** Cumulative comparison (gt) between Vector and a scalar.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
      */
@@ -282,7 +316,7 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (gteq) between Vector and a scalar.
+    /** Cumulative comparison (gteq) between Vector and a scalar.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
      */
@@ -295,10 +329,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (gt) between Vector and a Vector.
+    /** Cumulative comparison (gt) between Vector and a Vector.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
     inline bool operator>(const Vector<T2,L>& that) const {
@@ -309,10 +343,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (gteq) between Vector and a Vector.
+    /** Cumulative comparison (gteq) between Vector and a Vector.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
     inline bool operator>=(const Vector<T2,L>& that) {
@@ -323,10 +357,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (lt) between Vector and a scalar.
+    /** Cumulative comparison (lt) between Vector and a scalar.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
     inline bool operator<(const T2& that) {
@@ -337,10 +371,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (leq) between Vector and a scalar.
+    /** Cumulative comparison (leq) between Vector and a scalar.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
     inline bool operator<=(const T2& that) {
@@ -351,10 +385,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (lt) between Vector and a Vector.
+    /** Cumulative comparison (lt) between Vector and a Vector.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
     */
     template <class T2>
     inline bool operator<(const Vector<T2,L>& that) {
@@ -365,10 +399,10 @@ class Vector {
         return retval;
     }
 
-    /** Cummulative comparison (leq) between Vector and a Vector.
+    /** Cumulative comparison (leq) between Vector and a Vector.
      * Comparison between Vectors of different types are allowed to use default
      * promotion of types.
-     * @return cummulative expression of component-wise comparision.
+     * @return cumulative expression of component-wise comparison.
     */
     template <class T2>
     inline bool operator<=(const Vector<T2,L>& that) {
@@ -441,6 +475,7 @@ inline bool operator==(const Vector<double,L>& v1, const Vector<double,L>& v2) {
     return retval;
 }
 
+/** Scalar X Vector multiplication operator. */
 template <class T, unsigned int L>
 inline Vector<T,L> operator*(const T & that, const Vector<T,L> & v) {
     Vector<T,L> ret;
@@ -448,6 +483,7 @@ inline Vector<T,L> operator*(const T & that, const Vector<T,L> & v) {
     return ret;
 }
 
+/** Vector X Vector cross product returned via a temporary Vector. */
 template <class T>
 inline Vector<T,3> cross (const Vector<T,3> & a, const Vector<T,3> b) {
     Vector<T,3> retval;
@@ -457,6 +493,7 @@ inline Vector<T,3> cross (const Vector<T,3> & a, const Vector<T,3> b) {
     return retval;
 }
 
+/** Vector X Vector cross product returned via a given input buffer. */
 template <class T>
 inline void cross (Vector<T,3> &retval, const Vector<T,3> & a, const Vector<T,3> b) {
     retval.val[0] = a.val[1]*b.val[2] - a.val[2]*b.val[1];
@@ -520,6 +557,8 @@ inline const Vector<T,L> compPow(const Vector<T,L> & v1, const T & e) {
     return retval;
 }
 
+/** Compute the maximum value in the Vector.
+ */
 template <class T, unsigned int L>
 inline T max (const Vector<T,L> & v) {
     T retval = v[0];
@@ -541,6 +580,7 @@ inline double mean (const Vector<T,L> & v) {
     return ((double)sum(v)) / ((double)L);
 }
 
+/** Compute the sum of the elements of the Vector. */
 template <class T, unsigned int L>
 inline T sum (const Vector<T,L> & v) {
     T retval = (T)0;
@@ -550,17 +590,22 @@ inline T sum (const Vector<T,L> & v) {
     return retval;
 }
 
+/** Define SQR explicitly to be in the inner product of a Vector with its
+ * self.  We define this specialization because the return value is not the
+ * same as the arguments. */
 template <class T, unsigned int L>
 inline T SQR(const Vector<T,L> & v) {
     return v*v;
 }
 
+/** Stream output operator. */
 template <class T, unsigned int L>
 inline std::ostream & operator<<(std::ostream & output, const Vector<T,L> & v) {
     for (unsigned int i = 0; i < L; i++) output << v.val[i] << '\t';
     return output;
 }
 
+/** Stream input operator. */
 template <class T, unsigned int L>
 inline std::istream & operator>>(std::istream & input, Vector<T,L> & v) {
     for (unsigned int i = 0; i < L; i++) input >> v.val[i];
@@ -574,14 +619,18 @@ inline std::istream & operator>>(std::istream & input, Vector<T,L> & v) {
 template <class T, unsigned int L>
 class SquareMatrix {
   public:
+    /** The internal storage array of the matrix elements. */
     T val[L][L];
 
+    /** Default constructor does nothing. */
     inline SquareMatrix() {}
 
+    /** SquareMatrix copy constructor--from another SquareMatrix. */
     inline SquareMatrix(const SquareMatrix & that) {
         *this = that;
     }
 
+    /** SquareMatrix copy constructor--from a two dimensional C-array. */
     inline SquareMatrix(const T that[L][L]) {
         *this = that;
     }
@@ -589,23 +638,30 @@ class SquareMatrix {
     /** The side length of the val matrix. */
     inline unsigned int side_length() const { return L;}
 
+    /** Set all matrix elements to zero. */
     inline void zero () {
         memset (&this->val[0][0], 0, sizeof(T)*L*L);
     }
 
+    /** Index operator--non-const version. */
     inline T & operator()(const int & i, const int & j) { return val[i][j]; }
+
+    /** Index operator--const version. */
     inline const T & operator()(const int & i, const int & j) const { return val[i][j]; }
 
+    /** Assignment operator--from SquareMatrix. */
     inline const SquareMatrix & operator=(const SquareMatrix & that) {
         memcpy (&this->val[0][0], &that.val[0][0], sizeof(T)*L*L);
         return *this;
     }
 
+    /** Assignment operator--from two dimensional C-array. */
     inline const SquareMatrix & operator=(const T that[L][L]) {
         memcpy (&this->val[0][0], &that[0][0], sizeof(T)*L*L);
         return *this;
     }
 
+    /** Assignment operator--from scalar. */
     inline const SquareMatrix & operator=(const T & that) {
         for (unsigned int i = 0; i < L; i++ ) {
             for (unsigned int j = 0; j < L; j++) {
@@ -615,6 +671,7 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Matrix inner product. */
     inline SquareMatrix operator *(const SquareMatrix & that) const {
         SquareMatrix result;
 
@@ -630,6 +687,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix subtraction. */
     inline SquareMatrix operator -(const SquareMatrix & that) const {
         SquareMatrix result;
 
@@ -642,6 +700,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix addition. */
     inline SquareMatrix operator +(const SquareMatrix & that) const {
         SquareMatrix result;
 
@@ -654,6 +713,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix X Vector multiplication. */
     inline Vector<T,L> operator *(const Vector<T,L> & that) const {
         Vector<T,L> result;
 
@@ -667,6 +727,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix + Scalar. */
     inline SquareMatrix operator +(const T & that) const {
         SquareMatrix result;
 
@@ -679,6 +740,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix - Scalar. */
     inline SquareMatrix operator -(const T & that) const {
         SquareMatrix result;
 
@@ -691,6 +753,7 @@ class SquareMatrix {
         return result;
     }
 
+    /** Matrix X Scalar immediate multiplication. */
     inline SquareMatrix & operator *=(const T & that) {
         for (unsigned int i = 0; i < L; i++ ) {
             for (unsigned int j = 0; j < L; j++) {
@@ -701,6 +764,7 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Matrix - Scalar immediate subtraction. */
     inline SquareMatrix & operator -=(const T & that) {
         for (unsigned int i = 0; i < L; i++ ) {
             for (unsigned int j = 0; j < L; j++) {
@@ -711,6 +775,7 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Matrix - Scalar immediate addition. */
     inline SquareMatrix & operator +=(const T & that) {
         for (unsigned int i = 0; i < L; i++ ) {
             for (unsigned int j = 0; j < L; j++) {
@@ -721,6 +786,7 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Matrix - Scalar immediate division. */
     inline SquareMatrix & operator /=(const T & that) {
         for (unsigned int i = 0; i < L; i++ ) {
             for (unsigned int j = 0; j < L; j++) {
@@ -731,6 +797,8 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Create (in temporary storage) an identity matrix equal in size to the
+     * current SquareMatrix. */
     inline static SquareMatrix identity() {
         SquareMatrix retval;
         memset(&retval, 0, sizeof(retval));

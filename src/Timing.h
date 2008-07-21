@@ -121,7 +121,7 @@ class Timing {
         current_time_absolute = t_absolute;
         double t_i = 0.0, t_f = 0.0;
         int i = 0;
-        for (; i < timings.size(); i++) {
+        for (; ((unsigned int)i) < timings.size(); i++) {
             TimingElement & te = *timings[i];
 
             t_i = t_f;         /* absolute start of this interval. */
