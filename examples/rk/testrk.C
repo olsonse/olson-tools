@@ -43,7 +43,7 @@ const double V_w[] = {
     0 /*rad/s */
 };
 
-void getderivs(const Particle *p, const double *time, double *F, void *args) {
+void getderivs(const Particle *p, const double *time, const double * dt, double *F, void *args) {
     /* copy over the dx/dt, dy/dt, and dz/dt */
     F[X] = p->vel[X];
     F[Y] = p->vel[Y];
