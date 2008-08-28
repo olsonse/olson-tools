@@ -1,6 +1,6 @@
 #include <iostream>
 #include <math.h>
-#include "Timer.h"
+#include <olson-tools/Timer.h>
 
 int main() {
     double r = 0.0;
