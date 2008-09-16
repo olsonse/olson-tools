@@ -1,0 +1,423 @@
+------------------------------------------------------------------------
+r590 | olsonse | 2008-08-28 15:50:25 -0400 (Thu, 28 Aug 2008) | 6 lines
+
+src/config.h.in:?
+src/version.h,configure.ac: versioning
+examples/timer/testTimer.C:  fixed include
+examples/options/Makefile.am:  fixed CLEAN, DIST, ...
+
+
+------------------------------------------------------------------------
+r588 | olsonse | 2008-08-28 12:36:56 -0400 (Thu, 28 Aug 2008) | 13 lines
+
+src/Timer.h:
+    Added simple timer class that implements code that has been quite
+    redundant in my programs for a while. 
+src/config.h.in:  I think autoconf changed this.
+src/Makefile.am:  Added src/Timer.h to distributed code.
+configure.ac:  Added examples/timer/Makefile.in to output.
+examples/timer/*, examples/Makefile.am:  Added simple Timer example.
+examples/bin/extended_2d/*/Makefile.in:  Removed these from repository; they
+                                         should not have been there anyway.  
+examples/rk/testrk.C:  Upgraded getderivs to match the current definition of
+derivitivesFunction.
+
+
+------------------------------------------------------------------------
+r582 | olsonse | 2008-07-21 13:04:28 -0400 (Mon, 21 Jul 2008) | 1 line
+
+updating version.h for posting
+------------------------------------------------------------------------
+r581 | olsonse | 2008-07-21 12:19:43 -0400 (Mon, 21 Jul 2008) | 1 line
+
+improving documentation
+------------------------------------------------------------------------
+r578 | olsonse | 2008-07-18 14:01:52 -0400 (Fri, 18 Jul 2008) | 1 line
+
+tweaking distribution
+------------------------------------------------------------------------
+r546 | olsonse | 2008-07-15 23:46:00 -0400 (Tue, 15 Jul 2008) | 7 lines
+
+src/physical.h:  fixed some misspellings 
+src/Timing.h:
+    Added a timing stack feature that allows times to be pushed/popped
+    from the stack.  Popping the stack will reset all the timers in a
+    Timing class to that popped absolute time.  
+
+
+------------------------------------------------------------------------
+r539 | olsonse | 2008-06-19 02:23:37 -0400 (Thu, 19 Jun 2008) | 6 lines
+
+src/options.h:
+    fixed very small spelling error in comment.
+configure.ac
+    changed version label to r539
+
+
+------------------------------------------------------------------------
+r497 | olsonse | 2008-05-28 14:40:26 -0400 (Wed, 28 May 2008) | 9 lines
+
+src/KeyedBin.h
+src/GenericBinExtender.h
+src/GenericBin.h:
+    Added MPI operations and defined MPI data types on.
+
+src/mpi_init.h,src/Makefile.am:
+    added utility to make it easier to create complex MPI data types.
+
+
+------------------------------------------------------------------------
+r490 | olsonse | 2008-05-21 14:32:41 -0400 (Wed, 21 May 2008) | 1 line
+
+src/Vector.h:  Added simple function Vector::length() to return length of vector.
+------------------------------------------------------------------------
+r477 | olsonse | 2008-05-06 17:36:22 -0400 (Tue, 06 May 2008) | 1 line
+
+src/Timing.h:  added timing printer and updated example
+------------------------------------------------------------------------
+r473 | olsonse | 2008-05-06 00:38:39 -0400 (Tue, 06 May 2008) | 10 lines
+
+src/rk.F:
+    fixed log_severe calling by passing numbers by value.  This fails
+    with some older versions of gfortran and must be changed to compile
+    with these older versions.
+src/rk.h:
+    Small comment typo.
+src/trapfe.C:
+    Improved fpesig error message and logic.
+
+
+------------------------------------------------------------------------
+r460 | olsonse | 2008-04-24 01:50:45 -0400 (Thu, 24 Apr 2008) | 1 line
+
+versioning for package
+------------------------------------------------------------------------
+r459 | olsonse | 2008-04-24 01:49:26 -0400 (Thu, 24 Apr 2008) | 1 line
+
+fixing documentation
+------------------------------------------------------------------------
+r458 | olsonse | 2008-04-23 13:34:10 -0400 (Wed, 23 Apr 2008) | 1 line
+
+updating version info for package.
+------------------------------------------------------------------------
+r456 | olsonse | 2008-04-23 12:59:36 -0400 (Wed, 23 Apr 2008) | 1 line
+
+updating version info for package.
+------------------------------------------------------------------------
+r447 | olsonse | 2008-03-27 21:05:07 -0400 (Thu, 27 Mar 2008) | 1 line
+
+src/Vector.h:  typo fixes and mispelling fixes (again)
+------------------------------------------------------------------------
+r446 | olsonse | 2008-03-27 20:54:46 -0400 (Thu, 27 Mar 2008) | 1 line
+
+src/Vector.h:  typo fixes and mispelling fixes
+------------------------------------------------------------------------
+r385 | olsonse | 2008-02-25 13:53:12 -0500 (Mon, 25 Feb 2008) | 1 line
+
+examples/timing:  added timing (ScaledField, ScaledForce) example.
+------------------------------------------------------------------------
+r361 | olsonse | 2008-02-22 15:26:23 -0500 (Fri, 22 Feb 2008) | 1 line
+
+just a version comment
+------------------------------------------------------------------------
+r360 | olsonse | 2008-02-22 15:21:37 -0500 (Fri, 22 Feb 2008) | 11 lines
+
+src/Fields.h:
+    spelling correction
+src/ScaleForce.h:
+    Added to help with timing forces.
+src/ScaleField.h
+    Added to help with timing fields.  Taken from ScaleIntensity originally in
+    laser-cooling package.
+src/Makefile.am:
+    Added references to Scale[Fields,Forces].h.
+
+
+------------------------------------------------------------------------
+r343 | olsonse | 2008-02-13 16:36:19 -0500 (Wed, 13 Feb 2008) | 1 line
+
+src/Timing.h:  changed getValue(...) to non-const.
+------------------------------------------------------------------------
+r341 | olsonse | 2008-02-13 16:29:53 -0500 (Wed, 13 Feb 2008) | 8 lines
+
+src/Timing.h:
+    added some documentation.
+    Fixed a few bugs:
+        exponential change in reverse mode was incorrect.
+        TimedElement->getValue(t) was supposed to be called with t being
+        relative time and not absolute time.   This is fixed now. 
+
+
+------------------------------------------------------------------------
+r332 | olsonse | 2008-02-13 13:20:28 -0500 (Wed, 13 Feb 2008) | 1 line
+
+src/Timing.h:  changed to use polymorphic timing elements for flexibility.
+------------------------------------------------------------------------
+r319 | olsonse | 2008-01-12 00:06:21 -0500 (Sat, 12 Jan 2008) | 1 line
+
+added src/version.h to help keep track of rcs Id tags and get them compiled into binaries.
+------------------------------------------------------------------------
+r294 | olsonse | 2007-12-15 23:20:54 -0500 (Sat, 15 Dec 2007) | 1 line
+
+src/*Bin*.h:  Added getMin() and getMax() to be able to read min/max values. 
+------------------------------------------------------------------------
+r288 | olsonse | 2007-12-12 14:51:18 -0500 (Wed, 12 Dec 2007) | 1 line
+
+minor fixes in bin codes.  Added GenericBinExtender examples for both GenericBin and KeyedBin
+------------------------------------------------------------------------
+r259 | olsonse | 2007-10-11 15:16:21 -0400 (Thu, 11 Oct 2007) | 1 line
+
+src/Vector.h:  operator<= and operator>= implemented.
+------------------------------------------------------------------------
+r256 | olsonse | 2007-10-11 14:09:59 -0400 (Thu, 11 Oct 2007) | 3 lines
+
+Moving Timing.h to olson-tools.  I think this is a generic enough of a tool to
+use in various places.
+
+------------------------------------------------------------------------
+r222 | olsonse | 2007-09-26 21:39:40 -0400 (Wed, 26 Sep 2007) | 1 line
+
+src/logger.[hc]:  added simple routine to help change the log destination.
+------------------------------------------------------------------------
+r218 | olsonse | 2007-09-22 11:03:51 -0400 (Sat, 22 Sep 2007) | 1 line
+
+src/RKIntegrator.h:  small typo.
+------------------------------------------------------------------------
+r217 | olsonse | 2007-09-22 10:59:46 -0400 (Sat, 22 Sep 2007) | 1 line
+
+src/RKIntegrator.h:  More debug info for timestep underruns.
+------------------------------------------------------------------------
+r216 | olsonse | 2007-09-21 13:15:18 -0400 (Fri, 21 Sep 2007) | 1 line
+
+src/RKIntegrator.h:  Trying to fix the random timestep underrun.  I think this is happening when timesteps are truncated.
+------------------------------------------------------------------------
+r214 | olsonse | 2007-09-21 00:44:40 -0400 (Fri, 21 Sep 2007) | 1 line
+
+rk.[Fh], RKIntegrator.h:  still more debug info.
+------------------------------------------------------------------------
+r213 | olsonse | 2007-09-20 19:22:28 -0400 (Thu, 20 Sep 2007) | 1 line
+
+rk.[Fh], RKIntegrator.h:  yet more debug info.
+------------------------------------------------------------------------
+r212 | olsonse | 2007-09-20 12:23:14 -0400 (Thu, 20 Sep 2007) | 1 line
+
+rk.F, RKIntegrator.h:  including more debug info for stepsize underrun.  Maybe I need a better way of recovering from this.
+------------------------------------------------------------------------
+r174 | olsonse | 2007-08-16 14:35:11 -0400 (Thu, 16 Aug 2007) | 1 line
+
+Distribution.h:  can now init via an array of an inverted distro.  Also, access to inverted distro now possible. 
+------------------------------------------------------------------------
+r173 | olsonse | 2007-08-14 07:25:20 -0400 (Tue, 14 Aug 2007) | 1 line
+
+Distribution.h:  \n    found a potential segfault in copy constructor; q was uninitialized before copy command which tests the value of q.\n    Added leverarm(double) function to help sample the inverted distribution externally.
+------------------------------------------------------------------------
+r170 | olsonse | 2007-08-11 21:59:00 -0400 (Sat, 11 Aug 2007) | 6 lines
+
+Forgot to add m_eps to the repository.  Helper to determine the machine
+precision for use in double comparisons.
+
+Added a TODO file for the package.
+
+
+------------------------------------------------------------------------
+r169 | olsonse | 2007-08-11 21:44:09 -0400 (Sat, 11 Aug 2007) | 9 lines
+
+Lots and lots of changes.  The main change that inspired this (uncommitted)
+branch was the genericizing fields so that I could use it all for optical
+fields as well.  Most of the inspiration for changes here were from trying to
+get the laser cooling package to work and simulating the toroidal optical atom
+trap.
+Runge-kutta now allows insertion of an impulse force.  The rk5 driver was
+ported to C++ as a by-product.  
+
+
+------------------------------------------------------------------------
+r168 | olsonse | 2007-08-11 21:05:26 -0400 (Sat, 11 Aug 2007) | 1 line
+
+added fast_pow notes for results with different compilers
+------------------------------------------------------------------------
+r162 | olsonse | 2007-07-27 14:51:07 -0400 (Fri, 27 Jul 2007) | 1 line
+
+RKIntegrator.h:  typos due to changes in function prototypes; testfast_pow:  added better timing tests; testfield.C:  added timing  tests by default.
+------------------------------------------------------------------------
+r134 | olsonse | 2007-05-01 21:47:57 -0400 (Tue, 01 May 2007) | 1 line
+
+forgot to add doxygen.{m4,am}
+------------------------------------------------------------------------
+r133 | olsonse | 2007-05-01 21:16:40 -0400 (Tue, 01 May 2007) | 6 lines
+
+Vector.h: n-dimensional Vector casting.
+tools.doxy:  trying to fix the documentation for distribution.
+readData.h:  small type fix.
+physical.h:  added GHz, THz.
+strutil.h:  added a tolower function.
+
+------------------------------------------------------------------------
+r123 | olsonse | 2007-03-22 15:16:28 -0400 (Thu, 22 Mar 2007) | 1 line
+
+housecleaning:  makefiles and automake...
+------------------------------------------------------------------------
+r122 | olsonse | 2007-03-22 14:36:07 -0400 (Thu, 22 Mar 2007) | 1 line
+
+added property to configure.ac
+------------------------------------------------------------------------
+r121 | olsonse | 2007-03-21 23:46:30 -0400 (Wed, 21 Mar 2007) | 1 line
+
+housecleaning:  COPYING now is LGPL. various other small package changes.
+------------------------------------------------------------------------
+r120 | olsonse | 2007-03-21 23:32:55 -0400 (Wed, 21 Mar 2007) | 1 line
+
+testfield.C:  added code to help test for run-time measurements.
+------------------------------------------------------------------------
+r119 | olsonse | 2007-03-21 23:29:56 -0400 (Wed, 21 Mar 2007) | 1 line
+
+HAVE_PTHREAD changed to USE_PTHREAD.
+------------------------------------------------------------------------
+r118 | olsonse | 2007-03-21 23:28:06 -0400 (Wed, 21 Mar 2007) | 1 line
+
+various changes
+------------------------------------------------------------------------
+r112 | olsonse | 2007-02-27 07:13:22 -0500 (Tue, 27 Feb 2007) | 1 line
+
+options.[hC]:  added string std option; added postProcess routine.
+------------------------------------------------------------------------
+r106 | olsonse | 2007-02-25 01:58:42 -0500 (Sun, 25 Feb 2007) | 1 line
+
+field-lookup.h:  error message added for invalid filename.
+------------------------------------------------------------------------
+r105 | olsonse | 2007-02-25 01:20:13 -0500 (Sun, 25 Feb 2007) | 1 line
+
+examples/bin/generic/testbin.C:  spelling correction.
+------------------------------------------------------------------------
+r104 | olsonse | 2007-02-25 01:17:56 -0500 (Sun, 25 Feb 2007) | 1 line
+
+field-lookup.h:  comments possible in field files now.  \ncreateFieldFile.h:  can now add comments to field file.\n3j.h:  spelling fixed.
+------------------------------------------------------------------------
+r92 | olsonse | 2007-01-22 07:13:09 -0500 (Mon, 22 Jan 2007) | 1 line
+
+memory.h:  had to include olson-tools-config.h; configure.ac:  fixed can_alias probe
+------------------------------------------------------------------------
+r89 | olsonse | 2007-01-20 02:07:21 -0500 (Sat, 20 Jan 2007) | 1 line
+
+Added configure option for enabling pthread use (mainly in memory.h in form of mutexes).
+------------------------------------------------------------------------
+r85 | olsonse | 2007-01-17 00:54:29 -0500 (Wed, 17 Jan 2007) | 1 line
+
+added some documentation to Vector.h
+------------------------------------------------------------------------
+r77 | olsonse | 2007-01-13 12:39:13 -0500 (Sat, 13 Jan 2007) | 1 line
+
+Added pthread mutexes to memory.h for use with pthreads (of course)
+------------------------------------------------------------------------
+r71 | olsonse | 2006-12-06 08:49:14 -0500 (Wed, 06 Dec 2006) | 1 line
+
+This contains work for using OpenMP as well as some small config changes.
+------------------------------------------------------------------------
+r66 | olsonse | 2006-10-26 23:35:29 -0400 (Thu, 26 Oct 2006) | 1 line
+
+Began conditioning for use with OpenMP
+------------------------------------------------------------------------
+r65 | olsonse | 2006-10-26 23:29:43 -0400 (Thu, 26 Oct 2006) | 1 line
+
+Adding exception helper file for OpenMP
+------------------------------------------------------------------------
+r58 | olsonse | 2006-10-17 23:58:26 -0400 (Tue, 17 Oct 2006) | 1 line
+
+Added missing ifdef in config.h.in so that it isn't re-included.
+------------------------------------------------------------------------
+r41 | olsonse | 2006-10-14 02:41:34 -0400 (Sat, 14 Oct 2006) | 1 line
+
+Small multiple bugfixes.
+------------------------------------------------------------------------
+r40 | olsonse | 2006-10-13 23:23:22 -0400 (Fri, 13 Oct 2006) | 1 line
+
+Converted olson-tools package over to automake/autoconf.
+------------------------------------------------------------------------
+r34 | olsonse | 2006-10-13 20:53:53 -0400 (Fri, 13 Oct 2006) | 1 line
+
+Realigning repository to instructions in svn-book.
+------------------------------------------------------------------------
+r32 | olsonse | 2006-10-13 20:52:09 -0400 (Fri, 13 Oct 2006) | 3 lines
+
+Trying to reorganize the repository to be inline with recommendations of the
+svn-book.
+
+------------------------------------------------------------------------
+r28 | olsonse | 2006-10-13 20:28:38 -0400 (Fri, 13 Oct 2006) | 3 lines
+
+Vector initialization for lists fixed up a little to allow promoting byte
+types to integers or the like.
+
+------------------------------------------------------------------------
+r27 | olsonse | 2006-06-02 06:03:36 -0400 (Fri, 02 Jun 2006) | 6 lines
+
+Lots of improvments and bug fixes.  Field lookup source added.  Example
+for using field lookup added. GenericBinExtender to help with
+multidimensional binning added.  TRAPFE stuff moved to c++ to get a
+better success percentage between compilers and languages and consructor
+binding.
+
+------------------------------------------------------------------------
+r21 | olsonse | 2006-03-07 09:32:42 -0500 (Tue, 07 Mar 2006) | 5 lines
+
+Found and eliminated an extra argument to derivs in rk-adaptive code.
+This might have cause problems if derivs used a variable on the stack
+without knowing that the stack had been used a bit more than expected on
+calling derivs (I think at least).
+
+------------------------------------------------------------------------
+r20 | olsonse | 2006-03-06 15:00:13 -0500 (Mon, 06 Mar 2006) | 6 lines
+
+Makeconf change:  -m32 changed to -m64 for gcc_40_x8_64 compile flags.
+InvCylindricalDist.h:  Fixed a mistake with dz_perp that caused FPE
+    (floating-point exceptions) because of a buffer overrun.
+trapfe.c:  trying to enable a clearfpe() function to use in debugger.
+    Doesn't work right yet.
+
+------------------------------------------------------------------------
+r19 | olsonse | 2006-02-08 10:24:06 -0500 (Wed, 08 Feb 2006) | 2 lines
+
+Changed Dr. Turley to Prof. Turley.
+
+------------------------------------------------------------------------
+r18 | olsonse | 2006-02-08 10:18:56 -0500 (Wed, 08 Feb 2006) | 2 lines
+
+Added a tiny more documentation.
+
+------------------------------------------------------------------------
+r17 | olsonse | 2006-02-08 10:06:40 -0500 (Wed, 08 Feb 2006) | 3 lines
+
+Added at least minimal attribution for fit library and other parts prior to
+publishing the whole package.
+
+------------------------------------------------------------------------
+r13 | olsonse | 2005-10-19 22:28:04 -0400 (Wed, 19 Oct 2005) | 3 lines
+
+Moved all B-field calcs to inlines and templates to speed up by allowing
+compile time optimizations.
+
+------------------------------------------------------------------------
+r12 | olsonse | 2005-10-19 22:24:17 -0400 (Wed, 19 Oct 2005) | 4 lines
+
+Fixed intel compiler options (a little) after upgrading to icc9.0.
+Vector class added more functionality (cross product...).
+Bfield calculations more modular and flexible.
+
+------------------------------------------------------------------------
+r10 | olsonse | 2005-09-23 22:53:05 -0400 (Fri, 23 Sep 2005) | 3 lines
+
+Lots of fixes.  Added more examples (binning and generic data reader).
+Some compiler fixes (for gcc 4.0 and Intel 8.0/9.0).
+
+------------------------------------------------------------------------
+r4 | olsonse | 2005-08-06 21:23:23 -0400 (Sat, 06 Aug 2005) | 3 lines
+
+Several organizational changes, bug-fixes, and addition of GenericBin
+histograming tool.
+
+------------------------------------------------------------------------
+r1 | olsonse | 2005-07-08 21:33:56 -0400 (Fri, 08 Jul 2005) | 2 lines
+
+First import into subversion repository.
+
+------------------------------------------------------------------------
