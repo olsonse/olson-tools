@@ -96,9 +96,9 @@ probe_for_fast_pow(){
 
     local fast_pow_enabled=0
     printf "Testing to see if compiler can use fast_pow... "
-#   Make sure that config.h at least exists so that power.h can include it.
+#   Make sure that olson-tools-config.h at least exists so that power.h can include it.
     AS_MKDIR_P(src)
-    touch src/config.h
+    touch src/olson-tools-config.h
     AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM(
 [[
