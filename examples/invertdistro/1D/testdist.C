@@ -77,8 +77,7 @@ bin bins[5] = {
 int main() {
 
     int iter = 0;
-    std::cout << "Enter the nubmer of samples:  "
-              << std::flush;
+    std::cout << "Enter the nubmer of samples:  " << std::flush;
     std::cin >> iter;
     if (iter == 0) return EXIT_FAILURE;
     std::cout << iter << " samples requested." << std::endl;

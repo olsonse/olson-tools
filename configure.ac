@@ -295,6 +295,7 @@ AC_CONFIG_FILES([Makeconf
                  examples/fast_pow/fortran/Makefile
                  examples/field/Makefile
                  examples/field/lookup/Makefile
+                 examples/field/addfield/Makefile
                  examples/fit/Makefile
                  examples/fit/ga/Makefile
                  examples/fit/simplex/Makefile

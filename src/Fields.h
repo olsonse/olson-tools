@@ -131,6 +131,10 @@ class magnitude_of {
  * Scalar fields must implement the operator()(r) (returns doubles) and
  * Vector fields must implement the operator()(F,r) (void return value).
  *
+ * AddField requires fields to typedef the base type as 'typedef T base' where
+ * T is the type of the field (double/float/int/... for scalar and Vector<...>
+ * for vector fields).
+ *
  * By inheriting this class, a derived Field class gains the 'delta' member
  * which is used for computing gradients.  Inheritance of this class should
  * normally be done virtually. 
@@ -159,6 +163,7 @@ template <class T>
 class BgField : public virtual BaseField {
   public:
     typedef BaseField super;
+    typedef T         base; /* required by AddField. */
 
     BgField() : super() {
         bg = 0.0;
@@ -183,54 +188,12 @@ class BgField : public virtual BaseField {
     T bg;
 };
 
-/** Adds VectorFields from two different sources. */
-template <class VF0, class VF1>
-class AddVectorField : public virtual BaseField, public VF0, public VF1 {
-  public:
-    typedef BaseField super0;
-
-    AddVectorField() : super0(), VF0(), VF1() {}
-
-    inline const AddVectorField & operator=(const AddVectorField & that) {
-        super0::operator=(that);
-        VF0::operator=(that);
-        VF1::operator=(that);
-        return *this;
-    }
-
-    /** Adds two fields together. */
-    inline void operator()(Vector<double,3> & F, const Vector<double,3> & r) const {
-        VF0::operator()(F,r);
-        Vector<double,3> F2;
-        VF1::operator()(F2,r);
-        F += F2;
-    }
-};
-
-/** Adds ScalarFields from two different sources. */
-template <class SF0, class SF1>
-class AddScalarField : public virtual BaseField, public SF0, public SF1 {
-  public:
-    typedef BaseField super0;
-
-    AddScalarField() : super0(), SF0(), SF1() {}
-
-    inline const AddScalarField & operator=(const AddScalarField & that) {
-        super0::operator=(that);
-        SF0::operator=(that);
-        SF1::operator=(that);
-        return *this;
-    }
-
-    /** Adds two fields together. */
-    inline double operator()(const Vector<double,3> & r) const {
-        return SF0::operator()(r) + SF1::operator()(r);
-    }
-};
 
 /** Adds Fields from two different sources. 
- * I'm pretty sure that this class supersedes AddScalerField and
- * AddVectorField, so don't use those if possible.
+ * The sources can be both scalar, vector, as well as mixed type fields.  The
+ * only caveat is that for mixed field types, F0 cannot be a scalar field as
+ * any operation of the type Vector+scalar is defined to result in a Vector
+ * (where the scalar addition was applied to each component of the vector). 
  */
 template <class F0, class F1>
 class AddField : public virtual BaseField, public F0, public F1 {
@@ -246,18 +209,24 @@ class AddField : public virtual BaseField, public F0, public F1 {
         return *this;
     }
 
-    /** Adds two fields together. This should really be used by Scalar Fields.
-     * This will not instantiate with Vector Fields. */
-    inline double operator()(const Vector<double,3> & r) const {
+    /** Adds two fields together.  
+     * This function requires that F0::base is typedefed.  
+     *
+     * This should work both Vector and Scalar fields, although the user
+     * should verify that the efficiency is not limited for the application
+     * at hand.  This is ideally suited for Scalar fields, but should work
+     * for both.  It might even work for mixed field types, although I'm not
+     * sure why you would want to do this.  It is entirely possible that
+     * this function will not instantiate in some cases.
+     * */
+    inline typename F0::base operator()(const Vector<double,3> & r) const {
         return F0::operator()(r) + F1::operator()(r);
     }
 
-    /** Adds two fields together. This should really be used by Vector Fields.
-     * This may not instantiate with all Scalar Fields that I've made. */
-    template <class T>
-    inline void operator()(T & F, const Vector<double,3> & r) const {
+    /** Adds two fields together. This should really be used by Vector Fields. */
+    inline void operator()(typename F0::base & F, const Vector<double,3> & r) const {
         F0::operator()(F,r);
-        Vector<double,3> F2;
+        typename F1::base F2;
         F1::operator()(F2,r);
         F += F2;
     }

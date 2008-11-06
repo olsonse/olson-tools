@@ -78,19 +78,19 @@ int main() {
     pos_distrib.initialize(origin);
 
     int im = 10;
-    std::cout << "enter max vals:  ";
+    std::cout << "Enter the nubmer of samples:  " << std::flush;
     std::cin >> im;
 
     std::ofstream ofile ("disttest.dat");
 
     for(int i = 0; i < im; i++) {
-        /* you must not include pos_distrib.x() and pos_distrib.y() on the same ofile<< line.
-         * This is because you need to deterministically execute x() before
-         * y().
+        /* you must not include pos_distrib.x() on the same ofile<< line as
+         * for pos_distrib.y() or pos_distrib.z().  This is because you need
+         * to deterministically execute x() before y() and z().
          */
-        ofile << (pos_distrib.x() + origin[X]) << '\t'
-              << (pos_distrib.y() + origin[Y]) << '\t'
-              << (pos_distrib.z() + origin[Y]) << '\n';
+        ofile << (pos_distrib.x() + origin[X]) << '\t';
+        ofile << (pos_distrib.y() + origin[Y]) << '\t' 
+              << (pos_distrib.z() + origin[Z]) << '\n';
     }
 
     ofile << std::endl;

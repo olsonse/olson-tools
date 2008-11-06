@@ -37,6 +37,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include <strings.h>
 #include <string>
 #include <vector>
 #include "logger.h"

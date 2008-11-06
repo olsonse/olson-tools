@@ -1,1 +1,1 @@
-SUBDIRS = lookup
+SUBDIRS = lookup addfield

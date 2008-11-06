@@ -116,6 +116,7 @@ namespace BField {
     class ThinWireSrc : public virtual BaseField {
       public:
         typedef BaseField super;
+        typedef Vector<double,3> base;
 
         /** Default constructor. */
         inline ThinWireSrc() : super(), currents(), rcut(1e-10) { }

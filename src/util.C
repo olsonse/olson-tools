@@ -52,6 +52,7 @@
 #include <string>
 #include <iostream>
 #include <cfloat>
+#include <stdlib.h>
 
 using namespace std;
 

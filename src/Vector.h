@@ -349,7 +349,7 @@ class Vector {
      * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
-    inline bool operator>=(const Vector<T2,L>& that) {
+    inline bool operator>=(const Vector<T2,L>& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] >= that.val[i]);
@@ -363,7 +363,7 @@ class Vector {
      * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
-    inline bool operator<(const T2& that) {
+    inline bool operator<(const T2& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] < that);
@@ -377,7 +377,7 @@ class Vector {
      * @return cumulative expression of component-wise comparison.
      */
     template <class T2>
-    inline bool operator<=(const T2& that) {
+    inline bool operator<=(const T2& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] <= that);
@@ -391,7 +391,7 @@ class Vector {
      * @return cumulative expression of component-wise comparison.
     */
     template <class T2>
-    inline bool operator<(const Vector<T2,L>& that) {
+    inline bool operator<(const Vector<T2,L>& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] < that.val[i]);
@@ -405,7 +405,7 @@ class Vector {
      * @return cumulative expression of component-wise comparison.
     */
     template <class T2>
-    inline bool operator<=(const Vector<T2,L>& that) {
+    inline bool operator<=(const Vector<T2,L>& that) const {
         bool retval = true;
         for (unsigned int i = 0; i < L; i++)
             retval = retval && (this->val[i] <= that.val[i]);

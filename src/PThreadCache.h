@@ -1,6 +1,10 @@
+/** \file
+ * Implementation of a generally useful PThreads cache and associated task
+ * manager.
+ * */
 
-#ifndef PTHREADBUILDOCTREE
-#define PTHREADBUILDOCTREE
+#ifndef PTHREADCACHE_H
+#define PTHREADCACHE_H
 
 
 
@@ -112,7 +116,7 @@ class PThreadCache {
      * Sets the initial value of max_threads from the environment variable
      * NUM_PTHREADS.  If this variable is not set, then the default will be to
      * NOT create any threads for executing tasks given this this cache
-     * manager. */
+     * manager.
      */
     PThreadCache() : max_threads(0),
                      threads(NULL),
@@ -247,86 +251,4 @@ static inline const int & get_max_threads() {
     return pthreadCache.get_max_threads();
 }
 
-
-/** An octree builder that creates buildOctree tasks that are then executed by
- * the default thread cache.
- */
-template < class _Octree>
-class PThreadBuildOctree {
-  private:
-    typedef typename _Octree::OParticle _Particle;
-    typedef typename _Octree::OLeafModel _LeafModel;
-
-    class PThreadBuildOctreeTask : public PThreadTask {
-        _Octree * child;
-        _Particle **a;
-        _LeafModel leafModel;
-        int leaves;
-
-      public:
-        virtual ~PThreadBuildOctreeTask() {}
-        PThreadBuildOctreeTask(
-                    _Octree * _child,
-                    _Particle *_a[],
-                    _LeafModel _leafModel) :
-                PThreadTask(),
-                child(_child), a(_a), leafModel(_leafModel), leaves(0) { }
-
-        inline const int & getLeaves() {return leaves;}
-
-        virtual void exec() {
-            leaves = child->buildOctree(a, leafModel);
-        }
-    };
-
-    PThreadTaskSet tasks;
-
-    struct sumLeaves : public std::unary_function<PThreadTask *, void> {
-        sumLeaves() : leaves(0) {}
-        void operator() (PThreadTask * t) {
-            leaves += ((PThreadBuildOctreeTask*)t)->getLeaves();
-            /* we finally delete the actual memory of the task. */
-            delete t;
-        }
-        int leaves;
-    };
-
-  public:
-
-    /** buildOctree Task scatterer.  Transforms a call of buildOctree into a
-     * task that will be executed by the PThread threads cache. */
-    inline void buildOctree(_Octree * child, _Particle *a[], const _LeafModel & leafModel) {
-        /* first wait for a thread to become available */
-        PThreadTask * task = new PThreadBuildOctreeTask(child, a, leafModel);
-        tasks.insert(task);
-        pthreadCache.addTask(task);
-    }
-
-    /** buildOctree gatherer.  This function makes sure that all of this
-     * instance's tasks are completed before returning.
-     *
-     * @return The total number of leaves in created by the tasks of this
-     * instance. */
-    inline int gatherLeaves() {
-        int leaves = 0;
-
-        while (tasks.size() > 0) {
-            PThreadTaskSet finished = pthreadCache.waitForTasks(tasks);
-
-            sumLeaves s = for_each(finished.begin(), finished.end(), sumLeaves());
-            leaves += s.leaves;
-
-            /* Now make sure that we remove the finished tasks from the
-             * tasks set.  We'll use the set operations to do this. */
-            PThreadTaskSet tmp;
-            std::set_difference(tasks.begin(), tasks.end(),
-                                finished.begin(), finished.end(),
-                                inserter(tmp, tmp.begin()));
-            tasks.swap(tmp);
-        }
-
-        return leaves;
-    }
-};
-
-#endif // PTHREADBUILDOCTREE
+#endif // PTHREADCACHE_H

@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <sys/times.h>
 #include <unistd.h>
+#include <string.h>
 
 
 /** A simple timer class. 

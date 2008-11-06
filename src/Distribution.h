@@ -59,6 +59,7 @@
 
 #include <stdexcept>
 #include <math.h>
+#include <string.h>
 #include "ompexcept.h"
 #include "random/random.h"
 #include "physical.h"
@@ -72,21 +73,24 @@
  * @see Distribution::Distribution constructor.
  * */
 class Distribution {
+  private:
+    /** memset function. */
+    inline void copyLq(const int & that_L, const double * that_q) {
+        if (q) delete[] q;
+        L = that_L;
+        q = new double[L + 1];
+        memcpy (q, that_q, sizeof(double)*(L+1));
+    }
   public:
 
     /** copy constructor. */
     inline Distribution(const Distribution & that) : L(0), q(NULL) {
-        *this = that;
+        copyLq(that.L, that.q);
     }
 
     /** constructor */
     inline Distribution(const int & _qLen, const double * _q) : L(0), q(NULL) {
-        struct {
-            int L;
-            const double * q; /* length L + 1 */
-        } D = {_qLen-1, _q};
-
-        *this = (const Distribution &)D;
+        copyLq(_qLen-1, q);
     }
 
     /** Distribution constructor.
@@ -209,12 +213,7 @@ class Distribution {
 
     /** Copy operator. */
     inline const Distribution & operator=(const Distribution & that) {
-        if (q) delete[] q;
-
-        L = that.L;
-        q = new double[L + 1];
-        memcpy (q, that.q, sizeof(double)*(L+1));
-
+        copyLq(that.L, that.q);
         return *this;
     }
 

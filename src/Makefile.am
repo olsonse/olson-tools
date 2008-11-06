@@ -77,6 +77,7 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./ScaleField.h \
         ./ScaleForce.h \
         ./mpi_init.h \
+	./PThreadCache.h \
         ./$(PACKAGE)-config.h
 
 
