@@ -326,10 +326,10 @@ namespace physical {
         const double Kelvins = Kelvin;
         const double K = Kelvin;
         const double milliKelvin = Kelvin*1e-3;
-        const double milliKelvins = milliKelvins;
+        const double milliKelvins = milliKelvin;
         const double mK = milliKelvin;
         const double microKelvin = Kelvin*1e-6;
-        const double microKelvins = microKelvins;
+        const double microKelvins = microKelvin;
         const double uK = microKelvin;
         // luminous intensity
         const double candela = 1.0;
