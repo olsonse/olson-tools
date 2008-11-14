@@ -21,7 +21,7 @@
 #ifndef BTRAP_DISTRO_H
 #define BTRAP_DISTRO_H
 
-#include "physical.h"
+#include "physical/physical.h"
 #include "bfield.h"
 #include "logger.h"
 #include "Vector.h"

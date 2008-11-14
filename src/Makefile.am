@@ -46,7 +46,13 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./msg.h \
         ./GenericBinExtender.h \
         ./strutil.h \
-        ./physical.h \
+        ./physical/physical.h \
+        ./physical/quantity.h \
+	./physical/calc/BaseCalc.h \
+	./physical/calc/infix.h \
+	./physical/calc/math.h \
+	./physical/calc/symbol.h \
+	./physical/calc/units.h \
         ./InvCylindricalDist.h \
         ./bfield.h \
         ./Fields.h \

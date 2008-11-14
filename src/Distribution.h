@@ -62,7 +62,7 @@
 #include <string.h>
 #include "ompexcept.h"
 #include "random/random.h"
-#include "physical.h"
+#include "physical/physical.h"
 #include "power.h"
 
 /** A generic class to invert distributions.

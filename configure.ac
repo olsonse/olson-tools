@@ -63,6 +63,15 @@ AC_CHECK_LIB([c], [strcpy])
 # FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [cos])
 
+# check for boost library
+AX_BOOST_BASE([1.33.0])
+AM_CONDITIONAL([HAVE_BOOST], [$HAVE_BOOST])
+
+# check for readline library
+PRE_READLINE_LIBS="$LIBS"
+VL_LIB_READLINE
+AC_SUBST([READLINE_LDFLAGS],[$LIBS])
+LIBS="$PRE_READLINE_LIBS"
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -304,6 +313,13 @@ AC_CONFIG_FILES([Makeconf
                  examples/invertdistro/2D/Makefile
                  examples/memory/Makefile
                  examples/options/Makefile
+                 examples/physical/Makefile
+                 examples/physical/output/Makefile
+                 examples/physical/registry/Makefile
+                 examples/physical/data-only/Makefile
+                 examples/physical/calc/Makefile
+                 examples/physical/calc/parser/Makefile
+                 examples/physical/calc/interactive/Makefile
                  examples/random/Makefile
                  examples/readdata/Makefile
                  examples/rk/Makefile

@@ -234,7 +234,7 @@ logToSystemLog(LogLevel_t level, char *msg)
 	break;
     }
 
-    syslog(logLevel, msg);
+    syslog(logLevel, "%s", msg);
 #endif
 }
 #endif  // !N_PLAT_NLM

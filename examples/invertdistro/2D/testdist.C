@@ -3,7 +3,7 @@
 #include <fstream>
 
 #include <olson-tools/BTrapDistro.h>
-#include <olson-tools/physical.h>
+#include <olson-tools/physical/physical.h>
 #include <olson-tools/InvCylindricalDist.h>
 #include <olson-tools/strutil.h>
 

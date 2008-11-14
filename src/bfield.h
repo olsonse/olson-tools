@@ -20,7 +20,7 @@
 #include <ostream>
 #include <math.h>
 
-#include "physical.h"
+#include "physical/physical.h"
 #include "Vector.h"
 #include "power.h"
 #include "indices.h"

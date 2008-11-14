@@ -3,6 +3,9 @@
 /* ELF aliasing of symbols is supported using GCC type __attribute__. */
 #undef CAN_ALIAS
 
+/* define if the Boost library is available */
+#undef HAVE_BOOST
+
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 #undef HAVE_DOPRNT
 
@@ -154,3 +157,12 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Found readline stuff. */
+#undef HAVE_LIBREADLINE
+#undef HAVE_READLINE_READLINE_H
+#undef HAVE_READLINE_H
+#undef HAVE_READLINE_HISTORY
+#undef HAVE_READLINE_HISTORY_H
+#undef HAVE_HISTORY_H
+

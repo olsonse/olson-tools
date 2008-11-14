@@ -24,7 +24,7 @@
 #define INVCYLINDRICALDIST_H
 
 #include "Distribution.h"
-#include "physical.h"
+#include "physical/physical.h"
 #include "logger.h"
 #include "Vector.h"
 #include "power.h"
@@ -164,7 +164,7 @@ class FlatDistribution {
 template <class Distrib2D,
           class Distrib1D = FlatDistribution,
           unsigned int N2D = 1u,
-          class InitClass = nothing>
+          class InitClass = olson_tools::nothing>
 class InvCylindricalDist {
   public:
 

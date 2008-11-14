@@ -2,7 +2,7 @@
 #include <float.h>
 #include <fstream>
 
-#include <olson-tools/physical.h>
+#include <olson-tools/physical/physical.h>
 #include <olson-tools/Vector.h>
 #include <olson-tools/Fields.h>
 #include <olson-tools/Forces.h>
