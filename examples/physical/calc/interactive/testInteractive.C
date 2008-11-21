@@ -115,7 +115,7 @@ int main() {
         bool result_set = false;
         do {
             try {
-                physical::Quantity result = calc.parse(first, line.end(), finished, result_set);
+                physical::Quantity result = calc.parse_statement(first, line.end(), finished, result_set);
                 if (result_set)
                     std::cout << result << std::endl;
             } catch (physical::calc::symbol_error & e) {

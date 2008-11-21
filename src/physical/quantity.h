@@ -85,7 +85,15 @@ namespace physical {
      *
      * @see Quantity.
      * */
-    struct units_map : std::map<std::string, int> {};
+    struct units_map : std::map<std::string, int> {
+        enum PRINT_TYPE {
+            PRETTY_PRINT,
+            MATH_PRINT,
+        };
+        static enum PRINT_TYPE print_type;
+    };
+    enum units_map::PRINT_TYPE units_map::print_type = units_map::PRETTY_PRINT;
+
     typedef std::pair<const std::string, int> units_pair;
 
     /** A simple ostream helper class to print items in a container using
@@ -98,23 +106,41 @@ namespace physical {
         print_output(std::ostream & out, std::string sep) : out(out), sep(sep) {}
 
         void operator()(const T & t) {
-            out << t << sep;
+            ugly_print(out,t) << sep;
         }
     };
 
+    /** Print out a tuple (of type units_pair) in the units_map. */
+    inline std::ostream & ugly_print (std::ostream & out, const units_pair & p) {
+        return out << '(' << p.first << " : " << p.second << ')';
+    }
+
     /** Print out a units_map. */
-    inline std::ostream & operator<< (std::ostream & out, const units_map & u) {
+    inline std::ostream & ugly_print (std::ostream & out, const units_map & u) {
         out << '{';
         std::for_each(u.begin(), u.end(), print_output<units_pair>(out, ", "));
         out << '}';
         return out;
     }
 
-    /** Print out a tuple (of type units_pair) in the units_map. */
+    /** Pretty/math print the units_pair. */
     inline std::ostream & operator<< (std::ostream & out, const units_pair & p) {
-        return out << '(' << p.first << " : " << p.second << ')';
+        out << p.first;
+        if (p.second > 1)
+            out << '^' << p.second;
+        return out;
     }
 
+    /** Pretty/math print the units_map. */
+    inline std::ostream & operator<< (std::ostream & out, const units_map & u) {
+        const char * sep = units_map::print_type == units_map::MATH_PRINT ? " * " : " ";
+        const char * cur_sep = "";
+        for (units_map::const_iterator i = u.begin(); i != u.end(); i++) {
+            out << cur_sep << (*i);
+            cur_sep = sep;
+        }
+        return out;
+    }
 
 
     /** Exponentiate a set of units by a non-integral factor. 
@@ -247,6 +273,14 @@ namespace physical {
         typedef physical::registry::recorder< quantity<T> > registry;
         typedef physical::registry::name regname;
 
+        enum PRINT_TYPE {
+            PRETTY_PRINT,
+            MATH_PRINT,
+            UGLY_PRINT
+        };
+
+        static enum PRINT_TYPE print_type;
+
         /** The data storage type of the coefficient of the physical
          * quantity. */
         typedef T coeff_type;
@@ -293,16 +327,19 @@ namespace physical {
             drop_empty_units(units);
         }
 
-        /** Prints the physical quantity in an easy-to-read format similar to
-         * GNU units. */
+        /** Convert the units to an equivalent string representation using the
+         * current print_type. */
         inline std::string toString() const {
             std::ostringstream out;
-            prettyPrint(out);
+            print(out);
             return out.str();
         }
 
+        /** Prints the physical quantity in an easy-to-read format similar to
+         * GNU units. */
         std::ostream & prettyPrint(std::ostream & out) const {
             units_map pos, neg;
+            units_map::print_type = units_map::PRETTY_PRINT;
 
             /* first sort into pos or neg exponent (of units).  The results
              * should already be sorted lexically because we use a map. */
@@ -314,26 +351,11 @@ namespace physical {
                     pos[p.first] = p.second;
             }
 
-            out << '<' << coeff;
- 
-            // numerator first
-            for (units_map::const_iterator i = pos.begin(); i != pos.end(); i++) {
-                const units_pair & p = (*i);
-                out << ' ' << p.first;
-                if (p.second > 1)
-                    out << '^' << p.second;
-            }
+            out << '<' << coeff << ' ' << pos;
 
             // now denominator
-            if (!neg.empty()) {
-                out <<  " /";
-                for (units_map::const_iterator i = neg.begin(); i!=neg.end(); i++) {
-                    const units_pair & p = (*i);
-                    out << ' ' << p.first;
-                    if (p.second < -1)
-                        out << '^' << (-p.second);
-                }
-            }
+            if (!neg.empty())
+                out <<  " / " << neg;
 
             out << '>';
 
@@ -343,13 +365,69 @@ namespace physical {
             return out;
         }
 
-        inline std::ostream & print(std::ostream & out) const {
-            return out << coeff << " * " << units;
+        /** Prints the physical quantity in a mathematically format that can
+         * be parsed by the calculator. */
+        std::ostream & mathPrint(std::ostream & out) const {
+            units_map pos, neg;
+            units_map::print_type = units_map::MATH_PRINT;
+
+            /* first sort into pos or neg exponent (of units).  The results
+             * should already be sorted lexically because we use a map. */
+            for (units_map::const_iterator i = units.begin(); i!= units.end(); i++) {
+                const units_pair & p = (*i);
+                if (p.second<0)
+                    neg[p.first] = p.second;
+                else
+                    pos[p.first] = p.second;
+            }
+
+            out << '(' << coeff;
+
+            if (!pos.empty())
+                out << " * " << pos;
+
+            // now denominator
+            if (neg.size() == 1)
+                out <<  " / " << neg;
+            else if (!neg.empty())
+                out <<  " / (" << neg << ')';
+
+            out << ')';
+
+            return out;
         }
 
-        inline void assertMatch(const quantity & q) const throw (exception) {
+        inline std::ostream & print(std::ostream & out, const enum PRINT_TYPE & t) const {
+            enum PRINT_TYPE old = quantity::print_type;
+            quantity::print_type = t;
+            print(out);
+            quantity::print_type = old;
+            return out;
+        }
+
+        inline std::ostream & print(std::ostream & out) const {
+            switch(quantity::print_type) {
+                case MATH_PRINT:
+                    mathPrint(out);
+                    break;
+
+                case UGLY_PRINT:
+                    out << coeff << " * ";
+                    ugly_print(out,units);
+                    break;
+
+                default:
+                case PRETTY_PRINT:
+                    prettyPrint(out);
+                    break;
+            }
+            return out;
+        }
+
+        inline const quantity & assertMatch(const quantity & q) const throw (exception) {
             if (units != q.units)
                 throw exception(UnitsMismatch);
+            return *this;
         }
 
         /* **** BEGIN QUANTITY OPERATORS **** */
@@ -401,6 +479,11 @@ namespace physical {
             return coeff <= q.coeff;
         }
 
+        inline bool operator==(const quantity & q) const {
+            assertMatch(q);
+            return coeff == q.coeff;
+        }
+
 
         /* THESE FUNCTIONS MUST BE IN-CLASS. */
 
@@ -435,6 +518,9 @@ namespace physical {
         /* ****   END QUANTITY OPERATORS **** */
     };
 
+    template <class T>
+    enum quantity<T>::PRINT_TYPE quantity<T>::print_type = quantity<T>::PRETTY_PRINT;
+
 
     /* **** BEGIN QUANTITY OPERATORS **** */
     /* we define all operators here that do not need assertMatch */
@@ -452,7 +538,7 @@ namespace physical {
      * similar to GNU units. */
     template<class T>
     inline std::ostream & operator << (std::ostream & out, const quantity<T> & q) {
-        return q.prettyPrint(out);
+        return q.print(out);
     }
 
     /** Multiplication operator between two quantities. */

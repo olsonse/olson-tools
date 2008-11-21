@@ -4,7 +4,9 @@
 #
 
 MAKECONF=$(top_builddir)/Makeconf
+NO_OPTIM=$(srcdir)/Makefile.extra
 include $(MAKECONF)
+include $(NO_OPTIM)
 
 bin_PROGRAMS    = testParser
 LDADD           = -L$(top_builddir)/lib -lolson-tools $(BOOST_LDFLAGS) -lboost_regex

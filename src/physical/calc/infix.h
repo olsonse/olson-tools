@@ -151,13 +151,16 @@ class InfixCalcEngine : public boost::spirit::grammar<InfixCalcEngine> {
             // function is called to store the definition. Notice how a rule can
             // have multiple semantic actions.
             assignment
-                = identifier[assignment.name = arg1]
-                  >> '='
-                  >> ( expression[assignment.value = arg1]
-                  /* can't seem to figure this one out! */
-//                   | assignment[assignment.value = arg1]
-                     )
-                       [bind(&InfixCalcEngine::define_variable)(self, assignment.name, assignment.value)]
+                = (
+                    identifier[assignment.name = arg1]
+                    >> '='
+                    >> assignment[assignment.value = arg1]
+                  ) [bind(&InfixCalcEngine::define_variable)(self, assignment.name, assignment.value)]
+                | (
+                    identifier[assignment.name = arg1]
+                    >> '='
+                    >> expression[assignment.value = arg1]
+                  ) [bind(&InfixCalcEngine::define_variable)(self, assignment.name, assignment.value)]
                 ;
            
             expression
@@ -392,12 +395,14 @@ class InfixCalcEngine : public boost::spirit::grammar<InfixCalcEngine> {
     bool & result_setRef;
 };
 
-struct InfixCalc : BaseCalc<InfixCalc, InfixCalcEngine> {
-    typedef BaseCalc<InfixCalc, InfixCalcEngine> super;
-    Quantity result;
-    bool result_set;
-    InfixCalcEngine engine;
-    InfixCalc() : super(engine), result(), engine(symbols,result,result_set) {}
+struct InfixCalc : BaseBoostCalc<InfixCalcEngine>, BaseCalc<InfixCalc> {
+    typedef BaseBoostCalc<InfixCalcEngine>      base_boost_calc;
+    typedef BaseCalc<InfixCalc>                 base_calc;
+    Quantity                                    result;
+    bool                                        result_set;
+    InfixCalcEngine                             engine;
+    InfixCalc() : base_boost_calc(engine), base_calc(), result(),
+                  engine(base_calc::symbols,result,result_set) {}
 };
 
 } /* namespace calc */

@@ -2,7 +2,7 @@
  * A multitude of physical constants and units (mks where applicable)
  * organized into a bunch of namespaces.
  *
- * The data for the units and constants listed in this header are
+ * Much of the data for the units and constants listed in this header are
  * freely available on usenet servers.  The reference for the original
  * header is comp.lang.cpp/2004-10/2217 by E. Robert Tisdale (10/17/04).
  * The namespace layout is original to the posting by E. Robert Tisdale.
@@ -869,7 +869,35 @@ namespace physical {
     }
     namespace constants = constant;
     // ####   END OF CONSTANT CREATION #### #
-} 
+
+
+    // #### BEGIN OF ELEMENT CREATION #### #
+    // FIXME:  finish filling out this periodic table data
+    /* This data is taken from physics.nist.gov. */
+#define _ELEMENT(name,sym,n,m,i) \
+    namespace name { \
+        const Quantity number = n; \
+        const Quantity mass = m * amu; \
+        const Quantity ionization = i * eV; \
+    } \
+    namespace sym = name;
+
+    namespace element {
+        using namespace constants;
+        _ELEMENT(hydrogen,      H,    1,      1.00794,      13.5984 );
+        _ELEMENT(helium,        He,   2,      4.002602,     24.5874 );
+        _ELEMENT(lithium,       Li,   3,      6.941,         5.3917 );
+        _ELEMENT(neon,          Ne,  10,      20.1797,      21.5645 );
+        _ELEMENT(sodium,        Na,  11,      22.989770,     5.1391 );
+        _ELEMENT(argon,         Ar,  18,      39.948,       15.7596 );
+        _ELEMENT(potassium,      K,  19,      39.0983,       4.3407 );
+        _ELEMENT(rubidium,      Rb,  37,      85.4678,       4.1771 );
+        _ELEMENT(cesium,        Cs,  55,     132.90545,      3.8939 );
+        _ELEMENT(francium,      Fr,  87,     223,            4.0727 );
+    }
+    namespace elements = element;
+    // ####   END OF ELEMENT CREATION #### #
+}
 
 
 #endif // PHYSICAL_DATA_H

@@ -14,9 +14,9 @@ int main() {
     Quantity d = 10*physical::unit::radian;
 
 
-    b.print(std::cout << "b:  ") << '\n';
-    c.print(std::cout << "c:  ") << '\n';
-    pow(b,0.1).print(std::cout << "pow(b,0.1):  ") << '\n';
+    b.print(std::cout << "b:  ", Quantity::UGLY_PRINT) << '\n';
+    c.print(std::cout << "c:  ", Quantity::UGLY_PRINT) << '\n';
+    pow(b,0.1).print(std::cout << "pow(b,0.1):  ", Quantity::UGLY_PRINT) << '\n';
     std::cout << "b = " << b << "\n\n";
 
     d.print(std::cout << "d:  ") << '\n';

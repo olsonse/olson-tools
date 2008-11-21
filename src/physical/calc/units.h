@@ -7,6 +7,8 @@ namespace physical {
 namespace calc {
 
 void addPhysicalUnits(symbol::table & symbols) {
+    /* FIXME:  perhaps when I finish the Quantity::registry stuff, then I will
+     * merely have to import a pre-compiled list of defined symbols. */
     symbols["physical::constant::amu"                 ] =physical::constant::amu                         ;
     symbols["physical::constant::pi"                  ] =physical::constant::pi                          ;
     symbols["physical::unit::radian"                  ] =physical::unit::radian                          ;
@@ -664,6 +666,7 @@ void addPhysicalUnits(symbol::table & symbols) {
     symbols["physical::unit::equivalent::foot_candle" ] =physical::unit::equivalent::foot_candle         ;
     symbols["physical::unit::equivalent::foot_candles"] =physical::unit::equivalent::foot_candles        ;
     symbols["physical::unit::equivalent::fc"          ] =physical::unit::equivalent::fc                  ;
+
     symbols["physical::constant::c"                   ] =physical::constant::c                           ;
     symbols["physical::constant::Mach"                ] =physical::constant::Mach                        ;
     symbols["physical::constant::h"                   ] =physical::constant::h                           ;
@@ -701,6 +704,57 @@ void addPhysicalUnits(symbol::table & symbols) {
     symbols["physical::constant::K_B"                 ] =physical::constant::K_B                         ;
     symbols["physical::constant::V_molar"             ] =physical::constant::V_molar                     ;
     symbols["physical::constant::sigma_SB"            ] =physical::constant::sigma_SB                    ;
+
+    symbols["physical::element::hydrogen::number"     ] =physical::element::hydrogen::number             ;
+    symbols["physical::element::hydrogen::mass"       ] =physical::element::hydrogen::mass               ;
+    symbols["physical::element::hydrogen::ionization" ] =physical::element::hydrogen::ionization         ;
+
+    symbols["physical::element::helium::number"       ] =physical::element::helium::number               ;
+    symbols["physical::element::helium::mass"         ] =physical::element::helium::mass                 ;
+    symbols["physical::element::helium::ionization"   ] =physical::element::helium::ionization           ;
+
+    symbols["physical::element::lithium::number"      ] =physical::element::lithium::number              ;
+    symbols["physical::element::lithium::mass"        ] =physical::element::lithium::mass                ;
+    symbols["physical::element::lithium::ionization"  ] =physical::element::lithium::ionization          ;
+
+    symbols["physical::element::neon::number"         ] =physical::element::neon::number                 ;
+    symbols["physical::element::neon::mass"           ] =physical::element::neon::mass                   ;
+    symbols["physical::element::neon::ionization"     ] =physical::element::neon::ionization             ;
+
+    symbols["physical::element::sodium::number"       ] =physical::element::sodium::number               ;
+    symbols["physical::element::sodium::mass"         ] =physical::element::sodium::mass                 ;
+    symbols["physical::element::sodium::ionization"   ] =physical::element::sodium::ionization           ;
+
+    symbols["physical::element::argon::number"        ] =physical::element::argon::number                ;
+    symbols["physical::element::argon::mass"          ] =physical::element::argon::mass                  ;
+    symbols["physical::element::argon::ionization"    ] =physical::element::argon::ionization            ;
+
+    symbols["physical::element::potassium::number"    ] =physical::element::potassium::number            ;
+    symbols["physical::element::potassium::mass"      ] =physical::element::potassium::mass              ;
+    symbols["physical::element::potassium::ionization"] =physical::element::potassium::ionization        ;
+
+    symbols["physical::element::rubidium::number"     ] =physical::element::rubidium::number             ;
+    symbols["physical::element::rubidium::mass"       ] =physical::element::rubidium::mass               ;
+    symbols["physical::element::rubidium::ionization" ] =physical::element::rubidium::ionization         ;
+
+    symbols["physical::element::cesium::number"       ] =physical::element::cesium::number               ;
+    symbols["physical::element::cesium::mass"         ] =physical::element::cesium::mass                 ;
+    symbols["physical::element::cesium::ionization"   ] =physical::element::cesium::ionization           ;
+
+    symbols["physical::element::francium::number"     ] =physical::element::francium::number             ;
+    symbols["physical::element::francium::mass"       ] =physical::element::francium::mass               ;
+    symbols["physical::element::francium::ionization" ] =physical::element::francium::ionization         ;
+
+    symbol::import(symbols, "physical::element::hydrogen",  "*", "physical::element::H" );
+    symbol::import(symbols, "physical::element::helium",    "*", "physical::element::He");
+    symbol::import(symbols, "physical::element::lithium",   "*", "physical::element::Li");
+    symbol::import(symbols, "physical::element::neon",      "*", "physical::element::Ne");
+    symbol::import(symbols, "physical::element::sodium",    "*", "physical::element::Na");
+    symbol::import(symbols, "physical::element::argon",     "*", "physical::element::Ar");
+    symbol::import(symbols, "physical::element::potassium", "*", "physical::element::K" );
+    symbol::import(symbols, "physical::element::rubidium",  "*", "physical::element::Rb");
+    symbol::import(symbols, "physical::element::cesium",    "*", "physical::element::Cs");
+    symbol::import(symbols, "physical::element::francium",  "*", "physical::element::Fr");
 }
 
 }
