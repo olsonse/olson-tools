@@ -66,6 +66,9 @@
 #include "Gene.h"
 #include "GeneticAlgArgs.h"
 
+
+namespace olson_tools{ namespace fit {
+
 ///
 class GeneticAlg {
   public:
@@ -97,6 +100,8 @@ class GeneticAlg {
 
 ///The GeneticAlg print function.
 std::ostream & operator<<(std::ostream &, const GeneticAlg &);
+
+}}/*namespace olson_tools::fit */
 
 #endif //  GENETICALG_H
 

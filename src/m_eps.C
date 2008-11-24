@@ -6,6 +6,8 @@
 
 #include "m_eps.h"
 
+namespace olson_tools {
+
 /*   This function is to ensure that x gets written to system memory at
  *   sometime and is not always in a register. */
 double setMachineEPSHelper (const double & x) {
@@ -28,3 +30,4 @@ double getMachineEPS () {
     return eps*2.0;
 }
 
+} /*namespace olson_tools*/

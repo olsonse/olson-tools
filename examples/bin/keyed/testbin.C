@@ -19,7 +19,7 @@ typedef struct {
 } FlatDistribution;
 
 int main() {
-    KeyedBin<double,double,3,201> bin(-0.5,0.5);
+    olson_tools::KeyedBin<double,double,3,201> bin(-0.5,0.5);
 
     int iter = 0;
     std::cout << "Enter the nubmer of samples:  "
@@ -30,10 +30,10 @@ int main() {
 
     FlatDistribution flat;
 
-    Distribution distro(flat, -0.5, 0.5, 1000);
+    olson_tools::Distribution distro(flat, -0.5, 0.5, 1000);
     for (int i = 0; i < iter; i++) {
         double x = distro();
-        Vector<double,3> v(VInit, log(fabs(x)), exp(x), pow(2.0,x));
+        olson_tools::Vector<double,3> v(VInit, log(fabs(x)), exp(x), pow(2.0,x));
         bin.bin(distro(),v);
     }
 

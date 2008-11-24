@@ -39,7 +39,11 @@
 
 // The following will function for now as our virtual io
 
+namespace olson_tools{ namespace fit {
+
 std::istream gain(std::cin.rdbuf());
 std::ostream gaout(std::cout.rdbuf());
 std::ostream gaerr(std::cerr.rdbuf());
 std::ostream galog(std::clog.rdbuf());
+
+}}/*namespace olson_tools::fit */

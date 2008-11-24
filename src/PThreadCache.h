@@ -13,6 +13,8 @@
 #include <queue>
 #include <algorithm>
 
+namespace olson_tools {
+
 /** The basic pthread task structure.  Inheriting classes must implement the
  * exec() function. */
 class PThreadTask {
@@ -250,5 +252,7 @@ static PThreadCache pthreadCache;
 static inline const int & get_max_threads() {
     return pthreadCache.get_max_threads();
 }
+
+}/* namespace olson_tools */
 
 #endif // PTHREADCACHE_H

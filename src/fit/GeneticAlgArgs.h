@@ -26,6 +26,8 @@
 #include "merit_def.h"
 #include "Individual.h"
 
+namespace olson_tools{ namespace fit {
+
 ///The args for GeneticAlg class.
 class GeneticAlgArgs {
   public:
@@ -79,5 +81,6 @@ class GeneticAlgArgs {
 
 };//class GeneticAlgArgs
 
-#endif //  GENETICALGARGS_H
+}}/*namespace olson_tools::fit */
 
+#endif //  GENETICALGARGS_H

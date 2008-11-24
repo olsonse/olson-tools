@@ -17,6 +17,22 @@
 #include <olson-tools/logger.h>
 #include <olson-tools/strutil.h>
 
+using olson_tools::OptionHandler;
+using olson_tools::OptionProcessor;
+using olson_tools::tolower;
+using olson_tools::logger::setLogProgramName;
+using olson_tools::logger::log_info;
+using olson_tools::logger::log_severe;
+using olson_tools::logger::LogFileP;
+using olson_tools::logger::LogLevel;
+using olson_tools::logger::LLOG_WARNING;
+using olson_tools::logger::LLOG_FINE;
+using olson_tools::logger::LLOG_FINER;
+using olson_tools::logger::LLOG_FINEST;
+using olson_tools::logger::LLOG_INFO;
+using olson_tools::logger::LLOG_CONFIG;
+using olson_tools::logger::LLOG_SEVERE;
+
 const char * PROGRAM = "A Good Program";
 
 /******************* BEGIN BOOT OPTIONHANDLER *******************/

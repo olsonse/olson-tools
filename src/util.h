@@ -46,6 +46,11 @@
 
 #include <string>
 
+
+
+namespace olson_tools {
+
+
 // the following reads from stdin to find the max & min and value of a
 // certain parameter named string. 
 void text_getMinValMax(double &min,double &val,double &max,bool &stat,const std::string & qstring);
@@ -84,5 +89,7 @@ void text_alert( const char * message );
 // just to create a pause; "Press <Enter> to continue."
 int pausetext() ;
 
-#endif // UTIL_H
 
+}/* namespace olson_tools */
+
+#endif // UTIL_H

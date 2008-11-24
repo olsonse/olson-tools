@@ -2,6 +2,8 @@
 #include <olson-tools/fit/simfit.h>
 #include <iostream>
 
+using olson_tools::fit::Fit;
+
 template <typename T>
 class bob : public Fit<T> {
 public:

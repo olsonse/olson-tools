@@ -15,6 +15,8 @@
 #include "Fields.h"
 #include "Timing.h"
 
+namespace olson_tools {
+
 template <class Field>
 class ScaleField : public virtual BaseField,
                    public Field {
@@ -62,5 +64,7 @@ class ScaleField : public virtual BaseField,
 
 template <class F>
 ExpTimingElement ScaleField<F>::DefaultTiming(-DBL_MAX,1.0,1.0,1.0);
+
+}/* namespace olson_tools */
 
 #endif //SCALEFIELD_H

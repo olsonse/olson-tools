@@ -10,18 +10,33 @@
 using namespace physical::units;
 using namespace physical::constants;
 
+using olson_tools::SQR;
+using olson_tools::AddField;
+using olson_tools::AddForce;
+using olson_tools::BgField;
+using olson_tools::Vector;
+using olson_tools::Gravity;
+using olson_tools::InvCylindricalDist;
+using olson_tools::FlatDistribution;
+using olson_tools::BField::BCalcs;
+using olson_tools::BField::ThinWireSrc;
+using olson_tools::BField::ThinCurrentElement;
+using olson_tools::BField::BTrapDistribution2D;
+using olson_tools::BField::BTrap2DInit;
+using olson_tools::to_string;
+
 const double I = 300;
 
     /** Guide wires without the knee. */
-    BField::ThinCurrentElement wires[] = {
+    ThinCurrentElement wires[] = {
         /* source for wire 2. */
-        BField::ThinCurrentElement(-0.0032567, 0.0,  2.0, -0.0012567, 0.0,-4.0,I),
+        ThinCurrentElement(-0.0032567, 0.0,  2.0, -0.0012567, 0.0,-4.0,I),
 
         /* source for wire 1. */
-        BField::ThinCurrentElement( 0.0032567, 0.0,  2.0,  0.0012567, 0.0,-4.0,I),
+        ThinCurrentElement( 0.0032567, 0.0,  2.0,  0.0012567, 0.0,-4.0,I),
 
         /* end marker. */
-        BField::ThinCurrentElement(0,0,0,0,0,0,0)
+        ThinCurrentElement(0,0,0,0,0,0,0)
     };
 
 
@@ -30,9 +45,9 @@ inline void addwires(ThinWireBSrc & bsrc) {
     for (int i = 0; fabs(wires[i].I) > 0; bsrc.currents.push_back(wires[i++]));
 }
 
-typedef BField::BCalcs<
+typedef BCalcs<
     AddField<
-        BField::ThinWireSrc,
+        ThinWireSrc,
         BgField< Vector<double,3> >
     >
 > BForce;
@@ -41,10 +56,10 @@ typedef AddForce< BForce, Gravity > BFieldSrc;
 
 
 typedef InvCylindricalDist<
-            BField::BTrapDistribution2D<BForce>,
+            BTrapDistribution2D<BForce>,
             FlatDistribution,
             1u,
-            BField::BTrap2DInit<BForce>
+            BTrap2DInit<BForce>
 > P_xyz;
 
 int main() {

@@ -19,7 +19,7 @@ typedef struct {
     }
 } SincDistribution;
 
-typedef GenericBinExtender<double,GenericBin<double,100>,100> BinType;
+typedef olson_tools::GenericBinExtender<double,olson_tools::GenericBin<double,100>,100> BinType;
 
 int main() {
     BinType bin(-10.0,10.0, -10.0,10.0);
@@ -33,7 +33,7 @@ int main() {
 
     SincDistribution sinc;
 
-    Distribution distro(sinc, -10.0, 10.0, 1000);
+    olson_tools::Distribution distro(sinc, -10.0, 10.0, 1000);
     for (int i = 0; i < iter; i++) {
         bin.bin(distro(), distro());
     }

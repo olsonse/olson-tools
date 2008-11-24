@@ -7,7 +7,10 @@
  * changes the type of the base class.
  * */
 template<class T, unsigned int id = 0>
-class BgI : public virtual BaseField, public BgField<T> {};
+class BgI : public virtual olson_tools::BaseField, public olson_tools::BgField<T> {};
+
+using olson_tools::Vector;
+using olson_tools::AddField;
 
 typedef  BgI<double,0U> s0;
 typedef  BgI<double,1U> s1;

@@ -25,6 +25,8 @@
 #include "indices.h"
 
 
+namespace olson_tools {
+
 template <class FieldTable>
 int spitfieldout(std::ostream & output,
                  const FieldTable & ftable,
@@ -129,5 +131,7 @@ int spitfieldout(std::ostream & output,
     }
     return N;
 }
+
+}/* namespace olson_tools */
 
 #endif // CREATEFIELDFILE_H

@@ -18,11 +18,15 @@
  */
 
 #include "options.h"
+#include "logger.h"
+
+
 #include <string.h>
 #include <strings.h>
-#include "logger.h"
 #include <iostream>
 #include <iterator>
+
+namespace olson_tools {
 
 const char * OptionHandler::defs::option_type_desc[] = {
     "float",
@@ -114,7 +118,7 @@ bool OptionProcessor::processOptions( std::vector<std::string> & options,
 
 	    if( equal_sign != NULL ) {
 		if( equal_sign == (arg + strlen(arg) - 1) ) {
-		    if(!silent) log_severe( "unrecognized option '%s'", arg);
+		    if(!silent) logger::log_severe( "unrecognized option '%s'", arg);
 		    unhandled++;
 		    continue;
 		}
@@ -138,7 +142,7 @@ bool OptionProcessor::processOptions( std::vector<std::string> & options,
 	    if (equal_sign) *equal_sign = '=';
 
 	    if( !handled ) {
-		if(!silent) log_severe( "unrecognized option '%s'", arg);
+		if(!silent) logger::log_severe( "unrecognized option '%s'", arg);
 		unhandled++;
 	    }
 
@@ -262,3 +266,4 @@ std::string  OptionHandler::defs::standard_option::getUsage(const std::string & 
                          ,+opthelp+);
 }/* getUsage */
 
+}/* namespace olson_tools */

@@ -46,6 +46,7 @@
 
 
 #  ifdef __cplusplus
+namespace olson_tools {
 extern "C" {
 #  endif
 
@@ -61,6 +62,7 @@ extern "C" {
     double cg (double j1, double m1, double j2, double m2, double j, double m);
 
 #  ifdef __cplusplus
+}
 }
 #  endif
 

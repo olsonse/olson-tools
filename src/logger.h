@@ -47,6 +47,7 @@
 #define LOGGER_H
 
 #ifdef __cplusplus
+namespace olson_tools { namespace logger {
 extern "C" {
 #endif 
 
@@ -154,9 +155,6 @@ void vlog(LogLevel_t level, int err, const char *fmt, va_list args);
 #  define _predef_vlog
 #endif
 
-#ifndef DOXYGEN_SKIP
-#  define setLogProgramName setLogProgramName_
-#endif
 /** Set the program name to be used in log messages.
  * @param prog The name of the program that will be prepended to all log
  * messages.
@@ -228,6 +226,7 @@ void setLogFile(const char * logfile);
 
 #ifdef __cplusplus
 }
+}} /*namespace olson_tools::logger */
 #endif 
 
 #endif // LOGGER_H

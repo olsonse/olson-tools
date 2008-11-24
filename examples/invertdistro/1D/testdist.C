@@ -11,6 +11,12 @@
 #include <olson-tools/GenericBin.h>
 
 using namespace physical::constants;
+using olson_tools::Distribution;
+using olson_tools::MaxwellianDistrib2D;
+using olson_tools::MaxwellianDistrib3D;
+using olson_tools::GaussianDistrib;
+using olson_tools::Vector;
+using olson_tools::GenericBin;
 
 /* this is how G.A. Bird gets his diffusely reflecting velocities. */
 void nextvel(double p[3]) {
@@ -77,7 +83,7 @@ bin bins[5] = {
 int main() {
 
     int iter = 0;
-    std::cout << "Enter the nubmer of samples:  " << std::flush;
+    std::cout << "Enter the number of samples:  " << std::flush;
     std::cin >> iter;
     if (iter == 0) return EXIT_FAILURE;
     std::cout << iter << " samples requested." << std::endl;

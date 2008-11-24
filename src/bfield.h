@@ -27,6 +27,7 @@
 #include "Fields.h"
 #include "Forces.h"
 
+namespace olson_tools {
 namespace BField {
 
     class  ThinCurrentElement {
@@ -272,5 +273,6 @@ namespace BField {
     };
 
 } /* namespace */
+}/* namespace olson_tools */
 
 #endif // BFIELD_H

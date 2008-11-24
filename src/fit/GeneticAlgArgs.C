@@ -12,6 +12,8 @@
 
 #include "GeneticAlgArgs.h"
 
+namespace olson_tools{ namespace fit {
+
 void GeneticAlgArgs::setParam (const std::string & name, double & var) {
 	if (name == "population")
 		population = (int)var;
@@ -42,3 +44,5 @@ void GeneticAlgArgs::setParam (const std::string & name, double & var) {
 	else if (name == "seed_fraction")
 		seed_fraction = (int)var;
 }
+
+}}/*namespace olson_tools::fit */

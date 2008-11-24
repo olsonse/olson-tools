@@ -45,9 +45,11 @@
 
 #include <iostream>
 
-extern std::istream gain;
 
-extern std::ostream gaout, gaerr, galog;
+namespace olson_tools{ namespace fit {
+    extern std::istream gain;
 
+    extern std::ostream gaout, gaerr, galog;
+}}/*namespace olson_tools::fit */
 #endif // IO_H
 

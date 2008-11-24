@@ -7,6 +7,8 @@
 #include <olson-tools/field-lookup.h>
 #include "common.h"
 
+using olson_tools::Vector;
+
 template <class BSrc1, class BSrc2>
 double testfield(std::ostream & output,
                  const BSrc1 & bsrc1,
@@ -38,7 +40,7 @@ int main() {
 
 
     /* Static Field Calc (interpolated from lookup table) */
-    ForceLookup<> flookup;
+    olson_tools::ForceLookup<> flookup;
     flookup.readindata(FIELD_FILENAME);
 
 

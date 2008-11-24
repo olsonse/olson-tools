@@ -19,7 +19,7 @@ typedef struct {
 } FlatDistribution;
 
 int main() {
-    GenericBin<double,201> bin(-0.5,0.5);
+    olson_tools::GenericBin<double,201> bin(-0.5,0.5);
 
     int iter = 0;
     std::cout << "Enter the number of samples:  "
@@ -30,7 +30,7 @@ int main() {
 
     FlatDistribution flat;
 
-    Distribution distro(flat, -0.5, 0.5, 1000);
+    olson_tools::Distribution distro(flat, -0.5, 0.5, 1000);
     for (int i = 0; i < iter; i++) {
         bin.bin(distro());
     }

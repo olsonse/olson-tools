@@ -11,7 +11,6 @@ libolson_tools_a_SOURCES = \
         random/random.C \
         random/randomf.f \
         3j.c \
-        Distribution.C \
         fit/debug.C \
         fit/Gene.C \
         fit/Generation.C \
@@ -33,6 +32,7 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./fit/fit.h \
         ./fit/merit_def.h \
         ./fit/simfit.h \
+        ./fit/simfit.C \
         ./fit/Histogram.h \
         ./fit/Individual.h \
         ./fit/Generation.h \

@@ -44,6 +44,8 @@
 #  include "mpi_init.h"
 #endif
 
+namespace olson_tools {
+
 /** A histogramming dimension extender.
  *
  * If MPI is used, this class supplies its own SUM operator for MPI::Reduce
@@ -207,7 +209,7 @@ class GenericBinExtender {
         static void init() {
             MPI.SUM.Init(reinterpret_cast<MPI::User_function*>(&MPISUM), true);
 
-            olson_tools::MPIStructBuilder msb;
+            MPIStructBuilder msb;
             msb.addBlocks<GenericBinExtender>();
             MPI.TYPE = msb.Create_struct();
         }
@@ -227,8 +229,8 @@ class GenericBinExtender {
         }
 
         static int add_init() {
-            olson_tools::MPIInit::add_init(init);
-            olson_tools::MPIInit::add_finish(finish);
+            MPIInit::add_init(init);
+            MPIInit::add_finish(finish);
             return 1;
         }
 
@@ -266,7 +268,7 @@ int GenericBinExtender<TKey,T2,nbins>::added_mpi_init = GenericBinExtender<TKey,
 template <class TKey, class T2, unsigned int nbins, class Block>
 void blockAdder( std::vector<Block> & blocks,
                  const GenericBinExtender<TKey,T2,nbins> * null_ptr ) {
-    int bi = olson_tools::MPIStructBuilder::total_size(blocks);
+    int bi = MPIStructBuilder::total_size(blocks);
     blocks.push_back(Block(3,sizeof(double))); /* pad */
     for (unsigned int i = 0; i < nbins; i++) {
         blockAdder( blocks, (T2*)NULL );
@@ -277,12 +279,13 @@ void blockAdder( std::vector<Block> & blocks,
     /* now we'll add any remaining padding necessary--helpful for arrays.
      * This should actually not really be necessary, but we'll do it anyway. */
     int pad = sizeof(GenericBinExtender<TKey,T2,nbins>)
-            - (olson_tools::MPIStructBuilder::total_size(blocks) - bi);
+            - (MPIStructBuilder::total_size(blocks) - bi);
     if (pad) blocks.push_back(Block(1,pad));    /* pad */
 }
 #endif // USE_MPI
 
 
+} /*namespace olson_tools*/
 
 
 #endif //GENERICBINEXTENDER_H

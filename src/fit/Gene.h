@@ -65,6 +65,9 @@
 #define GENE_H
 #include "io.h" // in and output
 
+
+namespace olson_tools{ namespace fit {
+
 /// Alleles are stored in memory as datatype Allele_t; currently as double.
 #define Allele_t double
 
@@ -211,5 +214,7 @@ void crossover(Chromosome& c1, Chromosome& c2);
 #define  TESTALLELETYPE( allele_type_variable, allele_type_test ) \
  ( ( ~allele_type_variable & allele_type_test ) == 0 )
 
-#endif // GENE_H
 
+}}/*namespace olson_tools::fit */
+
+#endif // GENE_H

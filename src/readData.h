@@ -47,7 +47,13 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+
 #include "listutil.h"
+#include "Vector.h"
+
+
+namespace olson_tools {
+
 
 /** Read a block of data from input stream into a linked list.
  * A block of data is defined by the overloaded operator>>(...) that is used
@@ -197,7 +203,6 @@ inline bool read_past_comment(std::istream & input,
     return false;
 }
 
-#include "Vector.h"
 
 template<class T, unsigned int L>
 class Data : public Vector<T,L> {
@@ -220,5 +225,7 @@ std::istream & operator>>(std::istream & input, Data<T,L> * & d) {
 
     return input;
 }
+
+}/* namespace olson_tools */
 
 #endif // READDATA_H

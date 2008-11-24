@@ -20,6 +20,8 @@
 #include <math.h>
 #include "../ompexcept.h"
 
+namespace olson_tools{ namespace fit {
+
 Histogram::Histogram(int population, int cont_grid_cols, const Individual & member):
     grid_spacing(0.0), mfact(1.0 - 1.0/sqrt(float(population))) {
     // allocate some space for the accumulation arrays
@@ -110,3 +112,4 @@ std::ostream & operator<<(std::ostream &output, const Histogram & hist) {
   return output;
 } // operator<< Histogram
 
+}}/*namespace olson_tools::fit */

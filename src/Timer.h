@@ -11,6 +11,8 @@
 #include <string.h>
 
 
+namespace olson_tools {
+
 /** A simple timer class. 
  * This class tracks both wall clock time as well as cpu time (as reported by
  * the times() function.   This is a simple class that collects code that I
@@ -135,5 +137,7 @@ std::ostream & operator<< (std::ostream & out, const Timer & t ) {
     out << t.dt << '\t' << t.dt_cpu_time;
     return out;
 }
+
+}/* namespace olson_tools */
 
 #endif // TIMER_H

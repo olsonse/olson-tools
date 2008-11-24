@@ -4,7 +4,7 @@
 
 int main() {
     double r = 0.0;
-    Timer t;
+    olson_tools::Timer t;
     t.start();
     for (double i = 0; i< 1.0; i+= 3e-8) {
         double b = log(i);

@@ -11,6 +11,15 @@
 #include <olson-tools/ScaleForce.h>
 
 using namespace physical::units;
+using olson_tools::BaseField;
+using olson_tools::ScaleField;
+using olson_tools::ScaleForce;
+using olson_tools::BgField;
+using olson_tools::Gravity;
+using olson_tools::Vector;
+using olson_tools::TimingElement;
+using olson_tools::ExpTimingElement;
+using olson_tools::TimingPrinter;
 
 typedef ScaleField< BgField<double> > ScaledScalarField;
 typedef ScaleField< BgField< Vector<double,3> > > ScaledVectorField;

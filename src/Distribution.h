@@ -65,6 +65,8 @@
 #include "physical/physical.h"
 #include "power.h"
 
+namespace olson_tools {
+
 /** A generic class to invert distributions.
  * The user needs to provide a class or struct that contains a 'distrib'
  * function that will return the value of the (un)normalized distribution at a
@@ -179,7 +181,10 @@ class Distribution {
         delete[] IntP;
     }
 
-    ~Distribution();
+    /** Destructor frees memory for q-array. */
+    ~Distribution() {
+        delete[] q;
+    }
 
     /** Get a random number from this distribution.
      * This calls leverarm(double).  This is now essentially the same function
@@ -360,5 +365,7 @@ class GaussianDistrib {
         return exp(-SQR(v-v0) * beta );
     }
 };
+
+}/* namespace olson_tools */
 
 #endif // DISTRIBUTION_H

@@ -23,6 +23,9 @@
 #ifndef LISTUTIL_H
 #define LISTUTIL_H
 
+
+namespace olson_tools {
+
 /** A c++ routine for deleting a linked list of particles.
  * @returns
  *     The number of items deleted.
@@ -41,5 +44,7 @@ inline int deleteList(T * list) {
 
     return n;
 }
+
+} /*namespace olson_tools*/
 
 #endif // LISTUTIL_H

@@ -64,6 +64,8 @@
 #include <stdexcept>
 #include "../ompexcept.h"
 
+namespace olson_tools{ namespace fit {
+
 typedef void (*sighandler_t)(int);
 
 GeneticAlg::GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args ):
@@ -201,3 +203,4 @@ std::ostream & operator<<(std::ostream & output,const GeneticAlg & ga){
   return output;
 } // operator<< GeneticAlg
 
+}}/*namespace olson_tools::fit */

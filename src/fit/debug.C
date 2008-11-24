@@ -8,6 +8,8 @@
 #include "debug.h"
 #include <stdlib.h>
 
+namespace olson_tools{ namespace fit {
+
 ///
 int default_debug_level = 0;
 ///
@@ -22,3 +24,4 @@ int pausel(){
   return int( c );
 } // pausel
 
+}}/*namespace olson_tools::fit */

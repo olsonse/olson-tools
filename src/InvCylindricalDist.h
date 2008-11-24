@@ -31,6 +31,8 @@
 #include "nothing.h"
 #include "indices.h"
 
+namespace olson_tools {
+
 /** Simple class to keep range information. */
 class range_t {
   public:
@@ -333,5 +335,7 @@ class InvCylindricalDist {
     double dz_perp;
     double one_over_dz_perp;
 };
+
+}/* namespace olson_tools */
 
 #endif // INVCYLINDRICALDIST_H

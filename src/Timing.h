@@ -6,6 +6,9 @@
 #include <stdexcept>
 #include "m_eps.h"
 
+
+namespace olson_tools {
+
 /**
  * \example timing/testtiming.C
  * An example of how use the timing code.  This code mimics the functionality
@@ -196,5 +199,7 @@ class TimingPrinter {
 
     std::vector<Timing *> timers;
 };
+
+}/* namespace olson_tools */
 
 #endif // TIMING_H

@@ -83,6 +83,9 @@
 #include <stdexcept>
 #include "../ompexcept.h"
 
+
+namespace olson_tools{ namespace fit {
+
 /* *****       stopGeneticAlg portion ******* */
 
 ///
@@ -539,3 +542,4 @@ std::ostream & operator<<(std::ostream &output, const Generation & gen) {
   return output;
 } // operator << Generation
 
+}}/*namespace olson_tools::fit */

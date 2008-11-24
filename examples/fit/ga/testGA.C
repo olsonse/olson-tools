@@ -3,6 +3,13 @@
 #include <iostream>
 #include <math.h>
 
+using olson_tools::fit::Allele_struct;
+using olson_tools::fit::ALLELE_DYNAMIC_CONT;
+using olson_tools::fit::Gene;
+using olson_tools::fit::Individual;
+using olson_tools::fit::GeneticAlg;
+using olson_tools::fit::GeneticAlgArgs;
+
 #define A(a,b,c)       Allele_struct((a),(b),(c), ALLELE_DYNAMIC_CONT)
 
 merit_t meritfnc( const Gene & gene, void * nothing ) {

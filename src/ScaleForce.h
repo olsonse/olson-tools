@@ -15,6 +15,8 @@
 #include "Forces.h"
 #include "Timing.h"
 
+namespace olson_tools {
+
 template <class Force>
 class ScaleForce : public virtual BaseForce,
                    public Force {
@@ -65,5 +67,6 @@ class ScaleForce : public virtual BaseForce,
 template <class F>
 ExpTimingElement ScaleForce<F>::DefaultTiming(-DBL_MAX,1.0,1.0,1.0);
 
+}/* namespace olson_tools */
 
 #endif //SCALEFORCE_H

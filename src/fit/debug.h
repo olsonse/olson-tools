@@ -11,6 +11,8 @@
 #ifndef GA_DEBUG_H
 #define GA_DEBUG_H
 
+namespace olson_tools{ namespace fit {
+
 /** This function creates a pause in the program which requires user intervention. */
 int pausel();
 
@@ -31,5 +33,8 @@ const int GAR_NICHTS = 0;
 const int GA = 2;
 
 //@}
+
+
+}}/*namespace olson_tools::fit */
 
 #endif // GA_DEBUG_H

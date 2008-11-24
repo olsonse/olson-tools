@@ -27,7 +27,7 @@
 #include "Vector.h"
 #include "InvCylindricalDist.h"
 
-namespace BField {
+namespace olson_tools { namespace BField {
 
     template <class BSrc>
     class BTrap2DInit {
@@ -118,6 +118,6 @@ namespace BField {
         }
     };
 
-} /* namespace */
+}} /* namespace olson_tools::BField */
 
 #endif // BTRAP_DISTRO_H

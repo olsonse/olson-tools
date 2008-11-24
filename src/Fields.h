@@ -28,6 +28,8 @@
 #include "Vector.h"
 #include "indices.h"
 
+namespace olson_tools {
+
 #if 0
             //Gradient::gradient(a, *static_cast< magnitude_of<super1> *>((super1*)this), r);
 #define MAGNITUDE_OF(T,CP) *static_cast< T * > ( (T*) CP )
@@ -252,5 +254,6 @@ class FieldFunctor : public virtual BaseField, public Functor {
      * it must implement the operator()(r) for ScalarFields. */
 };
 
+}/* namespace olson_tools */
 
 #endif // FIELDS_H

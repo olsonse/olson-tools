@@ -91,7 +91,6 @@ int TimestampLog = 0;		/* Should messages have timestamps? */
 char * ProgramName = NULL;
 
 
-
 void setLogProgramName(const char * prog)
 {
     if (!prog) {
@@ -102,6 +101,12 @@ void setLogProgramName(const char * prog)
 
     ProgramName = realloc(ProgramName, strlen(prog) + 1);
     memcpy(ProgramName, prog, strlen(prog) + 1);
+}
+
+
+/* create a function that is usable from fortran code. */
+void setLogProgramName_(const char * prog) {
+    setLogProgramName(prog);
 }
 
 #define Program (ProgramName != NULL ? ProgramName : "some cool program")

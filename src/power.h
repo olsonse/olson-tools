@@ -75,6 +75,15 @@
 #  include "olson-tools-config.h"
 #endif
 
+
+
+#ifdef __cplusplus
+namespace olson_tools {
+#endif 
+
+
+
+
 #ifdef SQR
 !  error  SQR already defined.  Better figure out what to do here now.
 #else
@@ -133,5 +142,11 @@ double fast_pow_(double*,double*);
 #  endif 
 
 #endif /*  if LANGUAGE_FORTRAN__ != 1 */
+
+
+
+#ifdef __cplusplus
+}/* namespace olson_tools */
+#endif 
 
 #endif /* MY_OWN_POW */

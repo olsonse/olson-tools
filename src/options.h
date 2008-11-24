@@ -43,6 +43,8 @@
 #include "logger.h"
 #include <ctype.h>
 
+namespace olson_tools {
+
 /** Interface description for an option handler.
  * A class that inherits and completes this interface, will be able to be
  * registered with the OptionProcessor for handling command line options.
@@ -209,13 +211,13 @@ class OptionHandler {
 	    switch((*i).typ) {
 		case defs::FLOAT: {
 		    float fval = *((float*)(*i).mem);
-		    log_info("\t%s%s%.*s= %g %s", pre, (*i).name.c_str(), nspaces, spaces, fval, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %g %s", pre, (*i).name.c_str(), nspaces, spaces, fval, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::DOUBLE: {
 		    double fval = *((double*)(*i).mem);
-		    log_info("\t%s%s%.*s= %lg %s", pre, (*i).name.c_str(), nspaces, spaces, fval, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %lg %s", pre, (*i).name.c_str(), nspaces, spaces, fval, (*i).units.c_str());
 		    break;
 		}
 
@@ -224,55 +226,55 @@ class OptionHandler {
 		case defs::TOGGLE_BOOL:
 		case defs::BOOL: {
 		    bool val = *((bool*)(*i).mem);
-		    log_info("\t%s%s%.*s= %s %s", pre, (*i).name.c_str(), nspaces, spaces, (val?"true":"false"), (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %s %s", pre, (*i).name.c_str(), nspaces, spaces, (val?"true":"false"), (*i).units.c_str());
 		    break;
 		}
 
 		case defs::INT: {
 		    int val = *((int*)(*i).mem);
-		    log_info("\t%s%s%.*s= %i %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %i %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::UINT: {
 		    unsigned int val = *((unsigned int*)(*i).mem);
-		    log_info("\t%s%s%.*s= %u %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %u %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::SHORT: {
 		    short val = *((int*)(*i).mem);
-		    log_info("\t%s%s%.*s= %hi %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %hi %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::USHORT: {
 		    unsigned short val = *((unsigned short*)(*i).mem);
-		    log_info("\t%s%s%.*s= %hu %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %hu %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::LONG: {
 		    long val = *((long*)(*i).mem);
-		    log_info("\t%s%s%.*s= %li %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %li %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::ULONG: {
 		    unsigned long val = *((unsigned long*)(*i).mem);
-		    log_info("\t%s%s%.*s= %lu %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %lu %s", pre, (*i).name.c_str(), nspaces, spaces, val, (*i).units.c_str());
 		    break;
 		}
 
 		case defs::STRING: {
 		    std::string val = *((std::string*)(*i).mem);
-		    log_info("\t%s%s%.*s= %s %s", pre, (*i).name.c_str(), nspaces, spaces, val.c_str(), (*i).units.c_str());
+		    logger::log_info("\t%s%s%.*s= %s %s", pre, (*i).name.c_str(), nspaces, spaces, val.c_str(), (*i).units.c_str());
 		    break;
 		}
 
 		case defs::NOOPT:
 		default:
-		    log_warning("programmer user error!!!! (with the option printer)");
+		    logger::log_warning("programmer user error!!!! (with the option printer)");
 		    break;
 	    }//switch
 	}//for
@@ -313,13 +315,13 @@ class OptionHandler {
 		    /* now go onto the next option */
 		    continue;
 		} else if (optarg == NULL) {
-		    if(!silent) log_severe("%s option requires a value", (*i).name.c_str());
+		    if(!silent) logger::log_severe("%s option requires a value", (*i).name.c_str());
 		    return -1;
 		}
 		switch((*i).typ) {
 		    case defs::FLOAT:
 			if (sscanf(optarg, "%f", (float*)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to a float", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to a float", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -327,7 +329,7 @@ class OptionHandler {
 
 		    case defs::DOUBLE:
 			if (sscanf(optarg, "%lf", (double*)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to a double", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to a double", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -339,7 +341,7 @@ class OptionHandler {
 			} else if (*optarg=='f' || *optarg=='F') {
 			    *((bool *)(*i).mem) = false;
 			} else {
-			    if(!silent) log_severe("%s could not be converted to a boolean", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to a boolean", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -347,7 +349,7 @@ class OptionHandler {
 
 		    case defs::INT:
 			if (sscanf(optarg, "%i", (int*)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to an int", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to an int", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -355,7 +357,7 @@ class OptionHandler {
 
 		    case defs::UINT:
 			if (sscanf(optarg, "%u", (unsigned int *)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to an unsigned int", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to an unsigned int", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -363,7 +365,7 @@ class OptionHandler {
 
 		    case defs::SHORT:
 			if (sscanf(optarg, "%hi", (short *)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to a short", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to a short", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -371,7 +373,7 @@ class OptionHandler {
 
 		    case defs::USHORT:
 			if (sscanf(optarg, "%hu", (unsigned short *)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to an unsigned short", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to an unsigned short", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -379,7 +381,7 @@ class OptionHandler {
 
 		    case defs::LONG:
 			if (sscanf(optarg, "%li", (long *)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to a long", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to a long", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -387,7 +389,7 @@ class OptionHandler {
 
 		    case defs::ULONG:
 			if (sscanf(optarg, "%lu", (unsigned long *)(*i).mem) != 1) {
-			    if(!silent) log_severe("%s could not be converted to an unsigned long", (*i).name.c_str());
+			    if(!silent) logger::log_severe("%s could not be converted to an unsigned long", (*i).name.c_str());
 			    return -1;
 			}
 			retval = 1;
@@ -400,7 +402,7 @@ class OptionHandler {
 
 		    case defs::NOOPT:
 		    default:
-			log_warning("programmer user error!!!! (with the option handler)");
+			logger::log_warning("programmer user error!!!! (with the option handler)");
 			break;
 		}//switch
 	    }//if name
@@ -483,5 +485,7 @@ class OptionProcessor {
     std::vector<OptionHandler *> handlers;
     std::string usageHeader;
 }; // class OptionProcessor
+
+}/* namespace olson_tools */
 
 #endif // OPTIONS_H

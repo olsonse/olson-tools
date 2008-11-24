@@ -58,6 +58,8 @@
 #endif
 
 
+namespace olson_tools {
+
 /** MemGooLock is a class to facilitate mutual exlusion locks for
  * multi-threaded code.  This should be specialized (by ifdefs) for the
  * specific type of mutex needed.
@@ -88,6 +90,8 @@ class MemGooLock {
         IFPTHREAD(pthread_mutex_unlock(&pthread_mutex);)
     }
 };
+
+} /*namespace olson_tools*/
 
 
 /** Memory Storage Implementation.
@@ -148,7 +152,7 @@ class MemGooLock {
   static void freetoheap( int new_memlimit = -1 ); \
   \
 private: \
-  static MemGooLock memGooLock; \
+  static olson_tools::MemGooLock memGooLock; \
   static class *freelist; /* free-store for stuff already allocated */ \
   static int freelistsz; /* will store the size of the freelist */ \
   static int freelistlimit; /* to store limit for size of freelist */ \
@@ -171,7 +175,7 @@ private: \
 template class* class::freelist = 0; /*init to NULL */ \
 template int class::freelistsz = 0; /* init to zero */ \
 template int class::freelistlimit = memlimit; /* limit number of instances */ \
-template MemGooLock class::memGooLock = MemGooLock(); \
+template olson_tools::MemGooLock class::memGooLock = olson_tools::MemGooLock(); \
  \
  \
 /* The following function will delete \

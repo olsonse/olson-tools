@@ -54,8 +54,6 @@
 #include <cfloat>
 #include <stdlib.h>
 
-using namespace std;
-
 #define GNU_READLINE
 #ifdef GNU_READLINE
 
@@ -71,6 +69,11 @@ void rl_stuff( const char * str ) {
 }//rl_stuff
 
 #endif
+
+namespace olson_tools {
+
+using namespace std;
+
 
 void text_getMinDoubleMax(double &min,double &val,double &max,
                   bool &stat, const string & qstring ) {
@@ -305,3 +308,5 @@ string & text_get_Long_Comment( string & str, const string & prompt ){
   return str;
 } // text_get_Long_Comment
 
+
+}/* namespace olson_tools */

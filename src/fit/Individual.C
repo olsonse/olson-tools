@@ -56,6 +56,9 @@
 #include "Gene.h"
 #include "debug.h"
 
+namespace olson_tools{ namespace fit {
+
+
 ///
 #ifdef __SC__
 int __cdecl mcomp(const void* l1, const void* l2){
@@ -205,3 +208,4 @@ Individual * create_Individual( const Gene & gn,
   return new Individual( gn, meritfnc, obj_ptr );
 }
 
+}}/*namespace olson_tools::fit */

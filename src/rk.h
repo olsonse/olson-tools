@@ -51,6 +51,13 @@
 
 #  if LANGUAGE_FORTRAN__ != 1
 
+
+#ifdef __cplusplus
+namespace olson_tools {
+#endif 
+
+
+
 /** Type of function needed for Runge-Kutta.
  * @param p
  *     The Particle that is being moved in Runge-Kutta; this is an array of
@@ -207,6 +214,8 @@ extern "C" {
 
 #    ifdef __cplusplus
 }
+
+}/* namespace olson_tools */
 #    endif
 
 

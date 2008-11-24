@@ -36,6 +36,9 @@
 #include "m_eps.h"
 #include "power.h"
 
+
+namespace olson_tools {
+
 /** A simple define to help make it easier and cleaner to initialize
  * 3-Vectors (of a certain type).
  * Because this uses va_arg stuff: single byte types are only possible with
@@ -48,15 +51,15 @@
  * For single byte types, V3t_ can be used, and if that doesn't work (some
  * compilers complain), then use V3tcast.
  */
-#define V3t(type,a,b,c)       __CONCAT(vect3,type)(VInit,((type)(a)),((type)(b)),((type)(c)))
+#define V3t(type,a,b,c)       olson_tools::__CONCAT(vect3,type)(VInit,((type)(a)),((type)(b)),((type)(c)))
 
-#define V3tcast(type,cast_type,a,b,c)   __CONCAT(vect3,type)((cast_type)0,VInit,((cast_type)(a)),((cast_type)(b)),((cast_type)(c)))
+#define V3tcast(type,cast_type,a,b,c)   olson_tools::__CONCAT(vect3,type)((cast_type)0,VInit,((cast_type)(a)),((cast_type)(b)),((cast_type)(c)))
 
 /** Another simple define to help make it easier and cleaner to init 3-vectors
  * (of a given type).  This macro can usually (compiler dependent) only
  * helpful if the arguments are primitive constants.
  */
-#define V3t_(type,a,b,c)       (*(Vector<type,3>*)((const type[3]){((type)(a)),((type)(b)),((type)(c))}))
+#define V3t_(type,a,b,c)       (*(olson_tools::Vector<type,3>*)((const type[3]){((type)(a)),((type)(b)),((type)(c))}))
 
 /** A simple define to help make it easier and cleaner to initialize
  * 3-Vectors (of doubles). */
@@ -70,7 +73,7 @@
 /** Simple define to help casting static N-element arrays to
  * N-Vectors.
  */
-#define VNCAST(t,n,a)          (*((Vector<t,n>*)(a)))
+#define VNCAST(t,n,a)          (*((olson_tools::Vector<t,n>*)(a)))
 
 /** Another simple define to help casting static 3-element arrays to
  * 3-Vectors.
@@ -78,7 +81,7 @@
 #define V3C(a)          VNCAST(double,3,a)
 
 typedef struct { int dontbugme; } VInit_t;
-#define VInit   ((VInit_t *)NULL)
+#define VInit   ((olson_tools::VInit_t *)NULL)
 
 
 /** Vector class of arbitrary type.  The idea here is to provide a clean
@@ -815,5 +818,7 @@ typedef Vector<float,3> vect3float;
 typedef Vector<int,3> vect3int;
 typedef Vector<uint32_t,3> vect3uint32_t;
 typedef Vector<bool,3> vect3bool;
+
+}/* namespace olson_tools */
 
 #endif // VECTOR_H

@@ -40,6 +40,8 @@
 #include "ompexcept.h"
 #include "field-lookup.h"
 
+namespace olson_tools {
+
 
 /* ************** BEGIN FORCE LOOKUP SPECIALIZATION *********** */
 
@@ -119,5 +121,6 @@ class ForceTableWrapper : public T {
 
 /* **************   END FORCE LOOKUP SPECIALIZATION *********** */
 
+}/* namespace olson_tools */
 
 #endif // __FORCE_LOOKUP_H

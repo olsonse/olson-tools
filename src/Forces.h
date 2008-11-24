@@ -13,6 +13,8 @@
 #include "indices.h"
 #include "Fields.h"
 
+namespace olson_tools {
+
 /** Container for a static function 'derivs' mainly for use with
  * integrating functions that accept a pointer to a derivative function.
  *
@@ -175,5 +177,8 @@ class StatisticalForceRKWrapper {
         statisticalForcePtr->applyStatisticalForce(particle, t, 0.5*dt_step_current);
     }
 };
+
+
+}/* namespace olson_tools */
 
 #endif // FORCES_H

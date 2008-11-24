@@ -1,16 +1,20 @@
 
 #include <iostream>
 #include <fstream>
+
 #include <olson-tools/logger.h>
 #include <olson-tools/rk.h>
 #include <olson-tools/random/random.h>
-#define X 0
-#define Y 1
-#define Z 2
+#include <olson-tools/indices.h>
 
-#define VX 3
-#define VY 4
-#define VZ 5
+
+using olson_tools::getMachineEPS;
+using olson_tools::logger::setLogProgramName;
+using olson_tools::rk_adapt_driver;
+using olson_tools::derivativesFunction;
+
+
+
 class Particle {
   public:
    double pos[3];

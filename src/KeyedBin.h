@@ -38,6 +38,8 @@
 #  include "mpi_init.h"
 #endif
 
+namespace olson_tools {
+
 /** A keyed histogramming class.
  *
  * If MPI is used, this class supplies its own SUM operator for MPI::Reduce
@@ -311,6 +313,7 @@ void blockAdder( std::vector<Block> & blocks,
 #endif // USE_MPI
 
 
+} /*namespace olson_tools*/
 
 
 #endif //KEYEDBIN_H

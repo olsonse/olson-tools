@@ -28,6 +28,9 @@
 #include "ompexcept.h"
 #include "power.h"
 
+
+namespace olson_tools {
+
 /**
  * Field-lookup class.
  * This class loads a table (from flat file created by createFieldFile.h
@@ -648,4 +651,8 @@ public:
     }
 
 };
+
+}/* namespace olson_tools */
+
+
 #endif // __FIELD_LOOKUP_H

@@ -66,6 +66,8 @@
 #include <algorithm>
 #include "../ompexcept.h"
 
+namespace olson_tools{ namespace fit {
+
 /* All of the following needs to be changed where we
    use Allele definitions, so that, if ALLELE_STATIC
    is used, then all of the static alleles are referenced
@@ -415,3 +417,4 @@ const Gene & Gene::operator+=( const Allele_struct & a ) {
   return *this;
 }//Gene::operator+=
 
+}}/*namespace olson_tools::fit */

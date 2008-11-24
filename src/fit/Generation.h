@@ -79,6 +79,12 @@
 #include "Individual.h"
 #include "Histogram.h"
 
+#ifdef HYBRID
+#  include "simfit.h"
+#endif
+
+namespace olson_tools{ namespace fit {
+
 ///
 class Generation{
 public:
@@ -181,7 +187,6 @@ private:
 }; // Generation class
 
 #ifdef HYBRID
-#include "simfit.h"
 
 /** This is an implemented class of the simplex algorithm
  * which will nicely find the local extrema of the
@@ -222,5 +227,7 @@ merit_t simplex_fit( Individual * member,
 ///The Generation print function.
 std::ostream & operator<<(std::ostream &, const Generation &);
 
-#endif // GENERATION_H
 
+}}/*namespace olson_tools::fit */
+
+#endif // GENERATION_H

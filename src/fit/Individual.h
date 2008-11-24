@@ -67,6 +67,8 @@
 #include "io.h"
 #include "merit_def.h"
 
+namespace olson_tools{ namespace fit {
+
 typedef merit_t (*MERIT_FUNCTION)( const Gene &, void * );
 
 /** The base class of the population that will be created for
@@ -177,6 +179,8 @@ Individual * create_Individual( const Gene & gn,
 
 ///The Individual print function.
 std::ostream & operator<<(std::ostream &, const Individual &);
+
+}}/*namespace olson_tools::fit */
 
 #endif //INDIVIDUAL_H
 

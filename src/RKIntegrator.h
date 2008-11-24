@@ -34,6 +34,9 @@
 #include <stdexcept>
 #include "rk.h"
 
+
+namespace olson_tools {
+
 class RKIntegrator {
   public:
     /** Default constructor doesn't do anything exciting except init derivs to
@@ -242,5 +245,7 @@ class RK2Integrator : public RKIntegrator {
         rk2step (p.val, &ndim, &t, &dt, super::derivs, fargs);
     }
 };
+
+}/* namespace olson_tools */
 
 #endif // RKINTEGRATOR_H

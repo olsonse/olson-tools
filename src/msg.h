@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id$
 /*
- * Copyright 2003-2004 Spencer Eugene Olson --- All Rights Reserved
+ * Copyright 2003-2004 Spencer E. Olson --- All Rights Reserved
  *
  * $Log$
  *

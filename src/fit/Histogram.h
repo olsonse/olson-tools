@@ -26,6 +26,8 @@
 
 #include "Individual.h"
 
+namespace olson_tools{ namespace fit {
+
 ///
 class Histogram{
 public:
@@ -56,5 +58,7 @@ private:
 
 ///The Histogram print function.
 std::ostream & operator<<(std::ostream &, const Histogram &);
+
+}}/*namespace olson_tools::fit */
 
 #endif // HISTOGRAM_H

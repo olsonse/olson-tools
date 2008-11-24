@@ -30,6 +30,8 @@
 #  include "mpi_init.h"
 #endif
 
+namespace olson_tools {
+
 /** A generic histogramming class.
  *
  * If MPI is used, this class supplies its own SUM operator for MPI::Reduce
@@ -156,7 +158,7 @@ class GenericBin {
         static void init() {
             MPI.SUM.Init(reinterpret_cast<MPI::User_function*>(&MPISUM), true);
 
-            olson_tools::MPIStructBuilder msb;
+            MPIStructBuilder msb;
             msb.addBlocks<GenericBin>();
             MPI.TYPE = msb.Create_struct();
         }
@@ -176,8 +178,8 @@ class GenericBin {
         }
 
         static int add_init() {
-            olson_tools::MPIInit::add_init(init);
-            olson_tools::MPIInit::add_finish(finish);
+            MPIInit::add_init(init);
+            MPIInit::add_finish(finish);
             return 1;
         }
 
@@ -323,5 +325,6 @@ void blockAdder( std::vector<Block> & blocks,
 #endif // USE_MPI
 
 
+} /*namespace olson_tools*/
 
 #endif //GENERICBIN_H
