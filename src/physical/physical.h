@@ -884,6 +884,7 @@ namespace physical {
 
     namespace element {
         using namespace constants;
+        //       long-name    abrv.   n        mass       outer-electron ionization
         _ELEMENT(hydrogen,      H,    1,      1.00794,      13.5984 );
         _ELEMENT(helium,        He,   2,      4.002602,     24.5874 );
         _ELEMENT(lithium,       Li,   3,      6.941,         5.3917 );

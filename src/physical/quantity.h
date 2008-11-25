@@ -351,7 +351,10 @@ namespace physical {
                     pos[p.first] = p.second;
             }
 
-            out << '<' << coeff << ' ' << pos;
+            out << '<' << coeff;
+            
+            if (!pos.empty() || !neg.empty())
+                out << ' ' << pos;
 
             // now denominator
             if (!neg.empty())
@@ -422,6 +425,12 @@ namespace physical {
                     break;
             }
             return out;
+        }
+
+        inline const quantity & assertUnitless() const throw (exception) {
+            if (!units.empty())
+                throw exception(UnitsNotDimensionless);
+            return *this;
         }
 
         inline const quantity & assertMatch(const quantity & q) const throw (exception) {
@@ -626,8 +635,7 @@ namespace physical {
         struct no_dims {
             template <class T>
             static inline void check(const quantity<T> & q) {
-                if (!q.units.empty())
-                    throw exception(UnitsNotDimensionless);
+                (void)q.assertUnitless();
             }
         };
  
