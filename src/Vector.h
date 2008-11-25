@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id: Vector.h,v 1.1.1.1 2005/01/08 04:57:25 olsonse Exp $
 /*
- * Copyright 2004 Spencer Olson
+ * Copyright 2004-2008 Spencer Olson
  *
  * $Log: Vector.h,v $
  * Revision 1.1.1.1  2005/01/08 04:57:25  olsonse
@@ -21,7 +21,7 @@
  * if one is careful.  I don't want to go into all the caveats for
  * time-sensitive operations, but be assured they can be worked around.
  *
- * Copyright 2004 Spencer Olson
+ * Copyright 2004-2008 Spencer Olson
  */
 
 
@@ -81,6 +81,9 @@ namespace olson_tools {
 #define V3C(a)          VNCAST(double,3,a)
 
 typedef struct { int dontbugme; } VInit_t;
+
+/** Simple little define that casts NULL to type (VInit_t*) for using with the
+ * va_arg constructors for Vector and SquareMatrix classes. */
 #define VInit   ((olson_tools::VInit_t *)NULL)
 
 
@@ -435,7 +438,17 @@ class Vector {
     }
 
 
-    /** Add a fraction of another Vector to this Vector. */
+    /** Add a fraction of another Vector to this Vector.
+     * This operation can certainly be done by just doing:
+     *          (*this) += f * that;
+     * and it is possible that the above operation could result in exactly
+     * this code if loop-unrolling/merging is able to be done, but I provide
+     * this function just in case you want to be sure that you use a more
+     * optimized version.  (Note that the compiler can certainly go ahead and
+     * optimize--i.e. loop unroll--this function as well.  It just might be
+     * easier for the compiler to produce efficient code from unrolling this
+     * version.)
+     */
     template <class T2>
     inline Vector<T,L> addFraction(const double & f, const Vector<T2,L> & that) {
         for (unsigned int i = 0; i < L; i++) this->val[i] += (T)(f*that.val[i]);
@@ -506,7 +519,7 @@ inline void cross (Vector<T,3> &retval, const Vector<T,3> & a, const Vector<T,3>
 
 /** component by component multiplication after type of that is converted
  * type of this.
- * @return reference to this (type Vector<T,L>).
+ * @return reference to temporary (type Vector<T,L>).
  *
  * @see Vector::compDiv.
  */
@@ -520,7 +533,7 @@ inline const Vector<T1,L> compMult(const Vector<T1,L> & v1, const Vector<T2,L>& 
 
 /** component by component division after type of that is converted
  * type of this.
- * @return reference to (type Vector<T,L>).
+ * @return reference to temporary (type Vector<T,L>).
  *
  * @see Vector::compMult.
  */
@@ -534,7 +547,7 @@ inline const Vector<T1,L> compDiv(const Vector<T1,L> & v1, const Vector<T2,L>& v
 
 /** component by component power after type of that is converted
  * type of this.
- * @return reference to (type Vector<T,L>).
+ * @return reference to temporary (type Vector<T,L>).
  *
  * @see Vector::compMult.
  */
@@ -542,21 +555,21 @@ template <class T1, class T2, unsigned int L>
 inline const Vector<T1,L> compPow(const Vector<T1,L> & v1, const Vector<T2,L>& v2) {
     Vector<T1,L> retval;
     for (unsigned int i = 0; i < L; i++)
-        retval.val[i] = fast_pow(v1.val[i], (T1)v2.val[i]);
+        retval.val[i] = (T1)fast_pow((double)v1.val[i], (double)v2.val[i]);
     return retval;
 }
 
 /** component by component power after type of that is converted
  * type of this.
- * @return reference to (type Vector<T,L>).
+ * @return reference to temporary (type Vector<T,L>).
  *
  * @see Vector::compMult.
  */
 template <class T,unsigned int L>
-inline const Vector<T,L> compPow(const Vector<T,L> & v1, const T & e) {
+inline const Vector<T,L> compPow(const Vector<T,L> & v1, const double & e) {
     Vector<T,L> retval;
     for (unsigned int i = 0; i < L; i++)
-        retval.val[i] = fast_pow(v1.val[i], e);
+        retval.val[i] = (T)fast_pow((double)v1.val[i], e);
     return retval;
 }
 
@@ -615,6 +628,16 @@ inline std::istream & operator>>(std::istream & input, Vector<T,L> & v) {
     return input;
 }
 
+
+
+
+
+
+
+
+
+
+
 /** Square matrix class.  The idea here is to provide a clean interface to
  * matrix calculations that are not too slow.  The size is compile time and
  * the compiler may opt to unroll loops and perform other optimizations.  
@@ -629,14 +652,59 @@ class SquareMatrix {
     inline SquareMatrix() {}
 
     /** SquareMatrix copy constructor--from another SquareMatrix. */
-    inline SquareMatrix(const SquareMatrix & that) {
-        *this = that;
-    }
+    inline SquareMatrix(const SquareMatrix & that) { *this = that; }
 
     /** SquareMatrix copy constructor--from a two dimensional C-array. */
-    inline SquareMatrix(const T that[L][L]) {
-        *this = that;
+    inline SquareMatrix(const T that[L][L]) { *this = that; }
+
+    /** SquareMatrix assignment constructor.
+     * Assigns all elements of the matrix to the given value that.
+     */
+    inline SquareMatrix(const T that) { *this = that; }
+
+    /** Copy list of values into Matrix (must be a list of contiguous row
+     * data). 
+     * @param dummy
+     *     a bogus pointer (casting NULL appropriately is fine).
+     * @warning
+     *     Make sure that you have the correct number of elements.
+     */
+    inline SquareMatrix(const VInit_t * dummy, ...) {
+        va_list ap;
+        va_start(ap,dummy);
+        for (unsigned int i = 0; i < L; i++) {
+            for (unsigned int j = 0; j < L; j++) {
+                this->val[i][j] = va_arg(ap,T);
+            }
+        }
+        va_end(ap);
     }
+
+    /** Copy list of values into Vector (must be a list of contiguous row
+     * data).
+     * @param another_dummy
+     *     a bogus value of a given type (casting 0 works fine).  This
+     *     constructor assumes that all values passed in are of this type.
+     *     The values will then be cast back to the type of the Vector.
+     * @param dummy
+     *     a bogus pointer (casting NULL appropriately is fine).
+     * @see V3tcast macro to use the more easily.
+     */
+    template <class TP>
+    inline SquareMatrix(const TP another_dummy, const VInit_t * dummy, ...) {
+        va_list ap;
+        va_start(ap,dummy);
+        for (unsigned int i = 0; i < L; i++) {
+            for (unsigned int j = 0; j < L; j++) {
+                this->val[i][j] = (T)va_arg(ap,TP);
+            }
+        }
+        va_end(ap);
+    }
+
+    /** The length of the val array. */
+    inline unsigned int length() const { return L;}
+
 
     /** The side length of the val matrix. */
     inline unsigned int side_length() const { return L;}
@@ -651,6 +719,19 @@ class SquareMatrix {
 
     /** Index operator--const version. */
     inline const T & operator()(const int & i, const int & j) const { return val[i][j]; }
+
+    /** Row extractor--non-const version. */
+    inline Vector<T,L> & row(const int & i) { return VNCAST(T,L,val[i]); }
+
+    /** Row extractor--const version. */
+    inline const Vector<T,L> & row(const int & i) const { return VNCAST(T,L,val[i]); }
+
+    /** Column extractor--const version (no non-const version exists). */
+    inline Vector<T,L> & col(const int & j) {
+        Vector<T,L> v;
+        for (int i = 0; i < L; i++) v[i] = val[i][j];
+        return v;
+    }
 
     /** Assignment operator--from SquareMatrix. */
     inline const SquareMatrix & operator=(const SquareMatrix & that) {
@@ -800,6 +881,42 @@ class SquareMatrix {
         return *this;
     }
 
+    /** Transpose oeprator. */
+    inline SquareMatrix & transpose() {
+        for (unsigned int i = 0; i < L; i++) {
+            for (unsigned int j = 0; j < L; j++) {
+                T tmp = val[i][j];
+                val[i][j] = val[j][i];
+                val[j][i] = tmp;
+            }
+        }
+        return *this;
+    }
+
+    /** component by component multiplication after type of that is converted
+     * type of this.
+     * @return reference to this (type SquareMatrix<T,L>).
+     */
+    template <class T2>
+    inline const SquareMatrix & compMult(const SquareMatrix<T2,L>& that) {
+        for (unsigned int i = 0; i < L; i++)
+            for (unsigned int j = 0; j < L; j++)
+                this->val[i][j] *= (T)that.val[i][j];
+        return *this;
+    }
+
+    /** component by component division after type of that is converted
+     * type of this.
+     * @return reference to this (type SquareMatrix<T,L>).
+     */
+    template <class T2>
+    inline const SquareMatrix & compDiv(const SquareMatrix<T2,L>& that) {
+        for (unsigned int i = 0; i < L; i++)
+            for (unsigned int j = 0; j < L; j++)
+                this->val[i][j] /= (T)that.val[i][j];
+        return *this;
+    }
+
     /** Create (in temporary storage) an identity matrix equal in size to the
      * current SquareMatrix. */
     inline static SquareMatrix identity() {
@@ -811,6 +928,122 @@ class SquareMatrix {
         return retval;
     }
 };
+
+template <class T, unsigned int L>
+inline SquareMatrix<T,L> transpose(const SquareMatrix<T,L> & m) {
+    SquareMatrix<T,L> retval;
+    for (unsigned int i = 0; i < L; i++) {
+        for (unsigned int j = 0; j < L; j++) {
+            retval(i,j) = m(j,i);
+        }
+    }
+    return retval;
+}
+
+/** Component by component multiplication after type of that is converted
+ * type of this.
+ * @return reference to temporary (type SquareMatrix<T,L>).
+ *
+ * @see Vector::compDiv.
+ */
+template <class T1, class T2, unsigned int L>
+inline const SquareMatrix<T1,L> compMult(const SquareMatrix<T1,L> & m1,
+                                         const SquareMatrix<T2,L> & m2) {
+    SquareMatrix<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        for (unsigned int j = 0; j < L; j++)
+            retval.val[i][j] = m1.val[i][j] * (T1)m2.val[i][j];
+    return retval;
+}
+
+/** Component by component division after type of that is converted
+ * type of this.
+ * @return reference to temporary (type SquareMatrix<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T1, class T2, unsigned int L>
+inline const SquareMatrix<T1,L> compDiv(const SquareMatrix<T1,L> & m1,
+                                        const SquareMatrix<T2,L> & m2) {
+    SquareMatrix<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        for (unsigned int j = 0; j < L; j++)
+            retval.val[i][j] = m1.val[i][j] / (T1)m2.val[i][j];
+    return retval;
+}
+
+/** Component by component power after type of that is converted
+ * type of this.
+ * @return reference to temporary (type SquareMatrix<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T1, class T2, unsigned int L>
+inline const SquareMatrix<T1,L> compPow(const SquareMatrix<T1,L> & m1,
+                                        const SquareMatrix<T2,L> & m2) {
+    SquareMatrix<T1,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        for (unsigned int j = 0; j < L; j++)
+            retval.val[i][j] = (T1)fast_pow((double)m1.val[i][j], (double)m2.val[i][j]);
+    return retval;
+}
+
+/** Component by component power after type of that is converted
+ * type of this.
+ * @return reference to temporary (type SquareMatrix<T,L>).
+ *
+ * @see Vector::compMult.
+ */
+template <class T, unsigned int L>
+inline const SquareMatrix<T,L> compPow(const SquareMatrix<T,L> & m1,
+                                        const double & e) {
+    SquareMatrix<T,L> retval;
+    for (unsigned int i = 0; i < L; i++)
+        for (unsigned int j = 0; j < L; j++)
+            retval.val[i][j] = (T)fast_pow((double)m1.val[i][j], e);
+    return retval;
+}
+
+/** Define SQR explicitly to be in the inner product of a SquareMatrix with its
+ * self.  We define this specialization because the return value is not the
+ * same as the arguments. */
+template <class T, unsigned int L>
+inline SquareMatrix<T,L> SQR(const SquareMatrix<T,L> & m) {
+    return m*m;
+}
+
+/** Stream output operator. */
+template <class T, unsigned int L>
+inline std::ostream & operator<<(std::ostream & output, const SquareMatrix<T,L> & m) {
+    for (unsigned int i = 0; i < L; i++) {
+        for (unsigned int j = 0; j < L; j++) {
+            output << m.val[i][j] << '\t';
+        }
+        output << '\n';
+        //output << ";\t";
+    }
+    return output;
+}
+
+/** Stream input operator. */
+template <class T, unsigned int L>
+inline std::istream & operator>>(std::istream & input, SquareMatrix<T,L> & m) {
+    for (unsigned int i = 0; i < L; i++) {
+        for (unsigned int j = 0; j < L; j++) {
+            input >> m.val[i][j];
+        }
+    }
+    return input;
+}
+
+
+
+
+
+
+
+
+
 
 /* these are kludgy types to be used with the kludgy V3t macro. */
 typedef Vector<double,3> vect3double;

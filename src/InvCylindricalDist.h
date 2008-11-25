@@ -158,7 +158,7 @@ class FlatDistribution {
  *     [Default = 1];
  * @param InitClass
  *     A user specified class that may be used to help initialize the
- *     distribution functions [Default = nothing].
+ *     distribution functions [Default = olson_tools::nothing].
  *
  * @see BFIeld::BTrapDistribution2D as an example of a 2D-distribution
  * function to use for this class.
