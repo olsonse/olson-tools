@@ -179,7 +179,7 @@ namespace physical {
         
         };
         
-        std::ostream & operator<<(std::ostream &out, const symbol & sym) {
+        inline std::ostream & operator<<(std::ostream &out, const symbol & sym) {
             switch(sym.type) {
                 case symbol::UNDEFINED:
                     out << "undefined";

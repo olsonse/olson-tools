@@ -825,46 +825,62 @@ namespace physical {
 
     // #### BEGIN OF CONSTANT CREATION #### #
     namespace constant {
-        using namespace units;
-        const Quantity c                = _PQINIT2(2.99792458e8*meters/second,  "speed of light");
-        const Quantity Mach             = _PQINIT2(331.46*meters/second,        "speed of sound");
-        const Quantity h                = _PQINIT2(6.6260755e-34*Joule*seconds, "Planck constant");
+        /* These using clauses will import these symbols into the constant
+         * namespace, but oh well... */
+        using unit::pi;
+        using unit::m;
+        using unit::s;
+        using unit::J;
+        using unit::C;
+        using unit::V;
+        using unit::kg;
+        using unit::F;
+        using unit::K;
+        using unit::A;
+        using unit::barns;
+        using unit::T;
+        using unit::rad;
+        using unit::W;
+        using unit::N;
+        const Quantity c                = _PQINIT2(2.99792458e8*m/s,            "speed of light");
+        const Quantity Mach             = _PQINIT2(331.46*m/s,                  "speed of sound");
+        const Quantity h                = _PQINIT2(6.6260755e-34*J*s,           "Planck constant");
         const Quantity h_bar            = _PQINIT2(h/(2.0*pi),                  "Plank constant");
-        const Quantity g                = _PQINIT2(units::gravity,              "standard gravitational acceleration at sea level");
+        const Quantity g                = _PQINIT2(unit::gravity,               "standard gravitational acceleration at sea level");
         // electron charge
-        const Quantity e                = _PQINIT2(1.60217733e-19*Coulombs,     "electron charge");
+        const Quantity e                = _PQINIT2(1.60217733e-19*C,            "electron charge");
         const Quantity eV               = _PQINIT2(e*V,                         "electron Volt");
         const Quantity keV              = _PQINIT2(1000.0*eV,                   "kilo-electron Volt");
         const Quantity MeV              = _PQINIT2(1000000.0*eV,                "Mega-electron Volt");
         const Quantity GeV              = _PQINIT2(1000000000.0*eV,             "Giga-electron Volt");
         const Quantity Rydberg          = _PQINIT2(13.6054*eV,                  "Rydberg energy");
         const Quantity Rydbergs         = Rydberg;
-        const Quantity m_e              = _PQINIT2(9.1093897e-31*kilograms,     "electron mass");
-        const Quantity m_P              = _PQINIT2(1.6726231e-27*kilograms,     "proton mass");
+        const Quantity m_e              = _PQINIT2(9.1093897e-31*kg,            "electron mass");
+        const Quantity m_P              = _PQINIT2(1.6726231e-27*kg,            "proton mass");
         // deuteron mass
         const Quantity m_D              = _PQINIT2(1875.61339*MeV/(c*c),        "deuteron mass");
         // unified atomic mass unit
-        const Quantity atomic_mass_unit = _PQINIT2(1.6605402e-27*kilograms, "unified atomic mass unit");
+        const Quantity atomic_mass_unit = _PQINIT2(1.6605402e-27*kg,            "unified atomic mass unit");
         const Quantity atomic_mass_units= atomic_mass_unit;
         const Quantity amu              = atomic_mass_unit;
         const Quantity Dalton           = atomic_mass_unit;
         const Quantity Daltons          = Dalton;
-        const Quantity epsilon          = _PQINIT2(8.854187817e-12*Farads/meter,"permittivity of free space");
-        const Quantity mu               = _PQINIT2(12.566370614e-7*Newtons/(A*A),"permeability of free space");
+        const Quantity epsilon          = _PQINIT2(8.854187817e-12*F/m,         "permittivity of free space");
+        const Quantity mu               = _PQINIT2(12.566370614e-7*N/(A*A),     "permeability of free space");
         const Quantity alpha            = _PQINIT3(1.0/137.0359895, units_map(),"fine-structure constant");
-        const Quantity r_e              = _PQINIT2(2.81794092e-15*meters,       "classical electron radius");
-        const Quantity lambda_bar       = _PQINIT2(3.86159323e-13*meters,     "electron Compton wavelength");
-        const Quantity a_0              = _PQINIT2(0.529177249e-10*meters,      "Bohr radius");
-        const Quantity lambda_1eV       = _PQINIT2(1.23984244e-6*meters,      "wavelength of 1 eV/c particle");
+        const Quantity r_e              = _PQINIT2(2.81794092e-15*m,            "classical electron radius");
+        const Quantity lambda_bar       = _PQINIT2(3.86159323e-13*m,            "electron Compton wavelength");
+        const Quantity a_0              = _PQINIT2(0.529177249e-10*m,           "Bohr radius");
+        const Quantity lambda_1eV       = _PQINIT2(1.23984244e-6*m,             "wavelength of 1 eV/c particle");
         const Quantity sigma_0          = _PQINIT2(0.66524616*barns,            "Thomson cross section");
-        const Quantity mu_B             = _PQINIT2(5.78838263e-11*MeV/Tesla,    "Bohr magneton");
-        const Quantity mu_N             = _PQINIT2(3.15245166e-14*MeV/Tesla,    "nuclear magneton");
+        const Quantity mu_B             = _PQINIT2(5.78838263e-11*MeV/T,        "Bohr magneton");
+        const Quantity mu_N             = _PQINIT2(3.15245166e-14*MeV/T,        "nuclear magneton");
         const Quantity E_M_e            = _PQINIT2(1.75881962e11*C/kg*(rad/(s*T)), "electron cyclotron frequency/field");
         const Quantity E_M_P            = _PQINIT2(9.5788309e7*C/kg*(rad/(s*T)),"proton cyclotron frequency/field");
         const Quantity G                = _PQINIT2(6.67259e-11*m*m*m/(kg*s*s),  "gravitational constant");
         const Quantity N_A              = _PQINIT3(6.0221367e23, units_map(),   "Avogadro's constant");
-        const Quantity K_B              = _PQINIT2(1.380658e-23*Joules/Kelvin,  "Boltzmann constant");
-        const Quantity V_molar          = _PQINIT2(2.897756e-3*meter*Kelvins,   "molar volume, ideal gas at standard temperature and pressure");
+        const Quantity K_B              = _PQINIT2(1.380658e-23*J/K,            "Boltzmann constant");
+        const Quantity V_molar          = _PQINIT2(2.897756e-3*m*K,             "molar volume, ideal gas at standard temperature and pressure");
         const Quantity sigma_SB         = _PQINIT2(5.67051e-8*W/(m*m*K*K*K*K),  "Stefan-Boltzmann constant");
     }
     namespace constants = constant;
@@ -877,14 +893,13 @@ namespace physical {
 #define _ELEMENT(name,sym,n,m,i) \
     namespace name { \
         const Quantity number = n; \
-        const Quantity mass = m * amu; \
-        const Quantity ionization = i * eV; \
+        const Quantity mass = m * constant::amu; \
+        const Quantity ionization = i * constant::eV; \
     } \
     namespace sym = name;
 
     namespace element {
-        using namespace constants;
-        //       long-name    abrv.   n        mass       outer-electron ionization
+        //       long-name    abrv.   n        mass       outer-electron ionization (eV)
         _ELEMENT(hydrogen,      H,    1,      1.00794,      13.5984 );
         _ELEMENT(helium,        He,   2,      4.002602,     24.5874 );
         _ELEMENT(lithium,       Li,   3,      6.941,         5.3917 );
@@ -894,6 +909,7 @@ namespace physical {
         _ELEMENT(potassium,      K,  19,      39.0983,       4.3407 );
         _ELEMENT(rubidium,      Rb,  37,      85.4678,       4.1771 );
         _ELEMENT(cesium,        Cs,  55,     132.90545,      3.8939 );
+        _ELEMENT(mercury,       Hg,  80,     200.59,        10.4375 );
         _ELEMENT(francium,      Fr,  87,     223,            4.0727 );
     }
     namespace elements = element;

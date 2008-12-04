@@ -88,9 +88,7 @@ extern "C" {
     double gauss_deviate(const double & sigma);
 
 #  ifndef DOXYGEN_SKIP
-#    if __linux__ != 1
-#      define ran2 ran2_
-#    endif
+#    define ran2 ran2_
 #  endif // DOXYGEN_SKIP
 
     /** RAN2 from numerical recipes.
@@ -102,13 +100,7 @@ extern "C" {
      * subdirectory), or do not have your own license for this, you will probably
      * want to comment this out.
      * */
-    double ran2(int * idum)
-#if __linux__ == 1 && !(defined(F77COMP_gfortran_40) && F77COMP_gfortran_40 == 1 ) \
-    && !(defined(F77COMP_gfortran) && F77COMP_gfortran == 1 )
-                            __attribute__ (( alias ("ran2_") ));
-    double ran2_(int * idum)
-#endif
-    ;
+    double ran2(int * idum);
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrand mtrngrand_

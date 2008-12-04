@@ -15,8 +15,8 @@
  *
  * */
 
-#ifndef PHYSICAL_H
-#define PHYSICAL_H
+#ifndef PHYSICAL_QUANTITY_H
+#define PHYSICAL_QUANTITY_H
 
 #include <map>
 #include <string>
@@ -60,12 +60,12 @@ namespace physical {
     };
 
 
-    const char * UnitsMismatch  = "Units mismatch:  cannot add/subtract/compare mismatched units";
-    const char * UnitsMismatchR = "Units mismatch:  mismatched units in read operation";
-    const char * UnitsMismatchF = "Units mismatch:  cannot operate on mismatched units";
-    const char * UnitsNotRoot   = "Units not root:  cannot take non-even root of units";
-    const char * UnitsNotDimensionless = "Units not dimensionless:  cannot create non-integer powers of unit";
-    const char * UnitsNotDimensionlessExp = "Units not dimensionless:  exponent must be dimensionless";
+    static const char * UnitsMismatch  = "Units mismatch:  cannot add/subtract/compare mismatched units";
+    static const char * UnitsMismatchR = "Units mismatch:  mismatched units in read operation";
+    static const char * UnitsMismatchF = "Units mismatch:  cannot operate on mismatched units";
+    static const char * UnitsNotRoot   = "Units not root:  cannot take non-even root of units";
+    static const char * UnitsNotDimensionless = "Units not dimensionless:  cannot create non-integer powers of unit";
+    static const char * UnitsNotDimensionlessExp = "Units not dimensionless:  exponent must be dimensionless";
 
 
 
@@ -85,15 +85,7 @@ namespace physical {
      *
      * @see Quantity.
      * */
-    struct units_map : std::map<std::string, int> {
-        enum PRINT_TYPE {
-            PRETTY_PRINT,
-            MATH_PRINT,
-        };
-        static enum PRINT_TYPE print_type;
-    };
-    enum units_map::PRINT_TYPE units_map::print_type = units_map::PRETTY_PRINT;
-
+    struct units_map : std::map<std::string, int> {};
     typedef std::pair<const std::string, int> units_pair;
 
     /** A simple ostream helper class to print items in a container using
@@ -131,15 +123,24 @@ namespace physical {
         return out;
     }
 
-    /** Pretty/math print the units_map. */
-    inline std::ostream & operator<< (std::ostream & out, const units_map & u) {
-        const char * sep = units_map::print_type == units_map::MATH_PRINT ? " * " : " ";
+    /** Print the units_map with a given seperator. */
+    inline std::ostream & sep_print (std::ostream & out, const units_map & u, const char * sep = " ") {
         const char * cur_sep = "";
         for (units_map::const_iterator i = u.begin(); i != u.end(); i++) {
             out << cur_sep << (*i);
             cur_sep = sep;
         }
         return out;
+    }
+
+    /** Math print the units_map. */
+    inline std::ostream & math_print (std::ostream & out, const units_map & u) {
+        return sep_print(out, u, " * ");
+    }
+
+    /** Pretty print the units_map. */
+    inline std::ostream & operator<< (std::ostream & out, const units_map & u) {
+        return sep_print(out, u);
     }
 
 
@@ -339,7 +340,6 @@ namespace physical {
          * GNU units. */
         std::ostream & prettyPrint(std::ostream & out) const {
             units_map pos, neg;
-            units_map::print_type = units_map::PRETTY_PRINT;
 
             /* first sort into pos or neg exponent (of units).  The results
              * should already be sorted lexically because we use a map. */
@@ -372,7 +372,6 @@ namespace physical {
          * be parsed by the calculator. */
         std::ostream & mathPrint(std::ostream & out) const {
             units_map pos, neg;
-            units_map::print_type = units_map::MATH_PRINT;
 
             /* first sort into pos or neg exponent (of units).  The results
              * should already be sorted lexically because we use a map. */
@@ -387,13 +386,13 @@ namespace physical {
             out << '(' << coeff;
 
             if (!pos.empty())
-                out << " * " << pos;
+                math_print(out << " * ", pos);
 
             // now denominator
             if (neg.size() == 1)
-                out <<  " / " << neg;
+                math_print(out <<  " / ", neg);
             else if (!neg.empty())
-                out <<  " / (" << neg << ')';
+                math_print(out <<  " / (", neg) << ')';
 
             out << ')';
 
@@ -761,8 +760,7 @@ namespace physical {
  
         template<class T>
         quantity<T> sqrt(const quantity<T> & q) {
-            no_dims::check(q);
-            return std::sqrt(q.coeff);
+            return pow(q, 0.5);
         };
  
         template<class T>
@@ -796,4 +794,4 @@ namespace physical {
     /* ****   END QUANTITY OPERATORS **** */
 }
 
-#endif // PHYSICAL_H
+#endif // PHYSICAL_QUANTITY_H

@@ -6,7 +6,7 @@
 
 namespace physical {
     namespace calc {
-        void addMathLib(symbol::table & symbols) {
+        static void addMathLib(symbol::table & symbols) {
             symbols["sin"]   = physical::math::sin   <Quantity::coeff_type>;
             symbols["cos"]   = physical::math::cos   <Quantity::coeff_type>;
             symbols["tan"]   = physical::math::tan   <Quantity::coeff_type>;

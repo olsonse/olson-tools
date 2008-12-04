@@ -6,11 +6,9 @@
 namespace physical {
 namespace calc {
 
-void addPhysicalUnits(symbol::table & symbols) {
+static void addPhysicalUnits(symbol::table & symbols) {
     /* FIXME:  perhaps when I finish the Quantity::registry stuff, then I will
      * merely have to import a pre-compiled list of defined symbols. */
-    symbols["physical::constant::amu"                 ] =physical::constant::amu                         ;
-    symbols["physical::constant::pi"                  ] =physical::constant::pi                          ;
     symbols["physical::unit::radian"                  ] =physical::unit::radian                          ;
     symbols["physical::unit::radians"                 ] =physical::unit::radians                         ;
     symbols["physical::unit::rad"                     ] =physical::unit::rad                             ;
@@ -40,6 +38,7 @@ void addPhysicalUnits(symbol::table & symbols) {
     symbols["physical::unit::mole"                    ] =physical::unit::mole                            ;
     symbols["physical::unit::moles"                   ] =physical::unit::moles                           ;
     symbols["physical::unit::mol"                     ] =physical::unit::mol                             ;
+    symbols["physical::unit::pi"                      ] =physical::unit::pi                              ;
     symbols["physical::unit::arc::degree"             ] =physical::unit::arc::degree                     ;
     symbols["physical::unit::arc::degrees"            ] =physical::unit::arc::degrees                    ;
     symbols["physical::unit::arc::minute"             ] =physical::unit::arc::minute                     ;
@@ -741,6 +740,10 @@ void addPhysicalUnits(symbol::table & symbols) {
     symbols["physical::element::cesium::mass"         ] =physical::element::cesium::mass                 ;
     symbols["physical::element::cesium::ionization"   ] =physical::element::cesium::ionization           ;
 
+    symbols["physical::element::mercury::number"      ] =physical::element::mercury::number              ;
+    symbols["physical::element::mercury::mass"        ] =physical::element::mercury::mass                ;
+    symbols["physical::element::mercury::ionization"  ] =physical::element::mercury::ionization          ;
+
     symbols["physical::element::francium::number"     ] =physical::element::francium::number             ;
     symbols["physical::element::francium::mass"       ] =physical::element::francium::mass               ;
     symbols["physical::element::francium::ionization" ] =physical::element::francium::ionization         ;
@@ -754,6 +757,7 @@ void addPhysicalUnits(symbol::table & symbols) {
     symbol::import(symbols, "physical::element::potassium", "*", "physical::element::K" );
     symbol::import(symbols, "physical::element::rubidium",  "*", "physical::element::Rb");
     symbol::import(symbols, "physical::element::cesium",    "*", "physical::element::Cs");
+    symbol::import(symbols, "physical::element::mercury",   "*", "physical::element::Hg");
     symbol::import(symbols, "physical::element::francium",  "*", "physical::element::Fr");
 }
 
