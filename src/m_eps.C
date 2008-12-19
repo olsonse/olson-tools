@@ -8,6 +8,8 @@
 
 namespace olson_tools {
 
+const double M_EPS = getMachineEPS();
+
 /*   This function is to ensure that x gets written to system memory at
  *   sometime and is not always in a register. */
 double setMachineEPSHelper (const double & x) {

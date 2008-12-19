@@ -19,8 +19,16 @@ namespace olson_tools {
 extern "C" {
 #endif 
 
+    /** Calculate and return the machine precision.
+     * This calculation is performed at run-time and returns the machine
+     * precision (as mostly limited by the main-memory double representation).
+     * For 64-bit doubles, this is around 2e-15.
+     * */
     double getMachineEPS ();
-    static double M_EPS = getMachineEPS();
+
+    /** The machine precision as calculated at constructor time (beginning of
+     * run-time). */
+    extern const double M_EPS;
 
 #ifdef __cplusplus
 }
