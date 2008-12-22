@@ -84,6 +84,10 @@ nobase_libolson_tools_a_include_HEADERS = \
         ./ScaleForce.h \
         ./mpi_init.h \
 	./PThreadCache.h \
+	./data_set.h \
+	./xml/XMLDoc.h \
+	./xml/physical_parse.h \
+	./upper_triangle.h \
         ./$(PACKAGE)-config.h
 
 
