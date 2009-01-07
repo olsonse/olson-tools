@@ -6,7 +6,7 @@
         <command>from physical import 'element::.*'</command>
     </calc-commands>
 
-    <thing name="0">15*amu</thing>
-    <thing name="1">25*amu</thing>
-    <thing name="2">35*amu</thing>
+    <thing name="n0">15*amu</thing>
+    <thing name="n1">25*amu</thing>
+    <thing name="n2">35*amu</thing>
 </Stuff>

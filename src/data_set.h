@@ -44,39 +44,30 @@ namespace olson_tools {
         return retval;
     }
 
-    namespace xml {
-        template <class A, class B>
-        struct parser< data_point<A,B> > {
-            static data_point<A,B> parse(const XMLContext & x) {
-                A a = x.query<A>("@x");
-                B b = x.query<B>("@y");
-                return data_point<A,B>(a,b);
-            }
-        };
+    template <class A, class B>
+    static void parse_item(data_point<A,B> & out, const xml::XMLContext & x) {
+        A a = x.query<A>("@x");
+        B b = x.query<B>("@y");
+        out = data_point<A,B>(a,b);
+    }
 
 
-        template <class A, class B>
-        struct parser< data_set<A,B> > {
-            static data_set<A,B> parse(const XMLContext & x) {
-                A xscale = x.query<A>("@xscale");
-                B yscale = x.query<B>("@yscale");
+    template <class A, class B>
+    static void parse_item(data_set<A,B> & out, const xml::XMLContext & x) {
+        A xscale = x.query<A>("@xscale");
+        B yscale = x.query<B>("@yscale");
 
-                XMLContext::set x_set = x.eval("val");
-                XMLContext::set::iterator i = x_set.begin();
+        xml::XMLContext::set x_set = x.eval("val");
+        xml::XMLContext::set::iterator i = x_set.begin();
 
-                data_set<A,B> data;
-                for(; i != x_set.end(); i++) {
-                    const XMLContext & x1 = (*i);
-                    data_point<A,B> dp = x1.parse< data_point<A,B> >();
-                    dp.first  *= xscale;
-                    dp.second *= yscale;
-                    data.insert( dp );
-                }
-
-                return data;
-            }
-        };
-    }/* namespace xml */
+        for(; i != x_set.end(); i++) {
+            const xml::XMLContext & x1 = (*i);
+            data_point<A,B> dp = x1.parse< data_point<A,B> >();
+            dp.first  *= xscale;
+            dp.second *= yscale;
+            out.insert( dp );
+        }
+    }
 
 }/* namespace olson_tools */
 

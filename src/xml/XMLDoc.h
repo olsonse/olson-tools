@@ -43,17 +43,6 @@ namespace olson_tools { namespace xml {
 
 
 
-    class XMLContext;
-
-    /** The templated parser class defaults to using a stringstream to attempt
-     * conversion. */
-    template <class A>
-    struct parser {
-        static A parse(const XMLContext & x);
-    };
-
-
-
     /** A simple class to represent a single (node-specific) XML context.  */
     struct XMLContext {
         xmlXPathContextPtr ctx;
@@ -179,7 +168,9 @@ namespace olson_tools { namespace xml {
         template <class T>
         T query(const std::string & q) const {
             XMLContext x = find(q);
-            return parser<T>::parse(x);
+            T retval;
+            parse_item(retval, x);
+            return retval;
         }
 
         /** Search for and parse a specific (single-valued) result of the
@@ -192,7 +183,9 @@ namespace olson_tools { namespace xml {
         T query(const std::string & q, const T & _default) const {
             try {
                 XMLContext x = find(q);
-                return parser<T>::parse(x);
+                T retval;
+                parse_item(retval, x);
+                return retval;
             } catch (nonsingle_result_error) {
                 return _default;
             }
@@ -201,7 +194,9 @@ namespace olson_tools { namespace xml {
         /** Attempt to parse the text of this current node. */
         template <class T>
         T parse() const {
-            return parser<T>::parse(*this);
+            T retval;
+            parse_item(retval, *this);
+            return retval;
         }
 
         /** Return the unparsed/unformatted text of this current node. */
@@ -226,21 +221,18 @@ namespace olson_tools { namespace xml {
 
 
     template <class A>
-    A parser<A>::parse(const XMLContext & x) {
+    static void parse_item(A & out, const XMLContext & x) {
         try {
-            return olson_tools::from_string<A>(x.text());
+            out = olson_tools::from_string<A>(x.text());
         } catch (olson_tools::string_error& e) {
             throw xml_error(e.what());
         }
     }
 
 
-    template <>
-    struct parser<std::string> {
-        static std::string parse(const XMLContext & x) {
-            return x.text();
-        }
-    };
+    static void parse_item(std::string & out, const XMLContext & x) {
+        out = x.text();
+    }
 
 
     class XMLDoc {

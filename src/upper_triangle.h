@@ -1,6 +1,8 @@
 #ifndef OLSON_TOOLS_UPPER_TRIANGLE_H
 #define OLSON_TOOLS_UPPER_TRIANGLE_H
 
+#include <vector>
+
 namespace olson_tools {
 
 struct SymmetryFix {
