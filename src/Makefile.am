@@ -88,6 +88,9 @@ nobase_libolson_tools_a_include_HEADERS = \
 	./xml/XMLDoc.h \
 	./xml/physical_parse.h \
 	./upper_triangle.h \
+	./IteratorRange.h \
+	./nsort_maps.h \
+	./nsort.h \
         ./$(PACKAGE)-config.h
 
 
