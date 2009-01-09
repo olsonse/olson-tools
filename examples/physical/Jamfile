@@ -1,0 +1,9 @@
+build-project data-only ;
+build-project output ;
+build-project registry ;
+
+# import boost_lib ;
+# if [ boost_lib.exist ]
+# {
+#     build-project calc ;
+# }

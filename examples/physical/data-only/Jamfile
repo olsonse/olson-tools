@@ -1,0 +1,1 @@
+exe testDataOnly : testDataOnly.cpp /olson-tools//olson-tools ;

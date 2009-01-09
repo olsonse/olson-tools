@@ -1,0 +1,13 @@
+echo "To do a timed difference between the lookup table" ;
+echo " and runtime computation, add feature <timed>on:" ;
+echo "'bjam timed=on'" ;
+
+import feature : feature ;
+feature timed : off on : composite ;
+feature.compose <timed>on : <define>TIMED_RUN=1 ;
+
+exe testfield : testfield.cpp /olson-tools//olson-tools ;
+exe createfieldfile : createfieldfile.cpp /olson-tools//olson-tools ;
+
+# FIXME:  figure out how to remove these on --clean ?
+# CLEANFILES      = error.dat field.dat

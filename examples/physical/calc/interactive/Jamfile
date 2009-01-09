@@ -1,0 +1,3 @@
+exe testInteractive : testInteractive_obj /olson-tools//olson-tools ;
+
+obj testInteractive_obj : testInteractive.cpp /olson-tools//olson-tools ;

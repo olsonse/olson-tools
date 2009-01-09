@@ -1,0 +1,16 @@
+echo "" ;
+echo "" ;
+echo "After building testXML, do  './testXML xpath-query'" ;
+echo "" ;
+echo "" ;
+echo "" ;
+
+path-constant XML_EXAMPLE : . ;
+project
+    : requirements
+        <define>XML_FILENAME=\\\"$(XML_EXAMPLE)/../data/particledb.xml\\\"
+    ;
+
+exe testXML : testXML_obj /olson-tools//olson-tools ;
+
+obj testXML_obj : testXML.cpp /olson-tools//olson-tools : <optimization>off ;

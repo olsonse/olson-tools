@@ -1,0 +1,82 @@
+# Copyright 2004-2008 Spencer Olson
+
+# alias install : install-headers install-lib ;
+
+# install install-lib : particledb ;
+# 
+# install install-headers
+#     : [ glob-tree *.h : .svn ]
+#     ;
+#
+# figure out the way to install this:
+# pkgconfig_DATA = olson-tools.pc
+
+# 
+
+constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
+
+import mpi ;
+import os ;
+
+using gfortran ;
+local gcc_fflags = <fflags>-ffree-form <fflags>-fPIC ;
+# using ifort ;
+
+local xml2-features = [ mpi.cmdline_to_features [ SHELL "printf '%s ' compiler `xml2-config --cflags --libs`" ] ] ;
+lib boost_regex : : <name>boost_regex ;
+rule supports_fast_pow ( )
+{
+    # this will not work for the pgi compiler
+    if [ MATCH "([xX]86).*" : [ os.platform ] ]
+    {
+        return <define>USE_SPENCERS_FAST_POW ;
+    }
+}
+
+
+
+project /olson-tools
+    : requirements
+        $(xml2-features)
+        <include>src/olson-tools
+        <threading>multi:<define>USE_PTHREAD
+        [ supports_fast_pow ]
+    : usage-requirements
+        $(xml2-features)
+        <include>src
+        <library>boost_regex
+        <threading>multi:<define>USE_PTHREAD
+        [ supports_fast_pow ]
+    : build-dir build
+    ;
+
+lib olson-tools :
+      src/olson-tools/options.cpp
+      src/olson-tools/logger.c
+          rk
+      src/olson-tools/power.c
+      src/olson-tools/random/random.cpp
+      src/olson-tools/3j.c
+      src/olson-tools/fit/debug.cpp
+      src/olson-tools/fit/Gene.cpp
+      src/olson-tools/fit/Generation.cpp
+      src/olson-tools/fit/Histogram.cpp
+      src/olson-tools/fit/GeneticAlg.cpp
+      src/olson-tools/fit/GeneticAlgArgs.cpp
+      src/olson-tools/fit/Individual.cpp
+      src/olson-tools/fit/io.cpp
+      src/olson-tools/util.cpp
+      src/olson-tools/m_eps.cpp
+    : <link>static
+    ;
+
+
+# need special compilation for libtrapfe.a
+obj trapfe
+    : src/olson-tools/trapfe.cpp : <optimization>off <variant>debug
+#   : <os>sunos:<define>__EXTENSIONS__<include>/opt/SUNWspro/WS6U2/include/cc
+    ;
+
+obj rk : src/olson-tools/rk.F :
+    <toolset>gcc:$(gcc_fflags) ;
+

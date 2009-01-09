@@ -1,0 +1,2 @@
+build-project c ;
+build-project fortran ;

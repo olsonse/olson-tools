@@ -1,0 +1,5 @@
+echo "Only the debug variant will be able to trap the floating point errors" ;
+
+exe testtrapfe : testtrapfe.cpp /olson-tools//olson-tools ;
+
+# FIXME:  cat out the README upon build?

@@ -1,0 +1,7 @@
+lib gfortranbegin : : <name>gfortranbegin ;
+lib gfortran : : <name>gfortran ;
+exe testfast_pow : testfast_pow.o stdpow.c /olson-tools//olson-tools gfortranbegin gfortran ;
+
+local gcc_fflags = <fflags>-ffree-form <fflags>-fPIC ;
+
+obj testfast_pow.o : testfast_pow.F : <toolset>gcc:$(gcc_fflags) ;

@@ -1,0 +1,3 @@
+exe testParser : testParser_obj /olson-tools//olson-tools ;
+
+obj testParser_obj : testParser.cpp /olson-tools//olson-tools ;
