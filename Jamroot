@@ -78,5 +78,5 @@ obj trapfe
     ;
 
 obj rk : src/olson-tools/rk.F :
-    <toolset>gcc:$(gcc_fflags) ;
+    <toolset>gcc:$(gcc_fflags) <link>static ;
 
