@@ -37,6 +37,7 @@ class Derivs {
                         const double * dt,
                         double rkf[VZ+1],
                         Force * f) {
+        using namespace indices;
         rkf[X]  = p[VX];
         rkf[Y]  = p[VY];
         rkf[Z]  = p[VZ];

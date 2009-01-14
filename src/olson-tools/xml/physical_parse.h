@@ -2,7 +2,7 @@
 #define OLSON_TOOLS_XML_PHYSICAL_PARSE_H
 
 #include "XMLDoc.h"
-#include "../physical/calc/infix.h"
+#include <physical/calc/infix.h>
 
 namespace olson_tools { namespace xml {
     static void parse_item(physical::Quantity & out, const XMLContext & x) {

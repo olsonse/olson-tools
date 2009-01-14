@@ -33,6 +33,7 @@ rule supports_fast_pow ( )
     }
 }
 
+use-project /physical : ../physical ;
 
 
 project /olson-tools
@@ -41,12 +42,14 @@ project /olson-tools
         <include>src/olson-tools
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
+        <library>/physical//physical
     : usage-requirements
         $(xml2-features)
         <include>src
         <library>boost_regex
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
+        <library>/physical//physical
     : build-dir build
     ;
 

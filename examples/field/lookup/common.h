@@ -3,7 +3,7 @@
 #define LOOKUP_COMMON_H
 
 #include <olson-tools/bfield.h>
-#include <olson-tools/physical/physical.h>
+#include <physical/physical.h>
 #include <olson-tools/force-lookup.h>
 
 using namespace physical::constants;

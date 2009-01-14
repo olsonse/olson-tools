@@ -32,6 +32,7 @@
 #include "indices.h"
 
 namespace olson_tools {
+    using namespace indices;
 
 /** Simple class to keep range information. */
 class range_t {

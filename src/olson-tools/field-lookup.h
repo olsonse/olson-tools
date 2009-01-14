@@ -30,6 +30,7 @@
 
 
 namespace olson_tools {
+    using namespace indices;
 
 /**
  * Field-lookup class.

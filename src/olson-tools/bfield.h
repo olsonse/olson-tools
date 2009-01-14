@@ -28,6 +28,7 @@
 #include "Forces.h"
 
 namespace olson_tools {
+    using namespace indices;
 namespace BField {
 
     class  ThinCurrentElement {

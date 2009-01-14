@@ -26,6 +26,7 @@
 
 
 namespace olson_tools {
+    using namespace indices;
 
 template <class FieldTable>
 int spitfieldout(std::ostream & output,

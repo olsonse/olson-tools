@@ -3,12 +3,13 @@
 #include <fstream>
 
 #include <olson-tools/BTrapDistro.h>
-#include <olson-tools/physical/physical.h>
+#include <physical/physical.h>
 #include <olson-tools/InvCylindricalDist.h>
 #include <olson-tools/strutil.h>
 
 using namespace physical::units;
 using namespace physical::constants;
+using namespace olson_tools::indices;
 
 using olson_tools::SQR;
 using olson_tools::AddField;

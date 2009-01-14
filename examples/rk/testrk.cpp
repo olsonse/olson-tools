@@ -12,6 +12,7 @@ using olson_tools::getMachineEPS;
 using olson_tools::logger::setLogProgramName;
 using olson_tools::rk_adapt_driver;
 using olson_tools::derivativesFunction;
+using namespace olson_tools::indices;
 
 
 

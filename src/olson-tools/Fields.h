@@ -29,6 +29,7 @@
 #include "indices.h"
 
 namespace olson_tools {
+    using namespace indices;
 
 #if 0
             //Gradient::gradient(a, *static_cast< magnitude_of<super1> *>((super1*)this), r);

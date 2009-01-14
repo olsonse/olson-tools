@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <olson-tools/physical/physical.h>
+#include <physical/physical.h>
 #include <olson-tools/random/random.h>
 #include <olson-tools/Distribution.h>
 #include <olson-tools/Vector.h>

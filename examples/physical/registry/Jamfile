@@ -1,1 +1,0 @@
-exe testregistry : testregistry.cpp /olson-tools//olson-tools ;

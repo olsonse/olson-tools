@@ -10,6 +10,7 @@
 #include "common.h"
 
 using olson_tools::Vector;
+using namespace olson_tools::indices;
 
 const Vector<double,3> X_MINc   = V3(-20.0*um,          -20.0*um,         -20.*um );
 const Vector<double,3> X_MAXc   = V3( 20.0*um  + 1e-12,  20.0*um  + 1e-12, 20.*um + 1e-12 );
