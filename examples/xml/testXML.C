@@ -3,8 +3,8 @@
  * */
 
 
-#ifndef   XML_FILENAME
-#  define XML_FILENAME  "file.xml"
+#ifndef   PARTICLEDB_XML
+#  define PARTICLEDB_XML  "file.xml"
 #endif
 
 #include <iostream>
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     using physical::constant::eV;
     using physical::unit::m;
 
-    XMLDoc db(XML_FILENAME);
+    XMLDoc db(PARTICLEDB_XML);
     prepareCalculator(db);
 
 
