@@ -18,9 +18,8 @@ constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] 
 import mpi ;
 import os ;
 
-using gfortran ;
-local gcc_fflags = <fflags>-ffree-form <fflags>-fPIC ;
-# using ifort ;
+local gcc_fflags = <fflags>-ffree-form ;
+local icc_fflags = <fflags>-free ;
 
 local xml2-features = [ mpi.cmdline_to_features [ SHELL "printf '%s ' compiler `xml2-config --cflags --libs`" ] ] ;
 lib boost_regex : : <name>boost_regex ;
@@ -81,5 +80,7 @@ obj trapfe
     ;
 
 obj rk : src/olson-tools/rk.F :
-    <toolset>gcc:$(gcc_fflags) <link>static ;
+    <toolset>gcc:$(gcc_fflags)
+    <toolset>intel:$(icc_fflags)
+    <link>static ;
 
