@@ -5,8 +5,8 @@
 #include <physical/calc/infix.h>
 
 namespace olson_tools { namespace xml {
-    static void parse_item(physical::Quantity & out, const XMLContext & x) {
-        using physical::calc::InfixCalc;
+    static void parse_item(runtime::physical::Quantity & out, const XMLContext & x) {
+        using runtime::physical::calc::InfixCalc;
     
         if( x.node->type != XML_ELEMENT_NODE &&
             x.node->type != XML_ATTRIBUTE_NODE &&
