@@ -11,6 +11,7 @@
 #include <olson-tools/data_set.h>
 #include <olson-tools/xml/physical_parse.h>
 
+using namespace runtime; /* strip runtime:: from physical::* */
 typedef olson_tools::data_set<physical::Quantity,physical::Quantity> pqdata_set;
 
 using olson_tools::xml::XMLDoc;
