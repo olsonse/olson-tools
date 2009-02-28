@@ -454,6 +454,18 @@ class Vector {
         for (unsigned int i = 0; i < L; i++) this->val[i] += (T)(f*that.val[i]);
         return *this;
     }
+
+
+    /** Convert the Vector to a string with an optional delimiter (default: [tab]).
+     * */
+    inline std::string to_string( const char & delim = '\t') {
+        std::stringstream streamOut;
+        if (L>0)
+            streamOut << val[0];
+        for (unsigned int i = 1; i < L; i++) streamOut << delim << this->val[i];
+        return streamOut.str( );
+    }
+
 };
 
 /** Cumulative '==' comparison of Vector types.
@@ -727,7 +739,7 @@ class SquareMatrix {
     inline const Vector<T,L> & row(const int & i) const { return VNCAST(T,L,val[i]); }
 
     /** Column extractor--const version (no non-const version exists). */
-    inline Vector<T,L> & col(const int & j) {
+    inline Vector<T,L> col(const int & j) const {
         Vector<T,L> v;
         for (int i = 0; i < L; i++) v[i] = val[i][j];
         return v;
