@@ -29,6 +29,7 @@
 #define VECTOR_H
 
 #include <string.h>
+#include <sstream>
 #include <ostream>
 #include <math.h>
 #include <stdarg.h>
