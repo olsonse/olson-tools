@@ -9,3 +9,6 @@
         inline void vector_lookup(retval, r, i);
 
         DONE
+
+3.  Figure out where to put unit-tests and how to get them compiled any time
+    that a file changes.

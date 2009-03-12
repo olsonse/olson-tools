@@ -13,6 +13,7 @@ build-project field ;
 build-project fit ;
 build-project invertdistro ;
 build-project memory ;
+build-project nsort ;
 build-project options ;
 build-project random ;
 build-project readdata ;

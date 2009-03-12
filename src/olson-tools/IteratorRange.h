@@ -1,6 +1,6 @@
 
-#ifndef OLSON_TOOLS_ITERATORRANGE_H
-#define OLSON_TOOLS_ITERATORRANGE_H
+#ifndef olson_tools_IteratorRange_h
+#define olson_tools_IteratorRange_h
 
 namespace olson_tools {
 
@@ -21,4 +21,4 @@ namespace olson_tools {
 
 }
 
-#endif // OLSON_TOOLS_ITERATORRANGE_H
+#endif // olson_tools_IteratorRange_h

@@ -1,6 +1,9 @@
 /** \file
  * Implementation of a generally useful PThreads cache and associated task
  * manager.
+ *
+ * Copyright 2006 Spencer Olson
+ *
  * */
 
 #ifndef PTHREADCACHE_H
