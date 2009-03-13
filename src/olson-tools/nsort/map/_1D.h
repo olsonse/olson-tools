@@ -16,6 +16,7 @@ namespace olson_tools {
        * */
       template <unsigned int _dir>
       struct _1D : pivot {
+        /* TYPEDEFS */
         struct node_fields {};
 
         template <unsigned int _depth> 
@@ -25,35 +26,17 @@ namespace olson_tools {
       
         /** The number of spatial dimensions. */
         static const unsigned int spatial_dimensions = 1u;
+        /** The 1st dimension direction */
+        static const unsigned int dir0 = _dir;
+
+
         _1D() {}
         template <class T> _1D(const T & t) {}
       
-        inline int getNumberValues() const {
-          return 2;
-        }
-      
-        inline int dir0() const { return _dir; }
-      
+        inline int getNumberValues() const { return 2; }
         template<class _Particle>
         inline int operator()(const _Particle & p) const {
           return p.x[_dir] >= pivot[_dir];
-        }
-      
-        template <class sorter, class Info>
-        void getIterators(const sorter & s, Info & info) {
-          typedef typename Info::particle_iter_type Iter;
-          if (!info.rules.pass(s)) {
-            /* do not create any children; retain all particles within this
-             * node. */
-            info.children = 0;
-            info.leaves = 1;
-            return;
-          }
-      
-          info.particles = IteratorRange<Iter>(
-            info.particles.begin() + s.begin(0),
-            info.particles.begin() + s.end(1)
-          );
         }
       };
     }
