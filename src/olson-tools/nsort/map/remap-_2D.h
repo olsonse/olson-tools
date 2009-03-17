@@ -8,9 +8,14 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        struct remap_2D {};
+      }
+
       /** Specialization of remap for _2D. */
       template < unsigned int _dir0, unsigned int _dir1 >
       struct remap< _2D<_dir0,_dir1> > : remap_base< _2D<_dir0,_dir1>, 4u > {
+        typedef tag::remap_2D tag;
         typedef remap_base< _2D<_dir0,_dir1>, 4u > super;
         /** Default constructor required by wrapping components. */
         remap() {}

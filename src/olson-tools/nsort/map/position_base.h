@@ -11,6 +11,11 @@ namespace olson_tools {
         Vector<double,3> pivot;
       };
 
+      namespace tag {
+        /** Simple tag class that can be used to detect this map. */
+        struct pivot_ctrs {};
+      }
+
       /** A simple wrapper for position maps (types that have a pivot fields)
        * that provides a constructor to assign the pivot fields regardless of
        * how many layers of wrappers there are.  Because this wrapper is for
@@ -69,8 +74,9 @@ namespace olson_tools {
       */
       template <class DIMS>
       struct pivot_ctrs : DIMS {
-        struct node_fields : DIMS::node_fields {};
-      
+        typedef tag::pivot_ctrs tag;
+        typedef DIMS super;
+
         /* ** BEGIN CONSTRUCTORS ** */
         pivot_ctrs( const double & px = 0.0,
                     const double & py = 0.0,

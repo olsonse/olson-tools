@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE( remap_1D ) {
    * It also ensures that the unmapped values continue to perform an identity
    * transformation.
    * */
-  for (unsigned int ri = 0; ri < rmap.getNVal(); ++ri) {
-    for (unsigned int rv = 0; rv < rmap.getNVal(); ++rv) {
+  for (unsigned int ri = 0; ri < rmap.nval; ++ri) {
+    for (unsigned int rv = 0; rv < rmap.nval; ++rv) {
       rmap.reset();
       rmap.m_remap[ri] = rv;
       unsigned int rii = 0;
@@ -100,8 +100,8 @@ BOOST_AUTO_TEST_CASE( remap_2D ) {
    * It also ensures that the unmapped values continue to perform an identity
    * transformation.
    * */
-  for (unsigned int ri = 0; ri < rmap.getNVal(); ++ri) {
-    for (unsigned int rv = 0; rv < rmap.getNVal(); ++rv) {
+  for (unsigned int ri = 0; ri < rmap.nval; ++ri) {
+    for (unsigned int rv = 0; rv < rmap.nval; ++rv) {
       rmap.reset();
       rmap.m_remap[ri] = rv;
       unsigned int rii = 0;
@@ -148,8 +148,8 @@ BOOST_AUTO_TEST_CASE( remap_3D ) {
    * It also ensures that the unmapped values continue to perform an identity
    * transformation.
    * */
-  for (unsigned int ri = 0; ri < rmap.getNVal(); ++ri) {
-    for (unsigned int rv = 0; rv < rmap.getNVal(); ++rv) {
+  for (unsigned int ri = 0; ri < rmap.nval; ++ri) {
+    for (unsigned int rv = 0; rv < rmap.nval; ++rv) {
       rmap.reset();
       rmap.m_remap[ri] = rv;
       unsigned int rii = 0;

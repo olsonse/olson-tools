@@ -10,6 +10,12 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        /** Simple tag class that can be used to detect this map. */
+        template <unsigned int dir>
+        struct _1D {};
+      }
+
       /** maps x<pivot to 0 and x>= pivot to 1.
        * This sort-map <i>does</i> dictate that new children are to be created,
        * provided the given set of rules (supplied by info) are followed.  
@@ -17,7 +23,8 @@ namespace olson_tools {
       template <unsigned int _dir>
       struct _1D : pivot {
         /* TYPEDEFS */
-        struct node_fields {};
+        typedef tag::_1D<_dir> tag;
+        typedef void super;
 
         template <unsigned int _depth> 
         struct depth {

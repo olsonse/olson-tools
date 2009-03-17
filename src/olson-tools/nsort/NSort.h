@@ -3,6 +3,7 @@
 
 #include <olson-tools/nsort/map/direct.h>
 #include <olson-tools/nsort/tweak/Null.h>
+#include <olson-tools/ref_of.h>
 
 #include <string.h>
 #include <ostream>
@@ -78,7 +79,7 @@ namespace olson_tools {
 
         /* first count the number of occurrences for each value. */
         for (Iter i = Ai; i < Af; ++i)
-          ++bin[map(*i)];
+          ++bin[map(ref_of(*i))];
 
         /* Allow user code to tweak the map according to the preliminary
          * counting statistics. */
@@ -97,7 +98,7 @@ namespace olson_tools {
           int & pos = ptr[i];
 
           while (pos < end_pos) {
-            int & pos2 = ptr[map(*(Ai + pos))];
+            int & pos2 = ptr[map(ref_of(*(Ai + pos)))];
 
             if (pos == pos2) {
               /* don't need to swap current position, move to next... */

@@ -11,14 +11,13 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        struct w_type {};
+      }
+
       template <class T>
       struct w_type : T {
-        /** Fields that must be inherited by a node type class that wants to use
-         * map::type sorting and subsequently use the getIterators function to
-         * store the results. */
-        template <class Iter>
-        struct node_fields : T::node_fields, map::type::node_fields<Iter> {};
-
+        typedef tag::w_type tag;
         typedef T super;
         const int n_types;
 
@@ -35,17 +34,6 @@ namespace olson_tools {
           return n_types * T::operator()(p) + p.type;
         }
 
-        template <class sorter, class Info>
-        static void getIterators(const sorter & s, Info & info) {
-          typedef typename Info::particle_iter_type Iter;
-
-          info.particles = IteratorRange<Iter>(
-            info.particles.begin() + s.begin(0),
-            info.particles.begin() + s.end(1)
-          );
-
-          map::type::getIterators(0, s.size(), s, info);
-        }
       };/*struct w_type */
     }/*namespace map */
   }/*namespace nsort */

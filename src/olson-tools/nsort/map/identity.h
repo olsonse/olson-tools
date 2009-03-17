@@ -6,12 +6,18 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        /** Simple tag class that can be used to detect this map. */
+        struct identity {};
+      }
+
      /** Identity nsort_map wrapper.  Useful as a default parameter in a templated
       * nsort::map wrap.
       * */
       template <class T>
       struct identity : T {
-        struct node_fields : T::node_fields {};
+        typedef tag::identity tag;
+        typedef T super;
 
         identity() {}
         template <class TT> identity(const TT & tt) : T(tt) {}

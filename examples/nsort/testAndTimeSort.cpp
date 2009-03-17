@@ -10,7 +10,6 @@
 #include <olson-tools/nsort/NSort.h>
 #include <olson-tools/nsort/map/_3D.h>
 #include <olson-tools/nsort/map/w_type.h>
-#include <olson-tools/nsort/map/ptr.h>
 #include "Particle.h"
 #include "partition.h"
 #include <olson-tools/Timer.h>
@@ -36,17 +35,17 @@ int main() {
     Particle::list                                 pv;
     std::vector<Particle*>                         ptrv;
     NSort<pivot_ctrs<_1D<0> > >                    ps(2);
-    NSort<pivot_ctrs<ptr<_1D<0> > > >              ptrs(2);
+    NSort<pivot_ctrs<_1D<0> > >                    ptrs(2);
     NSort<pivot_ctrs<w_type<_1D<0> > > >           ps_w_type(2*n_types);
-    NSort<pivot_ctrs<ptr<w_type<_1D<0> > > > >     ptrs_w_type(2*n_types);
+    NSort<pivot_ctrs<w_type<_1D<0> > > >           ptrs_w_type(2*n_types);
     NSort<pivot_ctrs<_2D<0,1> > >                  ps2D(4);
-    NSort<pivot_ctrs<ptr<_2D<0,1> > > >            ptrs2D(4);
+    NSort<pivot_ctrs<_2D<0,1> > >                  ptrs2D(4);
     NSort<pivot_ctrs<w_type<_2D<0,1> > > >         ps2D_w_type(4*n_types);
-    NSort<pivot_ctrs<ptr<w_type<_2D<0,1> > > > >   ptrs2D_w_type(4*n_types);
+    NSort<pivot_ctrs<w_type<_2D<0,1> > > >         ptrs2D_w_type(4*n_types);
     NSort<pivot_ctrs<_3D<0,1,2> > >                ps3D(8);
-    NSort<pivot_ctrs<ptr<_3D<0,1,2> > > >          ptrs3D(8);
+    NSort<pivot_ctrs<_3D<0,1,2> > >                ptrs3D(8);
     NSort<pivot_ctrs<w_type<_3D<0,1,2> > > >       ps3D_w_type(8*n_types);
-    NSort<pivot_ctrs<ptr<w_type<_3D<0,1,2> > > > > ptrs3D_w_type(8*n_types);
+    NSort<pivot_ctrs<w_type<_3D<0,1,2> > > >       ptrs3D_w_type(8*n_types);
     NSort<map::type>                               pts(n_types);
 
 
@@ -216,13 +215,13 @@ int main() {
 
     /* with ptr array */
     initPtrVector(pv,ptrv, N_little, n_types);
-    ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs<ptr<w_type<_3D<0,1,2> > > >(n_types));
+    ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs<w_type<_3D<0,1,2> > >(n_types));
     std::cout << "\nsorted by NSort(3D w/type) (ptr):\n";
     std::cout << "Pivot at " << ptrs3D_w_type.end(0) << " :  " << *ptrv[ptrs3D_w_type.end(0)] << std::endl;
     {
-        pivot_ctrs<ptr<w_type<_3D<0,1,2> > > > map(n_types);
+        pivot_ctrs<w_type<_3D<0,1,2> > > map(n_types);
         for (unsigned int i = 0; i < ptrv.size(); i++)
-            std::cout << *ptrv[i] << ";    map = " << map.super::operator()(*ptrv[i]) << ", " << map(ptrv[i]) << '\n';
+            std::cout << *ptrv[i] << ";    map = " << map(*ptrv[i]) << '\n';
     }
     std::cout << std::endl;
 
@@ -360,7 +359,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[11].start();
-            ptrs_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< ptr< w_type<_1D<0> > > >(n_types));
+            ptrs_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< w_type<_1D<0> > >(n_types));
             timer[11].stop();
 #endif
 
@@ -378,7 +377,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[14].start();
-            ptrs2D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< ptr< w_type<_2D<0,1> > > >(n_types));
+            ptrs2D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< w_type<_2D<0,1> > >(n_types));
             timer[14].stop();
 #endif
 
@@ -397,7 +396,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[17].start();
-            ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< ptr< w_type<_3D<0,1,2> > > >(n_types));
+            ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctrs< w_type<_3D<0,1,2> > >(n_types));
             timer[17].stop();
 #endif
 

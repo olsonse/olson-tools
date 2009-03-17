@@ -8,12 +8,21 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        /** Simple tag class that can be used to detect this map. */
+        template <unsigned int dir0, unsigned int dir1, unsigned int dir2>
+        struct _3D {};
+      }
+
       /** maps x[_dir0],x[_dir1],x[_dir2] to 0,1,2,3,4,5,6,7 */
       template <unsigned int _dir0, unsigned int _dir1, unsigned int _dir>
       struct _3D : _2D<_dir0,_dir1> {
         /* TYPEDEFS */
-        typedef _2D<_dir0,_dir1> super;
-        struct node_fields : _2D<_dir0,_dir1>::node_fields {};
+      private:
+        typedef _2D<_dir0,_dir1> twoD;
+      public:
+        typedef tag::_3D<_dir0,_dir1,_dir> tag;
+        typedef void super;
 
         template <unsigned int _depth> 
         struct depth {
@@ -32,7 +41,7 @@ namespace olson_tools {
         inline int getNumberValues() const { return 8; }
         template<class _Particle>
         inline int operator()(const _Particle & p) const {
-          return super::operator()(p) + 4*(p.x[_dir] >= super::pivot[_dir]);
+          return twoD::operator()(p) + 4*(p.x[_dir] >= twoD::pivot[_dir]);
         }
       };
     }

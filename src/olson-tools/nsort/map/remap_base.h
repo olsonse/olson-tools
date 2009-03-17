@@ -9,19 +9,30 @@
 namespace olson_tools {
   namespace nsort {
     namespace map {
+      namespace tag {
+        struct remap_base {};
+      }
+
       /** Re-maps an underlying map function onto a different set of mapped
        * values.
        * An example use of this class is to remap a portion of the domain of the
        * underlying map function onto another portion of the map function's
        * domain.
        * */
-      template < typename T , unsigned int nval = 0u >
+      template < typename T , unsigned int _nval = 0u >
       struct remap_base : T {
-        struct node_fields : T::node_fields {};
+        typedef tag::remap_base tag;
+        typedef T super;
+
+        /* STORAGE MEMBER(S) */
+        /** Outside access to the maximum number of possible values. */
+        static const unsigned int nval = _nval;
 
         /** The remap map. */
         int m_remap[nval];
+      
 
+        /* FUNCTION MEMBERS */
         /** Default constructor calls 'reset'.
          * @see reset. */
         remap_base() {
@@ -40,11 +51,6 @@ namespace olson_tools {
             m_remap[i] = i;
         }
 
-        /** Obtain the maximum number of possible values. */
-        inline unsigned int getNVal() const {
-          return nval;
-        }
-      
         /** Returns the number of unique values.  This function cannot be
          * optimized away during compilation because it relies on runtime
          * calculations.
