@@ -9,6 +9,7 @@
 #include <sys/times.h>
 #include <unistd.h>
 #include <string.h>
+#include <string>
 
 
 namespace olson_tools {
@@ -122,6 +123,12 @@ class Timer {
     /** Total number of calls to stop(). */
     int N_stop;
 
+    /** Label for the wall time. */
+    std::string wall_time_label;
+
+    /** Label for the cpu time. */
+    std::string cpu_time_label;
+
     /** Fraction/Number of seconds per each clock tick as reported by
      * sysconf(_SC_CLK_TCK). */
     static double seconds_per_clock_tick;
@@ -131,10 +138,21 @@ double Timer::seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
 
 std::ostream & operator<< (std::ostream & out, const Timer & t ) {
     if (t.function == Timer::CUMMULATIVE) {
-        out << t.dt_avg() << '\t'
-            << t.dt_cpu_time_avg() << '\t';
+        out << t.dt_avg()
+              << (t.wall_time_label.size() > 0 ? " ":"")
+              <<  t.wall_time_label
+              << '\t'
+            << t.dt_cpu_time_avg()
+              << (t.cpu_time_label.size() > 0 ? " ":"")
+              <<  t.cpu_time_label;
     }
-    out << t.dt << '\t' << t.dt_cpu_time;
+    out << t.dt
+              << (t.wall_time_label.size() > 0 ? " ":"")
+              <<  t.wall_time_label
+        << '\t'
+        << t.dt_cpu_time
+              << (t.cpu_time_label.size() > 0 ? " ":"")
+              <<  t.cpu_time_label;
     return out;
 }
 
