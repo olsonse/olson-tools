@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_SUITE( map_nD );
 
 BOOST_AUTO_TEST_CASE( map_1D ) {
   using olson_tools::nsort::map::_1D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< _1D<0> > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< _1D<0> > map_t;
   map_t map(V3(0,0,0));
 
   /* make sure the dimensionality is correct. */
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE( map_1D ) {
 
 BOOST_AUTO_TEST_CASE( map_2D ) {
   using olson_tools::nsort::map::_2D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< _2D<0,1> > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< _2D<0,1> > map_t;
   map_t map(V3(0,0,0));
 
   /* make sure the dimensionality is correct. */
@@ -97,8 +97,8 @@ BOOST_AUTO_TEST_CASE( map_2D ) {
 
 BOOST_AUTO_TEST_CASE( map_3D ) {
   using olson_tools::nsort::map::_3D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< _3D<2,1,0> > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< _3D<2,1,0> > map_t;
   map_t map(V3(0,0,0));
 
   /* make sure the dimensionality is correct. */

@@ -28,14 +28,16 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <olson-tools/m_eps.h>
+#include <olson-tools/power.h>
+
+
 #include <string.h>
 #include <sstream>
 #include <ostream>
-#include <math.h>
+#include <cmath>
 #include <stdarg.h>
 #include <stdint.h>
-#include "m_eps.h"
-#include "power.h"
 
 
 namespace olson_tools {
@@ -149,15 +151,15 @@ class Vector {
         memset (&this->val[0], 0, sizeof(T)*L);
     }
 
-    /** Apply fabs(double) to all elements and save.  
-     * fabs(double) is called regardless of the actual type of the vector. */
+    /** Apply std::abs(double) to all elements and save.  
+     * std::abs(double) is called regardless of the actual type of the vector. */
     inline void save_fabs() {
-        for (unsigned int i = 0; i < L; i++) this->val[i] = fabs(this->val[i]);
+        for (unsigned int i = 0; i < L; i++) this->val[i] = std::abs(this->val[i]);
     }
 
     /** Apply sqrt(double) to all elements and save. */
     inline void save_sqrt() {
-        for (unsigned int i = 0; i < L; i++) this->val[i] = sqrt(this->val[i]);
+        for (unsigned int i = 0; i < L; i++) this->val[i] = std::sqrt(this->val[i]);
     }
 
     /** Index operator--non-const version. */
@@ -304,7 +306,7 @@ class Vector {
 
     /** Compute the magnitude of this vector. */
     inline T abs () const {
-        return sqrt ((*this) * (*this));
+        return std::sqrt ((*this) * (*this));
     }
 
 
@@ -459,7 +461,7 @@ class Vector {
 
     /** Convert the Vector to a string with an optional delimiter (default: [tab]).
      * */
-    inline std::string to_string( const char & delim = '\t') {
+    inline std::string to_string( const char & delim = '\t') const {
         std::stringstream streamOut;
         if (L>0)
             streamOut << val[0];
@@ -491,6 +493,8 @@ inline bool operator!=(const Vector<T1,L>& v1, const Vector<T2,L>& v2) {
     return !(v1 == v2);
 }
 
+static const double M_EPS4 = 4 * M_EPS;
+
 /** Cumulative '==' comparison of Vector types.
  * Specialization:  Comparison between Vectors of doubles.  Equivalence is
  * defined by less than 4*M_EPS.
@@ -499,7 +503,7 @@ template <unsigned int L>
 inline bool operator==(const Vector<double,L>& v1, const Vector<double,L>& v2) {
     bool retval = true;
     for (unsigned int i = 0; i < L; i++)
-        retval = retval && ( fabs(v1.val[i] - v2.val[i]) <= fabs(4*M_EPS*v1.val[i]) ) ;
+        retval = retval && ( std::abs(v1.val[i] - v2.val[i]) <= std::abs(M_EPS4*v1.val[i]) ) ;
 
     return retval;
 }
@@ -939,6 +943,28 @@ class SquareMatrix {
             retval.val[i][i] = 1;
         }
         return retval;
+    }
+
+
+    /** Convert the SquareMatrix to a string with an optional delimiter between
+     * columns (default: [tab]), and an optional delimiter between rows
+     * (default: [newline]).
+     *
+     * @param col_delim
+     *  Delimiter between adjacent columns [Default '\t'].
+     *
+     * @param row_delim
+     *  Delimiter between adjacent rows [Default '\n'].
+     * */
+    inline std::string to_string( const char & col_delim = '\t', const char & row_delim = '\n' ) const {
+        std::stringstream output;
+        for (unsigned int i = 0; i < L; i++) {
+            for (unsigned int j = 0; j < L; j++) {
+                output << val[i][j] << col_delim;
+            }
+            output << row_delim;
+        }
+        return output.str( );
     }
 };
 

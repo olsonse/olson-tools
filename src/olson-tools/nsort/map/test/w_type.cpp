@@ -1,9 +1,9 @@
 
 BOOST_AUTO_TEST_CASE( map_1D_w_type ) {
   using olson_tools::nsort::map::_1D;
-  using olson_tools::nsort::map::pivot_ctrs;
+  using olson_tools::nsort::map::pivot_ctor;
   using olson_tools::nsort::map::w_type;
-  typedef pivot_ctrs< w_type< _1D<0> > > map_t;
+  typedef pivot_ctor< w_type< _1D<0> > > map_t;
   map_t map(1,V3(0,0,0));
 
 
@@ -25,9 +25,9 @@ BOOST_AUTO_TEST_CASE( map_1D_w_type ) {
 BOOST_AUTO_TEST_CASE( remap_1D_w_type ) {
   using olson_tools::nsort::map::remap;
   using olson_tools::nsort::map::_1D;
-  using olson_tools::nsort::map::pivot_ctrs;
+  using olson_tools::nsort::map::pivot_ctor;
   using olson_tools::nsort::map::w_type;
-  typedef pivot_ctrs< w_type< remap< _1D<0> > > > map_t;
+  typedef pivot_ctor< w_type< remap< _1D<0> > > > map_t;
   map_t rmap(1,V3(0,0,0));
 
   Particle p;

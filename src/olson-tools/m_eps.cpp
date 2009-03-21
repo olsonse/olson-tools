@@ -8,20 +8,20 @@
 
 namespace olson_tools {
 
-const double M_EPS = getMachineEPS();
-
 /*   This function is to ensure that x gets written to system memory at
  *   sometime and is not always in a register. */
-double setMachineEPSHelper (const double & x) {
-    static double y = 0.0;
+template < typename T >
+T setMachineEPSHelper (const T & x) {
+    static T y = 0.0;
     y = x;
     return y;
 }
 
-double getMachineEPS () {
+template < typename T >
+T calcMachineEPS () {
     // For something of this nature, it is ok to store on a common block.
-    double eps;
-    static double tmp;
+    T eps;
+    static T tmp;
     eps = 1.;
 
     do {
@@ -31,5 +31,17 @@ double getMachineEPS () {
 
     return eps*2.0;
 }
+
+long double getMachineEPS_quad () {
+  return calcMachineEPS<long double>();
+};
+
+double getMachineEPS_double () {
+  return calcMachineEPS<double>();
+};
+
+float getMachineEPS_single () {
+  return calcMachineEPS<float>();
+};
 
 } /*namespace olson_tools*/

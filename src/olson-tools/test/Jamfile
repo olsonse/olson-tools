@@ -1,0 +1,7 @@
+unit-test m_eps : m_eps.cpp ;
+
+unit-test ref_of : ref_of.cpp ;
+
+unit-test fast_log2 : fast_log2.cpp : <cxxflags>-O3 ;
+
+unit-test fast_pow : fast_pow.cpp ;

@@ -23,6 +23,7 @@ local icc_fflags = <fflags>-free ;
 
 local xml2-features = [ mpi.cmdline_to_features [ SHELL "printf '%s ' compiler `xml2-config --cflags --libs`" ] ] ;
 lib boost_regex : : <name>boost_regex ;
+lib boost_unit_test_framework : : <name>boost_unit_test_framework <link>static ;
 rule supports_fast_pow ( )
 {
     # this will not work for the pgi compiler
@@ -39,6 +40,7 @@ project /olson-tools
     : requirements
         $(xml2-features)
         <include>src/olson-tools
+        <include>src/
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
         <library>/physical//physical

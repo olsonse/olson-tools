@@ -1,0 +1,12 @@
+# this Jamroot is mostly for helping build unit-tests while developing in the
+# source
+
+project /olson-tools/unit-tests
+    : requirements
+        <library>/olson-tools//olson-tools
+        <library>/olson-tools//boost_unit_test_framework
+    : build-dir build
+    ;
+
+use-project /olson-tools : ../ ;
+

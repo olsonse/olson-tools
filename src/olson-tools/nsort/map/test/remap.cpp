@@ -38,8 +38,8 @@ BOOST_AUTO_TEST_SUITE( remap );
 BOOST_AUTO_TEST_CASE( remap_1D ) {
   using olson_tools::nsort::map::remap;
   using olson_tools::nsort::map::_1D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< remap< _1D<0> > > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< remap< _1D<0> > > map_t;
   map_t rmap(V3(0,0,0));
 
   Particle p;
@@ -90,8 +90,8 @@ BOOST_AUTO_TEST_CASE( remap_1D ) {
 BOOST_AUTO_TEST_CASE( remap_2D ) {
   using olson_tools::nsort::map::remap;
   using olson_tools::nsort::map::_2D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< remap< _2D<0,1> > > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< remap< _2D<0,1> > > map_t;
   map_t rmap(V3(0,0,0));
 
   Particle p;
@@ -138,8 +138,8 @@ BOOST_AUTO_TEST_CASE( remap_2D ) {
 BOOST_AUTO_TEST_CASE( remap_3D ) {
   using olson_tools::nsort::map::remap;
   using olson_tools::nsort::map::_3D;
-  using olson_tools::nsort::map::pivot_ctrs;
-  typedef pivot_ctrs< remap< _3D<0,1,2> > > map_t;
+  using olson_tools::nsort::map::pivot_ctor;
+  typedef pivot_ctor< remap< _3D<0,1,2> > > map_t;
   map_t rmap(V3(0,0,0));
 
   Particle p;

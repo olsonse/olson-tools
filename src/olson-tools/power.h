@@ -71,6 +71,12 @@
 
 
 #ifdef __cplusplus
+
+/* include cmath so that we get log2 and std::pow */
+#  if !defined(USE_SPENCERS_FAST_POW) && !defined(DOXYGEN_SKIP)
+#     include <cmath>
+#  endif
+
 namespace olson_tools {
 #endif 
 
@@ -102,39 +108,197 @@ namespace olson_tools {
 #endif
 
 
-#  if !defined(LANGUAGE_FORTRAN__) || LANGUAGE_FORTRAN__ != 1
+/* **** BEGIN FAST_POW **** */
+#if !defined(LANGUAGE_FORTRAN__) || LANGUAGE_FORTRAN__ != 1
 
-#    ifdef __cplusplus
-extern "C" {
-#    endif 
+# if defined(USE_SPENCERS_FAST_POW) || defined(DOXYGEN_SKIP)
 
-#if defined(USE_SPENCERS_FAST_POW) || defined(DOXYGEN_SKIP)
+#   define FAST_POW_CODE(derefd_x, derefd_y)                          \
+    register double value;                                            \
+                                                                      \
+    /*                                                                \
+      here's the pseudo code for the following:                       \
+                                                                      \
+    if (y == 0) return 1;                                             \
+    if (x == 0) return 0;                                             \
+                                                                      \
+    return x^y;                                                       \
+    */                                                                \
+    asm (                                                             \
+      /* first test for y == 0 */                                     \
+      "fxam                    # st(0) == 0 ?                     \n" \
+      "fnstsw %%ax             # mov ax, fpu status word          \n" \
+      /* the fpu status word condition bits after fnstsw are          \
+       * x1xxx0x0 xxxxxxxx                                            \
+       * if st(0) == +-0                                              \
+       *  Also note that 0x4500 ==  01000101 00000000                 \
+       *  and            0x4000 ==  01000000 00000000                 \
+       */                                                             \
+      "and $0x45,%%ah          # fpu status word & ???            \n" \
+      "cmp $0x40,%%ah          #                                  \n" \
+      "je 1f                   # jne (y == 0; return1;)           \n" \
+      /* now test the x value */                                      \
+      "fxch                    #                                  \n" \
+      "fxam                    # st(0) == 0 ?                     \n" \
+      "fnstsw %%ax             # mov ax, fpu status word          \n" \
+      /* the fpu status word condition bits after fnstsw are          \
+       * x1xxx0x0 xxxxxxxx                                            \
+       * if st(0) == +-0                                              \
+       *  Also note that 0x4500 ==  01000101 00000000                 \
+       *  and            0x4000 ==  01000000 00000000                 \
+       */                                                             \
+      "and $0x45,%%ah          # fpu status word & ???            \n" \
+      "cmp $0x40,%%ah          #                                  \n" \
+      "je 2f                   # jne (x == 0; return 0;)          \n" \
+      /* ***now finally do the hard work of computing x^y*** */       \
+      "fyl2x                   # yl2x: st(0) = st(1) * log2(st(0))\n" \
+      "fld        %%st(0)      # st(1) = st(0) = yl2x             \n" \
+      "frndint                 # int(yl2x): st(0) = int( st(0) )  \n" \
+      "fxch                    # swap( st(0), st(1) )             \n" \
+      "fsub        %%st(1)     # fract(yl2x): st(0) -= st(1)      \n" \
+      "f2xm1                   # st(0) = 2^( st(0) ) - 1          \n" \
+      "fld1                    # st(0) = 1, st(1) = (2^yl2x) - 1  \n" \
+      "faddp  %%st(0),%%st(1)  # st(0) = 2^yl2x [st(1)= int(yl2x)]\n" \
+      "fscale                  #                                  \n" \
+      /* ***hard work done!*** */                                     \
+      "jmp 3f                  # jmp finished                     \n" \
+"1:                            # y == 0; return 1;                \n" \
+      "fld1                    # put 1 in st(0)                   \n" \
+      "fstp   %%st(1)          #                                  \n" \
+      "jmp 3f                  # jmp finished                     \n" \
+"2:                            # x == 0; return 0;                \n" \
+      "fldz                    # put 0 in st(0)                   \n" \
+      "fstp   %%st(1)          #                                  \n" \
+    /*"jmp 3f                  # jmp finished \n" */                  \
+"3:                            # finished                         \n" \
+      : "=t" (value) : "f" ((derefd_x)), "0" ((derefd_y))             \
+      : "eax"                                                         \
+    );                                                                \
+                                                                      \
+    return value;                                                     \
+    /*end fast pow code */
 
+
+#   if defined(__cplusplus) || defined(DOXYGEN_SKIP)
 /** My own pow function.
- * Call this one for c/c++ code.  It will be ever so infinitesimally faster
- * than fast_pow__ which is resolved to if "fast_pow" is used in fortran.
+ * This function only really compiles for x86 based machines.  For other
+ * machihnes USE_SPENCERS_FAST_POW should not be defined.  In this case,
+ * fast_pow will revert to a simple alias for std::pow.
+ *
+ * This function can also be called from c.  The c-version will of course be
+ * non-c++ name-mangled and takes values as arguments (not references).
+ *
+ * This function can also be called from fortran.  For fortran, there is a
+ * version of this function with an extra underscore at the end.  The fortran
+ * function will end up having at least two additional instructions (mov) for
+ * dereferencing the pointers to x, and y.
+ *
+ * I regularly observe this function perform around 10 times faster than GCC's
+ * libm::pow function and 6 times faster than that provided by PGI.  Intel seems
+ * to be my only rival yet (that I've seen).
+ *
  * @param x The base.
  * @param y The exponent.
  * @return \f$ x^{y} \f$
  * */
+static inline double fast_pow( const double & x, const double & y ) {
+    FAST_POW_CODE(x,y);
+}
+#   else /* else lang = c */
+
 double fast_pow(double x,double y);
 
-/** This one is primarily for use from (g77) fortran code.
- * It has only 2 additional mov instructions. */
-double fast_pow_(double*,double*);
+#   endif /* else lang = c */
 
-#else
+# else /* don't use spencers fast pow family of functions */
     /* the least we can do is provide an alias macro for the math lib pow
      * function. */
-#  define fast_pow pow
+#   define fast_pow pow
+#   ifdef __cplusplus
+      /* import std::pow into this namespace for aliasing */
+      using std::pow;
+#   endif
 
-#endif /* USE_SPENCERS_FAST_POW */
-
-#  ifdef __cplusplus
-}
-#  endif 
-
+# endif /* USE_SPENCERS_FAST_POW */
 #endif /*  if LANGUAGE_FORTRAN__ != 1 */
+/* ****   END FAST_POW **** */
+
+
+
+/* **** BEGIN FAST_LOG2 **** */
+#if !defined(LANGUAGE_FORTRAN__) || LANGUAGE_FORTRAN__ != 1
+# if defined(USE_SPENCERS_FAST_POW) || defined(DOXYGEN_SKIP)
+
+#   define FAST_LOG2_CODE(derefd_x)                                   \
+    register double value;                                            \
+    asm (                                                             \
+      "fld1       # st(0) = 1                   \n"                   \
+      "fxch       # swap( st(0), st(1) )        \n"                   \
+      "fyl2x      # st(0) = st(1) * log2(st(0)) \n"                   \
+      : "=t" (value) : "0" (derefd_x)                                 \
+    );                                                                \
+    return value;                                                     \
+    /*end fast log2 code */
+
+#   if defined(__cplusplus) || defined(DOXYGEN_SKIP)
+
+/** My own log2 function.
+ * This function only really compiles for x86 based machines.  For other
+ * machihnes USE_SPENCERS_FAST_POW should not be defined.  In this case,
+ * fast_log2 will revert to a simple macro alias for log2.
+ *
+ * This function can also be called from c.  The c-version will of course be
+ * non-c++ name-mangled and takes values as arguments (not references).
+ *
+ * This function can also be called from fortran.  For fortran, there is a
+ * version of this function with an extra underscore at the end.  The fortran
+ * function will end up having at least one additional instruction (mov) for
+ * dereferencing the pointer to x.
+ *
+ * I regularly observe this function perform around 40 times faster than GCC's
+ * libm::log2 function.
+ * */
+static inline double fast_log2 ( const double & x ) {
+  FAST_LOG2_CODE(x);
+}
+
+#   else /* else lang = c */
+double fast_log2 ( const double x );
+#   endif /* else lang = c */
+# else /* don't use spencers fast pow family of functions */
+
+    /* At least define an alias macro for math lib log2 */
+#   define fast_log2 log2
+#   ifdef __cplusplus
+      /* import std::log2 into this namespace for aliasing */
+      using ::log2;
+#   endif
+# endif /* USE_SPENCERS_FAST_POW || DOXYGEN_SKIP */
+
+
+# ifdef __cplusplus
+/** Simple function to compute the log of a number in the base of another
+ * number.  This function uses fast_log2 when available (log2 from math lib
+ * otherwise).  
+ *
+ * This function can also be called from c.  The c-version will of course be
+ * non-c++ name-mangled and takes values as arguments (not references).
+ *
+ * This function can also be called from fortran.  For fortran, there is a
+ * version of this function with an extra underscore at the end.
+ *
+ * @returns \f$ \log_{n}\right(x\left) \f$
+ * */
+static inline double logn ( const double & n, const double & x ) {
+  return fast_log2( x ) / fast_log2( n );
+}
+
+# else /* else lang = c */
+double logn ( double n, double x );
+# endif /* else lang = c */
+#endif /* if LANGUAGE_FORTRAN__ != 1 */
+/* ****   END FAST_LOG2 **** */
+
 
 
 
