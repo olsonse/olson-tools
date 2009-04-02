@@ -1,1 +1,0 @@
-SUBDIRS = 1D 2D

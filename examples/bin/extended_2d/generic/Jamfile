@@ -1,0 +1,4 @@
+exe testbin : testbin.cpp /olson-tools//olson-tools ;
+
+# FIXME: should we find a way to do the equivalent of automake's:
+# CLEANFILES      = bin.dat

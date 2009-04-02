@@ -1,1 +1,0 @@
-SUBDIRS = simplex ga
