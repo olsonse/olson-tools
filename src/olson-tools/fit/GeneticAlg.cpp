@@ -52,17 +52,19 @@
  *
  */
 
-#include "io.h"
-#include "Generation.h"
-#include <math.h>
-#include "GeneticAlg.h"
+#include <olson-tools/fit/io.h>
+#include <olson-tools/fit/Generation.h>
+#include <olson-tools/fit/GeneticAlg.h>
+#include <olson-tools/fit/Gene.h>
 
-#include "Gene.h"
-#include "random/random.h"
+#include <olson-tools/random/random.h>
+#include <olson-tools/ompexcept.h>
+
+#include <stdexcept>
+#include <ostream>
+
 #include <signal.h> // This is so we can issue ^C to stop the ga in its tracks
 #include <assert.h>
-#include <stdexcept>
-#include "../ompexcept.h"
 
 namespace olson_tools{ namespace fit {
 

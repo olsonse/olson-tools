@@ -89,9 +89,6 @@ double fast_log2_( double * x ) {
   FAST_LOG2_CODE(*x); 
 }
 
-#else
-   /* include math.h so that we have log2 */
-#  include <math.h>
 #endif // USE_SPENCERS_FAST_POW
 
 double logn ( double n, double x ) {

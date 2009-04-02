@@ -73,15 +73,17 @@
 */
 
 
-#include "Generation.h"
-#include "debug.h"
-#include "Gene.h"
-#include "random/random.h"
-#include <stdlib.h>
-#include <assert.h>
-#include <math.h>
+#include <olson-tools/fit/Generation.h>
+#include <olson-tools/fit/debug.h>
+#include <olson-tools/fit/Gene.h>
+
+#include <olson-tools/random/random.h>
+#include <olson-tools/ompexcept.h>
+
 #include <stdexcept>
-#include "../ompexcept.h"
+
+#include <cstdlib>
+#include <cassert>
 
 
 namespace olson_tools{ namespace fit {

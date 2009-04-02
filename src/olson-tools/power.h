@@ -78,6 +78,10 @@
 #  endif
 
 namespace olson_tools {
+#else
+#  if !defined(USE_SPENCERS_FAST_POW) && !defined(DOXYGEN_SKIP)
+#     include <math.h>
+#  endif
 #endif 
 
 
