@@ -18,87 +18,127 @@ using olson_tools::xml::XMLDoc;
 using olson_tools::xml::XMLContext;
 
 void prepareCalculator(const XMLDoc & doc) {
-    /* prepare infix units calculator. */
-    using physical::calc::InfixCalc;
-    using physical::calc::symbol;
-    InfixCalc::base_calc & calc = InfixCalc::instance();
+  /* prepare infix units calculator. */
+  using physical::calc::InfixCalc;
+  using physical::calc::symbol;
+  InfixCalc::base_calc & calc = InfixCalc::instance();
 
-    /* clear the old symbols out */
-    calc.symbols.clear();
-    calc.addMathLib();
-    calc.addPhysicalUnits();
+  /* clear the old symbols out */
+  calc.symbols.clear();
+  calc.addMathLib();
+  calc.addPhysicalUnits();
 
-    XMLContext::set xl = doc.eval("//calc-commands/command");
-    XMLContext::set::iterator i = xl.begin();
-    for (; i != xl.end(); i++) {
-        const XMLContext & x = (*i);
-        calc.exec(x.parse<std::string>());
-    }
+  XMLContext::set xl = doc.eval("//calc-commands/command");
+  XMLContext::set::iterator i = xl.begin();
+  for (; i != xl.end(); i++) {
+    const XMLContext & x = (*i);
+    calc.exec(x.parse<std::string>());
+  }
 }
 
+
+void usage( const char * arg0 ) {
+  std::cout
+    << "testXML program of olson-tools package.\n"
+       "$Id$\n\n"
+       "usage:  "
+    << arg0 << " [options] [modifier]QUERY1 [[modifier]QUERY2] ...\n"
+       "where the valid modifiers are q,d,r [default : q].\n"
+       "The meaning of the modifiers is given by:\n\n"
+       "\tq\tParse the query as a runtime::physical::Quanity item.\n"
+        "\t\tIf there are multiple items returned by the query\n"
+        "\t\teach will be parsed as a runtime::physical::Quantity.\n"
+        "\t\tThis is the default when no option is given.\n"
+       "\td\tParse the query as a olson_tools::data_set<A,B>\n"
+        "\t\twhere A := B := runtime::physical::Quantity.\n"
+        "\t\tIf there are multiple items returned by the query\n"
+        "\t\teach will be parsed as a olson_tools::data_set<A,B>.\n"
+       "\tr\tObtain the raw text of the query result.\n"
+        "\t\tIf there are multiple items returned by the query\n"
+        "\t\tthe text of each be shown.\n\n"
+       "options:\n"
+       "\t--help\tShow this help.\n"
+    << std::endl;
+}/* usage */
+
+static const std::string help_str = "--help";
+
+enum query_type {
+  QUANTITY,
+  DATASET,
+  RAW
+};
+
+void showResults( std::ostream & out, XMLDoc & db,
+                  const enum query_type qt, const char * query ) {
+  using namespace olson_tools::xml;
+  using physical::Quantity;
+  using olson_tools::data_set;
+  //using olson_tools::convert_data_set;
+
+  XMLContext::set xl = db.eval(query);
+  XMLContext::set::iterator i = xl.begin();
+  for (; i != xl.end(); ++i) {
+    const XMLContext & x = (*i);
+    switch (qt) {
+      case RAW:
+        out << x.text() << std::endl;
+        break;
+
+      case DATASET:
+        try {
+          enum Quantity::PRINT_TYPE old = Quantity::getPrintMode();
+          Quantity::setPrintMode( Quantity::MATH_PRINT );
+          std::cout << db.query<pqdata_set>(query) << std::endl;
+          Quantity::setPrintMode( old );
+        } catch (physical::exception & e) {
+          std::cout << e.what() << std::endl;
+        }
+        break;
+
+      default:
+      case QUANTITY:
+        try {
+          std::cout << x.parse<Quantity>() << std::endl;
+        } catch (physical::exception & e) {
+          std::cout << x.text() << std::endl;
+        }
+        break;
+    }/* switch */
+  }/* for */
+}/* showResults() */
 
 int main(int argc, char **argv) {
-    using physical::Quantity;
-    using namespace olson_tools::xml;
-    using olson_tools::data_set;
-    using olson_tools::convert_data_set;
-    using physical::constant::eV;
-    using physical::unit::m;
-
-    XMLDoc db(PARTICLEDB_XML);
-    prepareCalculator(db);
-
-
-    /* Evaluate xpath expression */
-    for (int i = 1; i < argc; i++) {
-        bool raw = false;
-        switch(argv[i][0]) {
-            case 'q':
-                try {
-                    std::cout << db.query<Quantity>(argv[i]+1) << std::endl;
-                } catch (physical::exception & e) {
-                    std::cout << e.what() << std::endl;
-                }
-                break;
-
-            case 'd':
-                try {
-                    enum Quantity::PRINT_TYPE old = Quantity::print_type;
-                    Quantity::print_type = Quantity::MATH_PRINT;
-                    std::cout << db.query<pqdata_set>(argv[i]+1) << std::endl;
-                    Quantity::print_type = old;
-                } catch (physical::exception & e) {
-                    std::cout << e.what() << std::endl;
-                }
-                break;
-
-            default:
-                try {
-                    std::cout << db.query<physical::Quantity>(argv[i]) << std::endl;
-                } catch (physical::exception & e) {
-                    std::cout << e.what() << std::endl;
-                }
-                break;
-
-            case 'r':
-                raw = true;
-            case 'm':
-                XMLContext::set xl = db.eval(argv[i]+1);
-                XMLContext::set::iterator i = xl.begin();
-                for (; i != xl.end(); i++) {
-                    const XMLContext & x = (*i);
-                    try {
-                        if (!raw)
-                            std::cout << x.parse<Quantity>() << std::endl;
-                        else
-                            std::cout << x.text() << std::endl;
-                    } catch (physical::exception & e) {
-                        std::cout << x.text() << std::endl;
-                    }
-                }
-                break;
-        }
+  for (int i = 1; i < argc; i++) {
+    if ( help_str == argv[i] ) {
+      usage(argv[0]);
+      return EXIT_SUCCESS;
     }
-    return 0;
+  }
+
+  using olson_tools::xml::XMLDoc;
+  XMLDoc db(PARTICLEDB_XML);
+  prepareCalculator(db);
+
+
+  /* Evaluate xpath expression */
+  for (int i = 1; i < argc; ++i) {
+    switch(argv[i][0]) {
+      case 'd':
+        showResults(std::cout, db, DATASET, argv[i]+1);
+        break;
+      case 'r':
+        showResults(std::cout, db, RAW, argv[i]+1);
+        break;
+      case 'q':
+        showResults(std::cout, db, QUANTITY, argv[i]+1);
+        break;
+      default:
+        showResults(std::cout, db, QUANTITY, argv[i]);
+        break;
+    }
+  }
+  return 0;
 }
+
 
