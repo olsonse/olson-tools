@@ -2,6 +2,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include <cassert>
 #include <unistd.h>
 #include <iostream>
 #include <time.h>
@@ -21,6 +22,7 @@ namespace olson_tools {
 class Timer {
   public:
     enum FUNCTION {
+        AVERAGED, /* Tracks the averaged time between all pairs of start()/stop(). */
         CUMMULATIVE, /* Tracks the total time between all pairs of start()/stop(). */
         SIMPLE /* Only tracks the time between start() and stop(). */
     };
@@ -42,7 +44,7 @@ class Timer {
     /** Start the timer.  This essentially records the current time of day and
      * the current cpu usage time. */
     inline void start() {
-        N_start++;
+        ++N_start;
         times(&ti);
         gettimeofday(&tv[0],NULL);
     }
@@ -55,8 +57,7 @@ class Timer {
     inline void stop() {
         gettimeofday(&tv[1],NULL);
         times(&tf);
-        N_stop++;
-
+        ++N_stop;
         calculate();
     }
 
@@ -73,12 +74,23 @@ class Timer {
                * seconds_per_clock_tick
              );
 
-        if (function == CUMMULATIVE) {
-            dt += a_dt;
-            dt_cpu_time += a_dt_cpu_time;
-        } else {
-            dt = a_dt;
-            dt_cpu_time = a_dt_cpu_time;
+        assert( N_start == N_stop );
+        switch (function) {
+            case AVERAGED:
+                dt += (a_dt - dt)/N_start;
+                dt_cpu_time += (a_dt_cpu_time - dt_cpu_time)/N_start;
+                break;
+
+            case CUMMULATIVE:
+                dt += a_dt;
+                dt_cpu_time += a_dt_cpu_time;
+                break;
+
+            case SIMPLE:
+            default:
+                dt = a_dt;
+                dt_cpu_time = a_dt_cpu_time;
+                break;
         }
     }
 
@@ -90,14 +102,6 @@ class Timer {
         }
         result.tv_sec = tf.tv_sec - ti.tv_sec;
         result.tv_usec = tf.tv_usec - ti.tv_usec;
-    }
-
-    double dt_avg() const {
-        return dt / ((double)N_start);
-    }
-
-    double dt_cpu_time_avg() const {
-        return dt_cpu_time / ((double)N_start);
     }
 
     /* ***** storage ***** */
@@ -137,15 +141,6 @@ class Timer {
 double Timer::seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
 
 std::ostream & operator<< (std::ostream & out, const Timer & t ) {
-    if (t.function == Timer::CUMMULATIVE) {
-        out << t.dt_avg()
-              << (t.wall_time_label.size() > 0 ? " ":"")
-              <<  t.wall_time_label
-              << '\t'
-            << t.dt_cpu_time_avg()
-              << (t.cpu_time_label.size() > 0 ? " ":"")
-              <<  t.cpu_time_label;
-    }
     out << t.dt
               << (t.wall_time_label.size() > 0 ? " ":"")
               <<  t.wall_time_label

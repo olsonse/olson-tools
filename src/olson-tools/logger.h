@@ -46,14 +46,26 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <stdio.h>
+
+#ifdef WIN32
+#  include <windows.h>
+#  define LOG_MUTEX_TYPE CRITICAL_SECTION
+#elif defined(N_PLAT_NLM)
+#elif defined(USE_PTHREAD)
+/*  This is probably alread included, but oh well. */
+#  include <pthread.h>
+#  define LOG_MUTEX_TYPE pthread_mutex_t
+#endif
+
+
+
 #ifdef __cplusplus
 namespace olson_tools { namespace logger {
 extern "C" {
 #endif 
 
 #define logger_h_rcsid "$Id: logger.h,v 1.2 2005/05/12 04:27:32 olsonse Exp $"
-
-#include <stdio.h>
 
 #define STR(x) #x
 #define XSTR(x) STR(x)
@@ -175,17 +187,6 @@ void logToSystemLog(LogLevel_t level, char *msg);
  * @see TIMESTAMP_SIZE.
  * */
 void timestamp(char *timeBuf, int local);
-
-#ifdef WIN32
-#  include <windows.h>
-#  define LOG_MUTEX_TYPE CRITICAL_SECTION
-#elif defined(N_PLAT_NLM)
-#elif defined(USE_PTHREAD)
-/*  This is probably alread included, but oh well. */
-#  include <pthread.h>
-#  define LOG_MUTEX_TYPE pthread_mutex_t
-#endif
-
 
 #ifdef LOG_MUTEX_TYPE
 /* Make the logger routines fully re-entrant.
