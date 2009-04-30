@@ -17,6 +17,7 @@ constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] 
 
 import mpi ;
 import os ;
+import testing ; # for unit tests
 
 local gcc_fflags = <fflags>-ffree-form ;
 local icc_fflags = <fflags>-free ;
@@ -47,11 +48,11 @@ project /olson-tools
     : usage-requirements
         $(xml2-features)
         <include>src
-        <library>boost_regex
+        <library>/olson-tools//boost_regex
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
         <library>/physical//physical
-    : build-dir build
+    #: build-dir build
     ;
 
 lib olson-tools :

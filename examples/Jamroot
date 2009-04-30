@@ -2,7 +2,7 @@
 path-constant EXAMPLES_TOP : . ;
 
 project /olson-tools/examples
-    : build-dir build
+    #: build-dir build
     ;
 
 use-project /olson-tools : ../ ;
