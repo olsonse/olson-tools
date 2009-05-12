@@ -187,7 +187,7 @@ class InvCylindricalDist {
         range[RHO].min = 0;
         range[RHO].max = physical::units::cm;
         range[PHI].min = 0;
-        range[PHI].max = 2.0*physical::constant::pi;
+        range[PHI].max = 2.0*physical::constant::pi<>::value;
         range[Z].min = -physical::units::cm;
         range[Z].max = physical::units::cm;
 
@@ -222,7 +222,7 @@ class InvCylindricalDist {
         if (range[RHO].min < (0.5*dr)) range[RHO].min = 0.5*dr;
 
         /* get ds from the maximal radius assuming phi ranges from 0:2*pi. */
-        ds = 2.0*physical::constant::pi * range[RHO].max / (nbins[PHI]+1);
+        ds = 2.0*physical::constant::pi<>::value * range[RHO].max / (nbins[PHI]+1);
 
         /* and now get the maximum total number of circumferencial bins. */
         double nphi_R = 0.5*range[PHI].length()

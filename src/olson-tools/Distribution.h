@@ -62,7 +62,6 @@
 #include <string.h>
 #include "ompexcept.h"
 #include "random/random.h"
-#include "physical/physical.h"
 #include "power.h"
 
 namespace olson_tools {

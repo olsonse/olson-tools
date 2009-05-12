@@ -28,8 +28,8 @@
 #include "Forces.h"
 
 namespace olson_tools {
+  namespace BField {
     using namespace indices;
-namespace BField {
 
     class  ThinCurrentElement {
       public:
@@ -232,7 +232,7 @@ namespace BField {
 
         /** Default constructor of BCalcs. */
         inline BCalcs() : super0(), super1() {
-            mu = (-0.5) * (-1) * physical::constant::mu_B;
+            mu = (-0.5) * (-1) * physical::constant::si::mu_B;
         }
 
         inline const BCalcs & operator=(const BCalcs & that) {
@@ -273,7 +273,7 @@ namespace BField {
         double mu;
     };
 
-} /* namespace */
+  } /* namespace olson_tools::BField */
 }/* namespace olson_tools */
 
 #endif // BFIELD_H

@@ -76,7 +76,7 @@ namespace olson_tools { namespace BField {
                                  const double & ds_,
                                  const Vector<double,3> & origin_ ) :
             bsrc(*init.bsrc),
-            beta(1.0 / (physical::constants::K_B * init.T_perp * physical::units::K)),
+            beta(1.0 / (physical::constant::si::K_B * init.T_perp * physical::units::K)),
             const_indx(i),
             iVal(iVal_),
             dr(dr_), ds(ds_),
