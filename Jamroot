@@ -72,6 +72,7 @@ lib olson-tools :
       src/olson-tools/fit/io.cpp
       src/olson-tools/util.cpp
       src/olson-tools/m_eps.cpp
+      src/olson-tools/Timer.cpp
     : <link>static
     ;
 
