@@ -28,8 +28,8 @@ void prepareCalculator(const XMLDoc & doc) {
   calc.addMathLib();
   calc.addPhysicalUnits();
 
-  XMLContext::set xl = doc.eval("//calc-commands/command");
-  XMLContext::set::iterator i = xl.begin();
+  XMLContext::list xl = doc.eval("//calc-commands/command");
+  XMLContext::list::iterator i = xl.begin();
   for (; i != xl.end(); i++) {
     const XMLContext & x = (*i);
     calc.exec(x.parse<std::string>());
@@ -76,8 +76,8 @@ void showResults( std::ostream & out, XMLDoc & db,
   using olson_tools::data_set;
   //using olson_tools::convert_data_set;
 
-  XMLContext::set xl = db.eval(query);
-  XMLContext::set::iterator i = xl.begin();
+  XMLContext::list xl = db.eval(query);
+  XMLContext::list::iterator i = xl.begin();
   for (; i != xl.end(); ++i) {
     const XMLContext & x = (*i);
     switch (qt) {
