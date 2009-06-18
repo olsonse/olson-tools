@@ -305,6 +305,119 @@ double logn ( double n, double x );
 
 
 
+#ifdef __cplusplus
+/** generic implementation of x^y where y is an int. */
+template < int p >
+struct powNImpl {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return fast_pow(t,p);
+  }
+};
+
+/** Implementation of x^y where y = (int)1. */
+template<>
+struct powNImpl<1> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return t;
+  }
+};
+
+/** Implementation of x^y where y = (int)2. */
+template<>
+struct powNImpl<2> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return t*t;
+  }
+};
+
+/** Implementation of x^y where y = (int)3. */
+template<>
+struct powNImpl<3> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return t*t*t;
+  }
+};
+
+/** Implementation of x^y where y = (int)4. */
+template<>
+struct powNImpl<4> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return t*t*t*t;
+  }
+};
+
+/** Implementation of x^y where y = (int)4. */
+template<>
+struct powNImpl<5> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return t*t*t*t*t;
+  }
+};
+
+/** Implementation of x^y where y = (int)-1. */
+template<>
+struct powNImpl<-1> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return 1/t;
+  }
+};
+
+/** Implementation of x^y where y = (int)-2. */
+template<>
+struct powNImpl<-2> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return 1/(t*t);
+  }
+};
+
+/** Implementation of x^y where y = (int)-3. */
+template<>
+struct powNImpl<-3> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return 1/(t*t*t);
+  }
+};
+
+/** Implementation of x^y where y = (int)-4. */
+template<>
+struct powNImpl<-4> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return 1/(t*t*t*t);
+  }
+};
+
+/** Implementation of x^y where y = (int)-5. */
+template<>
+struct powNImpl<-5> {
+  template < typename T >
+  inline T operator() ( const T & t ) {
+    return 1/(t*t*t*t*t);
+  }
+};
+
+/** x^y where y = (int)y.
+ * @param p
+ *   Integer power (y) used in x^y.
+ * @param t
+ *   Value to be exponentiated by power (y).
+ */
+template < int p, typename T >
+inline T powN( const T & t ) {
+  return powNImpl<p>()(t);
+}
+#endif 
+
+
 
 #ifdef __cplusplus
 }/* namespace olson_tools */

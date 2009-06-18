@@ -19,9 +19,9 @@ namespace olson_tools {
       struct w_type : T {
         typedef tag::w_type tag;
         typedef T super;
-        const int n_types;
+        const unsigned int n_types;
 
-        w_type(const int & n_types) : n_types(n_types) {}
+        w_type(const unsigned int & n_types) : n_types(n_types) {}
         template <class TT> w_type(const TT & tt) : T(tt) {}
 
         inline int getNumberValues() const {

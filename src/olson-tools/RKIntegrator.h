@@ -30,9 +30,11 @@
 #ifndef RKINTEGRATOR_H
 #define RKINTEGRATOR_H
 
+#include <olson-tools/rk.h>
+
+#include <limits>
 #include <sstream>
 #include <stdexcept>
-#include "rk.h"
 
 
 namespace olson_tools {
@@ -129,8 +131,9 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
         int     truncated_step = 0;
         const double TINY = 1e-30;
 
+        const double eps = std::numeric_limits<double>::epsilon();
         /** The 1.0 + minimum fraction of total current time to allow stepping. */
-        const double TIME_COMP_EPS = 1.0 + (10. * M_EPS);
+        const double TIME_COMP_EPS = 1.0 + ( 10.0 * eps );
 
         /* to call the fortran rqks, we need to use an address for ndim */
         int     ndim = ndim_;
@@ -140,7 +143,7 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
          * that are too small.  This might occur if the integration is nearly
          * complete and the truncated_step will cause a very very tiny
          * timestep that causes timestep underrun.  We are just going to throw
-         * away anytiming that is as close as 10*M_EPS*t. */
+         * away anytiming that is as close as 10*eps*t. */
         while ( (t*dir*TIME_COMP_EPS) <  (tf*dir) ) {
             if ( ((t+dt_step)*dir) > (tf*dir) ) {
                  // If stepsize can overshoot, decrease.
@@ -167,7 +170,7 @@ class RK5AdaptiveIntegrator : public RKIntegrator {
             rkqs(x.val,&ndim,dxdt,&t,&dt_step,&errmax,x_cal,&dt_step_current, &tf, derivs, derivsArgs);
             // write (*,'(X,F15.8,1X,F15.8,1X,F15.8,1X,F15.8)') x(1:3), dt_step_current
 
-            if(fabs(t - told) <= fabs(t*1.5*M_EPS)) {
+            if(fabs(t - told) <= fabs(t*1.5*eps)) {
                 std::stringstream pos;
                 pos << x;
                 log_severe(

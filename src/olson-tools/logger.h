@@ -46,6 +46,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <olson-tools/XSTR.h>
+
 #include <stdio.h>
 
 #ifdef WIN32
@@ -66,9 +68,6 @@ extern "C" {
 #endif 
 
 #define logger_h_rcsid "$Id: logger.h,v 1.2 2005/05/12 04:27:32 olsonse Exp $"
-
-#define STR(x) #x
-#define XSTR(x) STR(x)
 
 /** Macro to produce a c-string constant of the source file and line number. */
 #define FILE_LINE __FILE__"("XSTR(__LINE__)"):  "

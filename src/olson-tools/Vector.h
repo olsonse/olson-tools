@@ -28,15 +28,16 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <olson-tools/m_eps.h>
 #include <olson-tools/power.h>
 
 
-#include <string.h>
+#include <limits>
 #include <sstream>
 #include <ostream>
+
 #include <cmath>
-#include <stdarg.h>
+#include <cstring>
+#include <cstdarg>
 #include <stdint.h>
 
 
@@ -147,19 +148,22 @@ class Vector {
     inline unsigned int length() const { return L;}
 
     /** Zero the Vector. */
-    inline void zero () {
+    inline const Vector & zero () {
         memset (&this->val[0], 0, sizeof(T)*L);
+        return *this;
     }
 
     /** Apply std::abs(double) to all elements and save.  
      * std::abs(double) is called regardless of the actual type of the vector. */
-    inline void save_fabs() {
+    inline const Vector & save_fabs() {
         for (unsigned int i = 0; i < L; i++) this->val[i] = std::abs(this->val[i]);
+        return *this;
     }
 
     /** Apply sqrt(double) to all elements and save. */
-    inline void save_sqrt() {
+    inline const Vector & save_sqrt() {
         for (unsigned int i = 0; i < L; i++) this->val[i] = std::sqrt(this->val[i]);
+        return *this;
     }
 
     /** Index operator--non-const version. */
@@ -493,7 +497,7 @@ inline bool operator!=(const Vector<T1,L>& v1, const Vector<T2,L>& v2) {
     return !(v1 == v2);
 }
 
-static const double M_EPS4 = 4 * M_EPS;
+static const double M_EPS4 = 4 * std::numeric_limits<double>::epsilon();
 
 /** Cumulative '==' comparison of Vector types.
  * Specialization:  Comparison between Vectors of doubles.  Equivalence is

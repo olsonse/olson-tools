@@ -1,7 +1,7 @@
 #ifndef OLSON_TOOLS_DATA_SET_H
 #define OLSON_TOOLS_DATA_SET_H
 
-#include "xml/XMLDoc.h"
+#include <olson-tools/xml/XMLDoc.h>
 
 #include <map>
 
@@ -25,7 +25,7 @@ namespace olson_tools {
     std::ostream & operator<<(std::ostream & out, const data_set<A,B> & data) {
         out << "<dataset>\n";
         typename data_set<A,B>::const_iterator i;
-        for (i = data.begin(); i != data.end(); i++)
+        for (i = data.begin(); i != data.end(); ++i)
             out << ((data_point<A,B> &)(*i)) << '\n';
         return out << "</dataset>";
     }
@@ -34,7 +34,7 @@ namespace olson_tools {
     data_set<C,D> convert_data_set( InIter i, const InIter & f,
                                     const UnitsPair & units) {
         data_set<C,D> retval;
-        for (; i != f; i++)
+        for (; i != f; ++i)
             retval.insert(
                 std::make_pair<C,D>(
                     i->first.assertMatch(units.first).coeff,
@@ -57,10 +57,10 @@ namespace olson_tools {
         A xscale = x.query<A>("@xscale");
         B yscale = x.query<B>("@yscale");
 
-        xml::XMLContext::set x_set = x.eval("val");
-        xml::XMLContext::set::iterator i = x_set.begin();
+        xml::XMLContext::list x_list = x.eval("val");
+        xml::XMLContext::list::iterator i = x_list.begin();
 
-        for(; i != x_set.end(); i++) {
+        for(; i != x_list.end(); ++i) {
             const xml::XMLContext & x1 = (*i);
             data_point<A,B> dp = x1.parse< data_point<A,B> >();
             dp.first  *= xscale;
