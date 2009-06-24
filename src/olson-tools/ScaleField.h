@@ -1,7 +1,7 @@
 // -*- c++ -*-
 // $Id$
 /** \file
- * Scale an intensity source.
+ * Scale a Field in a time dependent manner.
  *
  * Copyright 2004-2007 Spencer Olson
  *
@@ -9,34 +9,49 @@
 
 
 
-#ifndef SCALEFIELD_H
-#define SCALEFIELD_H
+#ifndef olson_tools_ScaleField_h
+#define olson_tools_ScaleField_h
 
-#include "Fields.h"
-#include "Timing.h"
+#include <olson-tools/Fields.h>
+#include <olson-tools/timing/Timing.h>
+#include <olson-tools/timing/element/Exponential.h>
+
+#include <limits>
 
 namespace olson_tools {
 
-template <class Field>
-class ScaleField : public virtual BaseField,
-                   public Field {
-  public:
-    typedef BaseField      super0;
+  /** Apply a timed scaling to a Field. */
+  template < typename Field >
+  struct ScaleField : virtual BaseField, Field {
+    /* TYPEDEFS */
+    typedef BaseField super0;
     typedef Field F0;
 
-    static ExpTimingElement DefaultTiming;
+    /* NON-MEMBER STORAGE */
+  private:
+    /** Default timing element applys a unity scaling. */
+    static timing::element::Exponential DefaultTiming;
 
-    ScaleField () : super0(), F0(), timing() {
-        /* default to having no timing effect. */
-        timing.timings.push_back(&DefaultTiming);
-        timing.current_val = DefaultTiming.getValue(DBL_MAX);
+    /* MEMBER STORAGE */
+  public:
+    /** Timing function for this Field scaling. */
+    timing::Timing timing;
+
+
+    /* MEMBER FUNCTIONS */
+    /** Constructor adds default timing element to timing. */
+    ScaleField() : super0(), F0(), timing() {
+      /* default to having no timing effect. */
+      timing.timings.push_back(&DefaultTiming);
+      timing.set_time(0.0);
     }
 
-    inline const ScaleField & operator=(const ScaleField & that) {
-        super0::operator=(that);
-        F0::operator=(that);
-        timing = that.timing;
-        return *this;
+    /** Assignment operator. */
+    inline const ScaleField & operator= ( const ScaleField & that ) {
+      super0::operator=(that);
+      F0::operator=(that);
+      timing = that.timing;
+      return *this;
     }
 
     /** Return the timed value of the Scalar field together.
@@ -44,8 +59,8 @@ class ScaleField : public virtual BaseField,
      * @param r
      *     The position to evaluate the field.
      * */
-    inline double operator()(const Vector<double,3> & r) const {
-        return timing.current_val * F0::operator()(r);
+    inline double operator() ( const Vector<double,3> & r ) const {
+      return timing.getVal() * F0::operator()(r);
     }
 
     /** Return the timed value of the Vector field together.
@@ -54,17 +69,17 @@ class ScaleField : public virtual BaseField,
      *     The position to evaluate the field.
      * */
     template <class T>
-    inline void operator()(T & F, const Vector<double,3> & r) const {
-        F0::operator()(F,r);
-        F *= timing.current_val;
+    inline void operator() ( T & F, const Vector<double,3> & r ) const {
+      F0::operator()(F,r);
+      F *= timing.getVal();
     }
+  };
 
-    Timing timing;
-};
-
-template <class F>
-ExpTimingElement ScaleField<F>::DefaultTiming(-DBL_MAX,1.0,1.0,1.0);
+  template < typename F >
+  timing::element::Exponential ScaleField<F>::DefaultTiming(
+    -std::numeric_limits<double>::infinity(), 1.0, 1.0, 1.0
+  );
 
 }/* namespace olson_tools */
 
-#endif //SCALEFIELD_H
+#endif //olson_tools_ScaleField_h

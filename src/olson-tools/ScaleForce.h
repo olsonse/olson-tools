@@ -9,64 +9,77 @@
 
 
 
-#ifndef SCALEFORCE_H
-#define SCALEFORCE_H
+#ifndef olson_tools_ScaleForce_h
+#define olson_tools_ScaleForce_h
 
-#include "Forces.h"
-#include "Timing.h"
+#include <olson-tools/Forces.h>
+#include <olson-tools/timing/Timing.h>
+
+#include <limits>
 
 namespace olson_tools {
 
-template <class Force>
-class ScaleForce : public virtual BaseForce,
-                   public Force {
-  public:
-    typedef BaseForce      super0;
+  template < typename Force >
+  struct ScaleForce : virtual BaseForce, Force {
+    /* TYPEDEFS */
+    typedef BaseForce super0;
     typedef Force F;
 
-    static ExpTimingElement DefaultTiming;
+    /* NON-MEMBER STORAGE */
+  private:
+    /** Default timing element applys a unity scaling. */
+    static timing::element::Exponential DefaultTiming;
 
-    ScaleForce () : super0(), F(), timing() {
-        /* default to having no timing effect. */
-        timing.timings.push_back(&DefaultTiming);
-        timing.current_val = DefaultTiming.getValue(DBL_MAX);
+    /* MEMBER STORAGE */
+  public:
+    /** Timing function for this Field scaling. */
+    timing::Timing timing;
+
+
+    /* MEMBER FUNCTIONS */
+    /** Constructor adds default timing element to timing. */
+    ScaleForce() : super0(), F(), timing() {
+      /* default to having no timing effect. */
+      timing.timings.push_back(&DefaultTiming);
+      timing.set_time(0.0);
     }
 
-    inline const ScaleForce & operator=(const ScaleForce & that) {
-        super0::operator=(that);
-        F::operator=(that);
-        timing = that.timing;
-        return *this;
+    /** Assignment operator. */
+    inline const ScaleForce & operator= ( const ScaleForce & that ) {
+      super0::operator=(that);
+      F::operator=(that);
+      timing = that.timing;
+      return *this;
     }
 
-    inline void accel(      Vector<double,3> & a,
-                      const Vector<double,3> & r,
-                      const Vector<double,3> & v = V3(0,0,0),
-                      const double & t = 0.0,
-                      const double & dt = 0.0) const {
-        F::accel(a,r,v,t,dt);
-        a *= timing.current_val;
+    /** Calculate acceleration. */
+    inline void accel(       Vector<double,3> & a,
+                       const Vector<double,3> & r,
+                       const Vector<double,3> & v = V3(0,0,0),
+                       const double & t = 0.0,
+                       const double & dt = 0.0 ) const {
+      F::accel(a,r,v,t,dt);
+      a *= timing.getVal();
     }
 
-    inline double potential(const Vector<double,3> & r,
-                            const Vector<double,3> & v = V3(0,0,0),
-                            const double & t = 0.0) const {
-        return timing.current_val * F::potential(r,v,t);
+    inline double potential( const Vector<double,3> & r,
+                             const Vector<double,3> & v = V3(0,0,0),
+                             const double & t = 0.0 ) const {
+      return timing.getVal() * F::potential(r,v,t);
     }
 
     template <unsigned int ndim_>
     inline void applyStatisticalForce(Vector<double,ndim_> & particle,
                                       const double & t, const double & dt) const {
-        F::applyStatisticalForce( particle, t, timing.current_val * dt );
+      F::applyStatisticalForce( particle, t, timing.getVal() * dt );
     }
+  };
 
-
-    Timing timing;
-};
-
-template <class F>
-ExpTimingElement ScaleForce<F>::DefaultTiming(-DBL_MAX,1.0,1.0,1.0);
+  template <class F>
+  timing::element::Exponential ScaleForce<F>::DefaultTiming(
+    -std::numeric_limits<double>::infinity(), 1.0, 1.0, 1.0
+  );
 
 }/* namespace olson_tools */
 
-#endif //SCALEFORCE_H
+#endif //olson_tools_ScaleForce_h
