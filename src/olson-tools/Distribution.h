@@ -57,12 +57,13 @@
 #define DISTRIBUTION_H
 
 
+#include <olson-tools/ompexcept.h>
+#include <olson-tools/random/random.h>
+#include <olson-tools/power.h>
+
 #include <stdexcept>
-#include <math.h>
-#include <string.h>
-#include "ompexcept.h"
-#include "random/random.h"
-#include "power.h"
+#include <cstring>
+#include <cmath>
 
 namespace olson_tools {
 
@@ -261,6 +262,7 @@ class MaxwellianDistrib3D {
      *     Independent variable.
      */
     inline double distrib (const double & v) const {
+        using std::exp;
         return v*v * exp(-SQR(v-v0) * beta );
     }
 };
@@ -294,6 +296,7 @@ class MaxwellianDistrib2D {
      *     Independent variable.
      */
     inline double distrib (const double & v) const {
+        using std::exp;
         return fabs(v) * exp(-SQR(v-v0) * beta );
     }
 };
@@ -314,6 +317,8 @@ class MaxwellianDistrib2D {
  * @see downstream_fraction.
  */
 inline double upstream_fraction(const double & v0, const double & beta) {
+    using std::exp;
+    using std::sqrt;
     double x = v0 * sqrt(beta);
     if (x == 0) return 0.5;
     return 0.5 * ( -exp(-SQR(x))/(sqrt(M_PI) * x) + (1.0 - erf(x)) );
@@ -335,6 +340,8 @@ inline double upstream_fraction(const double & v0, const double & beta) {
  * @see upstream_fraction.
  */
 inline double downstream_fraction(const double & v0, const double & beta) {
+    using std::exp;
+    using std::sqrt;
     double x = v0 * sqrt(beta);
     if (x == 0) return 0.5;
     return 0.5 * (  exp(-SQR(x))/(sqrt(M_PI) * x) + (1.0 + erf(x)) );
@@ -361,6 +368,7 @@ class GaussianDistrib {
      *     Independent variable.
      */
     inline double distrib (const double & v) const {
+        using std::exp;
         return exp(-SQR(v-v0) * beta );
     }
 };
