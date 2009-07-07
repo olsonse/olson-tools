@@ -10,7 +10,8 @@
 #include <olson-tools/Vector.h>
 #include <olson-tools/GenericBin.h>
 
-using namespace physical::constants;
+namespace si = physical::constants::si;
+using namespace si;
 using namespace physical::units;
 using olson_tools::Distribution;
 using olson_tools::MaxwellianDistrib2D;
@@ -21,17 +22,17 @@ using olson_tools::GenericBin;
 
 /* this is how G.A. Bird gets his diffusely reflecting velocities. */
 void nextvel(double p[3]) {
-    static double betaw = sqrt(2.0 * K_B * 500.0 * uK / (87.0 * amu) );
+    static double betaw = std::sqrt(2.0 * K_B * 500.0 * uK / (87.0 * amu) );
 
     double ran = std::max(1.e-8,MTRNGrand());
-    double B   = sqrt(-log(ran));
+    double B   = std::sqrt(-log(ran));
 
-    double A   = 2.0 * pi * MTRNGrand();
+    double A   = 2.0 * si::pi * MTRNGrand();
     double uu  = B * sin(A) * betaw;
     double ww  = B * cos(A) * betaw;
 
            ran = std::max(1.e-8, MTRNGrand());
-    double vv  = sqrt(-log(ran)) * betaw;
+    double vv  = std::sqrt(-log(ran)) * betaw;
 
     p[0] = -vv;
     p[1] = uu;
@@ -53,7 +54,7 @@ typedef struct {
 
 
 static double beta = 0.5 * (87.0 * amu) / (K_B * 500.0 * uK);
-static double sigma = sqrt( 0.5 / beta);
+static double sigma = std::sqrt( 0.5 / beta);
 
 static Distribution t2d = Distribution(MaxwellianDistrib2D(beta), 0.0, 5*sigma, 10000);
 

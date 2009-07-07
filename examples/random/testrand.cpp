@@ -1,8 +1,9 @@
 #include <olson-tools/random/random.h>
+#include <olson-tools/Distribution.h>
+#include <olson-tools/Timer.h>
+
 #include <iostream>
 #include <fstream>
-#include <sys/times.h>
-#include <unistd.h>
 
 using std::cin;
 using std::cout;
@@ -23,7 +24,7 @@ int main() {
     ofstream outgd("test_gauss_deviate.dat");
 
     for ( int i = 0; i < N; i++) {
-	outgd << gauss_deviate(sigma) << '\n';
+      outgd << gauss_deviate(sigma) << '\n';
     }
 
     outgd.flush();
@@ -32,47 +33,64 @@ int main() {
     ofstream outrn("test_mtrn.dat");
 
     for ( int i = 0; i < N; i++) {
-	outrn << r.randNorm(0,sigma) << '\n';
+      outrn << r.randNorm(0,sigma) << '\n';
     }
 
     outrn.flush();
     outrn.close();
 
+
+    olson_tools::Distribution d(
+      olson_tools::GaussianDistrib(1./(2.*sigma*sigma)),
+      -5*sigma, 5*sigma, 10000
+    );
+
+    ofstream outinv("test_invgaussian.dat");
+
+    for ( int i = 0; i < N; i++) {
+      outinv << d() << '\n';
+    }
+
+    outinv.flush();
+    outinv.close();
+
+
     /* now we do a little timing test between gauss_deviate and
      * MTRand::randNorm().
      */
 
-    struct tms ti, tf;
     double dev = 0;
-    const double seconds_per_clock_tick = 1.0 / sysconf(_SC_CLK_TCK);
 
 #define L 10000000
 
-    times(&ti);
+    olson_tools::Timer timer;
+    timer.cpu_time_label = "s (cpu)";
+    timer.wall_time_label = "s";
+
+    timer.start();
     for (int64_t i = 0; i < L; i++) {
         dev = 0.0 + gauss_deviate(sigma);
     }
-    times(&tf);
+    timer.stop();
 
 
-    double cycle_cpu_time = 
-        ( ( (tf.tms_utime + tf.tms_stime) - (ti.tms_utime + ti.tms_stime) )
-          * seconds_per_clock_tick
-        );
+    std::cout << "gauss_deviate finished in " << timer << std::endl;
 
-    std::cout << "gauss_deviate gives " << cycle_cpu_time << std::endl;
-
-    times(&ti);
+    timer.start();
     for (int64_t i = 0; i < L; i++) {
         dev = r.randNorm(0,sigma);
     }
-    times(&tf);
+    timer.stop();
 
-    cycle_cpu_time = 
-        ( ( (tf.tms_utime + tf.tms_stime) - (ti.tms_utime + ti.tms_stime) )
-          * seconds_per_clock_tick
-        );
+    std::cout << "MTRand::randNorm() finished in " << timer << std::endl;
 
-    std::cout << "MTRand::randNorm() gives " << cycle_cpu_time << std::endl;
+    timer.start();
+    for (int64_t i = 0; i < L; i++) {
+        dev = d();
+    }
+    timer.stop();
+
+    std::cout << "Distribution inversion (Gaussian) finished in " << timer << std::endl;
+
 
 }
