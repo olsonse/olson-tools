@@ -2,6 +2,7 @@
 #ifndef olson_tools_xml_XMLDoc_h
 #define olson_tools_xml_XMLDoc_h
 
+#include <olson-tools/strutil.h>
 
 //#include <libxml/tree.h>
 #include <libxml/parser.h>
@@ -14,7 +15,6 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "../strutil.h"
 
 
 namespace olson_tools {

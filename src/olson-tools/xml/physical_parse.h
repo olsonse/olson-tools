@@ -1,7 +1,7 @@
-#ifndef OLSON_TOOLS_XML_PHYSICAL_PARSE_H
-#define OLSON_TOOLS_XML_PHYSICAL_PARSE_H
+#ifndef olson_tools_xml_physical_parse_h
+#define olson_tools_xml_physical_parse_h
 
-#include "XMLDoc.h"
+#include <olson-tools/xml/XMLDoc.h>
 #include <physical/calc/infix.h>
 
 namespace olson_tools { namespace xml {
@@ -18,4 +18,4 @@ namespace olson_tools { namespace xml {
         free(bob);
     }
 }} /* namespace olson_tools::xml */
-#endif // OLSON_TOOLS_XML_PHYSICAL_PARSE_H
+#endif // olson_tools_xml_physical_parse_h
