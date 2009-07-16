@@ -50,7 +50,7 @@ namespace olson_tools {
     struct XMLContext {
       /* TYPEDEFS */
       /** The comparator for the XMLContext::set type (for maintaining order). */
-      struct XMLContextSetComparator {
+      struct Comparator {
         bool operator()(const XMLContext & lhs, const XMLContext & rhs) {
           return lhs.node < rhs.node;
         }
@@ -59,7 +59,7 @@ namespace olson_tools {
       /** A (unique) set of XMLContext instances.
        * @see eval(...)
        * */
-      typedef std::set<XMLContext, XMLContextSetComparator> set;
+      typedef std::set<XMLContext, Comparator> set;
 
       /** A list of XMLContext instances.
        * @see eval(...)
@@ -233,6 +233,15 @@ namespace olson_tools {
         return retval;
       }
     };
+
+    inline bool operator< ( const XMLContext & lhs, const XMLContext & rhs ) {
+      return XMLContext::Comparator()(lhs,rhs);
+    }
+
+    inline bool operator== ( const XMLContext & lhs, const XMLContext & rhs ) {
+      return !XMLContext::Comparator()(lhs,rhs) and
+             !XMLContext::Comparator()(rhs,lhs);
+    }
 
 
     template <class A>

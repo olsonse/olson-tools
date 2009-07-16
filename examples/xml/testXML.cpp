@@ -3,13 +3,15 @@
  * */
 
 
-#ifndef   PARTICLEDB_XML
-#  define PARTICLEDB_XML  "file.xml"
+#ifndef   XML_FILENAME
+#  define XML_FILENAME  "file.xml"
 #endif
 
-#include <iostream>
 #include <olson-tools/data_set.h>
 #include <olson-tools/xml/physical_parse.h>
+
+#include <iostream>
+#include <cstdlib>
 
 using namespace runtime; /* strip runtime:: from physical::* */
 typedef olson_tools::data_set<physical::Quantity,physical::Quantity> pqdata_set;
@@ -57,7 +59,9 @@ void usage( const char * arg0 ) {
         "\t\tIf there are multiple items returned by the query\n"
         "\t\tthe text of each be shown.\n\n"
        "options:\n"
-       "\t--help\tShow this help.\n"
+       "\t--help\tShow this help.\n\n"
+       "Influential environment variables:\n"
+       "\tXML_FILENAME\tSpecify an alternate xml file to query from\n"
     << std::endl;
 }/* usage */
 
@@ -116,8 +120,12 @@ int main(int argc, char **argv) {
     }
   }
 
+  const char * xml_filename = getenv("XML_FILENAME");
+  if ( !xml_filename )
+    xml_filename = XML_FILENAME;
+
   using olson_tools::xml::XMLDoc;
-  XMLDoc db(PARTICLEDB_XML);
+  XMLDoc db(xml_filename);
   prepareCalculator(db);
 
 
