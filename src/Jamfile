@@ -5,11 +5,8 @@ project /olson-tools/unit-tests
     : requirements
         <library>/olson-tools//olson-tools
         <library>/olson-tools//boost_unit_test_framework
-    # : build-dir build
     ;
 
 use-project /olson-tools : ../ ;
 
-build-project olson-tools/nsort/map/test ;
-build-project olson-tools/nsort/test ;
-build-project olson-tools/test ;
+build-project olson-tools ;

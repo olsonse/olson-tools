@@ -1,0 +1,6 @@
+path-constant XML_FILENAME : ./file.xml ;
+
+project : requirements <define>XML_FILENAME=\\\"$(XML_FILENAME)\\\" ;
+
+unit-test Doc : Doc.cpp ;
+unit-test physical_parse : physical_parse.cpp ;

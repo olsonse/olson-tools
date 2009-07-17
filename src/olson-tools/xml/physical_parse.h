@@ -1,21 +1,16 @@
 #ifndef olson_tools_xml_physical_parse_h
 #define olson_tools_xml_physical_parse_h
 
-#include <olson-tools/xml/XMLDoc.h>
+#include <olson-tools/xml/Doc.h>
 #include <physical/calc/infix.h>
 
-namespace olson_tools { namespace xml {
-    static void parse_item(runtime::physical::Quantity & out, const XMLContext & x) {
-        using runtime::physical::calc::InfixCalc;
-    
-        if( x.node->type != XML_ELEMENT_NODE &&
-            x.node->type != XML_ATTRIBUTE_NODE &&
-            x.node->type != XML_TEXT_NODE)
-            throw xml_error("unknown xml node type");
-    
-        char * bob = (char*)xmlNodeGetContent(x.node);
-        out = InfixCalc::instance().parse(bob);
-        free(bob);
+namespace olson_tools {
+  namespace xml {
+    static inline void parse_item( runtime::physical::Quantity & out,
+                                   const Context & x) {
+      using runtime::physical::calc::InfixCalc;
+      out = InfixCalc::instance().parse( x.text() );
     }
-}} /* namespace olson_tools::xml */
+  } /* namespace olson_tools::xml */
+} /* namespace olson_tools */
 #endif // olson_tools_xml_physical_parse_h

@@ -27,7 +27,7 @@ int main() {
 #ifdef DO_SMALL_TESTS
     const int N_little = 10;
 #endif
-    const int n_types = 2;
+    const unsigned int n_types = 2;
 
     using namespace olson_tools::nsort;
     using namespace olson_tools::nsort::map;

@@ -1,10 +1,13 @@
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
 #include <olson-tools/random/random.h>
 #include <olson-tools/Distribution.h>
 #include <olson-tools/GenericBin.h>
+
+#include <physical/physical.h>
+
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <cstdlib>
 
 using namespace physical::constants;
 

@@ -1,45 +1,24 @@
 
-#ifndef olson_tools_xml_XMLDoc_h
-#define olson_tools_xml_XMLDoc_h
+#ifndef olson_tools_xml_Context_h
+#define olson_tools_xml_Context_h
+
+#include <olson-tools/xml/error.h>
 
 #include <olson-tools/strutil.h>
 
-//#include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
-#include <libxml/xinclude.h>
-//#include <libxml/xpathInternals.h>
 
 #include <list>
 #include <set>
 #include <stdexcept>
 #include <sstream>
 
-
-
 namespace olson_tools {
   namespace xml {
 
-    /** The error exception class for this little XML library wrapper. */
-    struct xml_error : std::runtime_error {
-      typedef std::runtime_error super;
-      xml_error(const std::string & s) : super(s) {}
-    };
-
-    struct nonsingle_result_error : xml_error {
-      nonsingle_result_error(const std::string & s) : xml_error(s) {}
-    };
-
-    struct no_results : nonsingle_result_error {
-      no_results(const std::string & s) : nonsingle_result_error(s) {}
-    };
-
-    struct too_many_results : nonsingle_result_error {
-      too_many_results(const std::string & s) : nonsingle_result_error(s) {}
-    };
-
-
-    inline std::ostream & operator << (std::ostream & out, const xmlChar * s) {
+    /** C++ ostream insertion operator for xmlChar type. */
+    static inline std::ostream & operator<< (std::ostream & out, const xmlChar * s) {
       out << (const char*)s;
       return out;
     }
@@ -47,24 +26,24 @@ namespace olson_tools {
 
 
     /** A simple class to represent a single (node-specific) XML context.  */
-    struct XMLContext {
+    struct Context {
       /* TYPEDEFS */
-      /** The comparator for the XMLContext::set type (for maintaining order). */
+      /** The comparator for the Context::set type (for maintaining order). */
       struct Comparator {
-        bool operator()(const XMLContext & lhs, const XMLContext & rhs) {
+        bool operator()(const Context & lhs, const Context & rhs) {
           return lhs.node < rhs.node;
         }
       };
 
-      /** A (unique) set of XMLContext instances.
+      /** A (unique) set of Context instances.
        * @see eval(...)
        * */
-      typedef std::set<XMLContext, Comparator> set;
+      typedef std::set<Context, Comparator> set;
 
-      /** A list of XMLContext instances.
+      /** A list of Context instances.
        * @see eval(...)
        * */
-      typedef std::list<XMLContext> list;
+      typedef std::list<Context> list;
 
 
 
@@ -77,20 +56,20 @@ namespace olson_tools {
       /* MEMBER FUNCTIONS */
 
       /** The default constructor creates a contextless instance. */
-      XMLContext() : ctx(NULL), node(NULL) {}
+      Context() : ctx(NULL), node(NULL) {}
 
       /** Constructor which specifies the context within the inherited XML
        * DOM tree. */
-      XMLContext(const XMLContext & x, xmlNodePtr node) :
+      Context(const Context & x, xmlNodePtr node) :
         ctx(x.ctx), node(node) {}
 
       /** Constructor which simply wraps around the current context in the
        * DOM tree context object. */
-      XMLContext(xmlXPathContextPtr ctx) :
+      Context(xmlXPathContextPtr ctx) :
         ctx(ctx), node(ctx->node) {}
 
       /** Constructor which specifies the context within the XML DOM tree.*/
-      XMLContext(xmlXPathContextPtr ctx, xmlNodePtr node) :
+      Context(xmlXPathContextPtr ctx, xmlNodePtr node) :
           ctx(ctx), node(node) {}
 
       /** Method to reset/set the context of this instance. */
@@ -104,14 +83,12 @@ namespace olson_tools {
         assign(_ctx, _ctx->node);
       }
 
-      /** Assertion which throws an xml_error if the context object pointer
+      /** Assertion which throws an error if the context object pointer
        * is NULL. */
       void assertContext(const std::string & err = "invalid XML context") const
-      throw (xml_error) {
-        /* Apparently, if node == NULL, then the context is at the root of the
-         * tree. */
-        if (!ctx /* || !node */)
-          throw xml_error(err);
+      throw (error) {
+        if (!ctx || !node)
+          throw error(err);
       }
 
       /** XPath evaluation routine which properly pushes this context to the
@@ -135,16 +112,16 @@ namespace olson_tools {
       /** A simpler method to obtain the unformatted results of a particular
        * XPath expression.
        *
-       * @return A std::list of XMLContext instances that (uniquely) represent each of
+       * @return A std::list of Context instances that (uniquely) represent each of
        * the different results of the XPath expression <code>q</code>.
        * */
-      XMLContext::list eval(const std::string & q) const {
-        XMLContext::list result;
+      Context::list eval(const std::string & q) const {
+        Context::list result;
         xmlXPathObjectPtr xpathObj = raw_eval(q);
 
         if (!xpathObj) {
           xmlXPathFreeObject(xpathObj);
-          throw xml_error("xpath expression failed:  '" + q + '\'');
+          throw error("xpath expression failed:  '" + q + '\'');
         }
 
         xmlNodeSetPtr nodes = xpathObj->nodesetval;
@@ -153,7 +130,7 @@ namespace olson_tools {
           return result;
 
         for(int i = nodes->nodeNr - 1; i >= 0; i--) {
-          XMLContext x(*this, nodes->nodeTab[i]);
+          Context x(*this, nodes->nodeTab[i]);
           result.insert( result.begin(), x );
         }
         xmlXPathFreeObject(xpathObj);
@@ -164,8 +141,8 @@ namespace olson_tools {
       /** Search for a specific (single-valued) result of the XPath
        * expression in <code>q</code>.
        * */
-      XMLContext find(const std::string & q) const {
-        XMLContext::list x_set = eval(q);
+      Context find(const std::string & q) const throw(nonsingle_result_error) {
+        Context::list x_set = eval(q);
         if      (x_set.size() == 0)
           throw no_results("query '" + q + "' produced no results. cannot create context");
         else if (x_set.size() >1)
@@ -181,8 +158,8 @@ namespace olson_tools {
        * of the parsing function depends on the template parameter T.
        * */
       template <class T>
-      T query(const std::string & q) const {
-        XMLContext x = find(q);
+      T query(const std::string & q) const throw (nonsingle_result_error) {
+        Context x = find(q);
         T retval;
         parse_item(retval, x);
         return retval;
@@ -197,7 +174,7 @@ namespace olson_tools {
       template <class T>
       T query(const std::string & q, const T & _default) const {
         try {
-          XMLContext x = find(q);
+          Context x = find(q);
           T retval;
           parse_item(retval, x);
           return retval;
@@ -219,7 +196,8 @@ namespace olson_tools {
         std::string retval;
         if( node->type == XML_ELEMENT_NODE ||
           node->type == XML_ATTRIBUTE_NODE ||
-          node->type == XML_TEXT_NODE) {
+          node->type == XML_TEXT_NODE ||
+          node->type == XML_COMMENT_NODE) {
 
           char * txt = (char*)xmlNodeGetContent(node);
           retval = txt;
@@ -234,99 +212,41 @@ namespace olson_tools {
       }
     };
 
-    inline bool operator< ( const XMLContext & lhs, const XMLContext & rhs ) {
-      return XMLContext::Comparator()(lhs,rhs);
+
+    /** Context less than operator (uses the Context::Comparator object).
+     * @see Context::Comparator.
+     */
+    static inline bool operator< ( const Context & lhs, const Context & rhs ) {
+      return Context::Comparator()(lhs,rhs);
     }
 
-    inline bool operator== ( const XMLContext & lhs, const XMLContext & rhs ) {
-      return !XMLContext::Comparator()(lhs,rhs) and
-             !XMLContext::Comparator()(rhs,lhs);
+    /** Context equals operator (uses the Context::Comparator object).
+     * @see Context::Comparator.
+     */
+    static inline bool operator== ( const Context & lhs, const Context & rhs ) {
+      return !Context::Comparator()(lhs,rhs) and
+             !Context::Comparator()(rhs,lhs);
     }
 
-
+    /** Generic parse_item implementation that will match for any type that has
+     * an istream extraction operation defined. */
     template <class A>
-    static void parse_item(A & out, const XMLContext & x) {
+    static inline void parse_item(A & out, const Context & x) {
       try {
         out = olson_tools::from_string<A>(x.text());
       } catch (olson_tools::string_error& e) {
-        throw xml_error(e.what());
+        throw error(e.what());
       }
     }
 
-
-    static void parse_item(std::string & out, const XMLContext & x) {
+    /** Special implementation of parse_item for string return values.  This one
+     * is specially implemented because of its glaring simplicity--no need to
+     * use an extraction operation when we already have a string. */ 
+    static inline void parse_item(std::string & out, const Context & x) {
       out = x.text();
     }
-
-
-    class XMLDoc {
-    public:
-      xmlDocPtr doc;
-      XMLContext root_context;
-
-      XMLDoc(const std::string & filename = "") :
-        doc(NULL), root_context() {
-        if (filename.length() > 0)
-          open(filename);
-      }
-
-      ~XMLDoc() {
-        close();
-      }
-
-      void open(const std::string & filename) throw (xml_error) {
-        close();
-        doc = xmlParseFile(filename.c_str());
-        if (doc == NULL)
-          throw xml_error( "Error: unable to parse file \"" + filename + '\"');
-
-        /* specify that we want XInclude processing to work. */
-        xmlXIncludeProcess(doc);
-
-        /* Create xpath evaluation context */
-        root_context.assign(xmlXPathNewContext(doc));
-        try {
-          root_context.assertContext("unable to create root XPath context");
-        } catch (xml_error & e) {
-          close();
-          throw e;
-        }
-      }
-
-      /** Close and cleanup. */
-      void close() {
-        if (doc)
-          xmlFreeDoc(doc); 
-        doc = NULL;
-        if (root_context.ctx)
-          xmlXPathFreeContext(root_context.ctx); 
-        root_context.ctx = NULL;
-      }
-
-      void assertOpen() const throw (xml_error) {
-        if (!doc || !root_context.ctx)
-          throw xml_error("xml file not opened");
-      }
-
-      template <class T>
-      T query(const std::string & q) const {
-        assertOpen();
-        return root_context.query<T>(q);
-      }
-
-      template <class T>
-      T query(const std::string & q, const T & _default) const {
-        assertOpen();
-        return root_context.query(q, _default);
-      }
-
-      XMLContext::list eval(const std::string & q) const {
-        assertOpen();
-        return root_context.eval(q);
-      }
-    };
 
   }/* namespace olson_tools::xml */
 }/* namespace olson_tools */
 
-#endif // olson_tools_xml_XMLDoc_h
+#endif // olson_tools_xml_Context_h

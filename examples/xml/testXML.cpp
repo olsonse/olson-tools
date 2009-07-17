@@ -1,5 +1,5 @@
 /** \file
- * Simple test for XMLDoc class + physical::Quantity parser.
+ * Simple test for xml::Doc class + physical::Quantity parser.
  * */
 
 
@@ -16,10 +16,9 @@
 using namespace runtime; /* strip runtime:: from physical::* */
 typedef olson_tools::data_set<physical::Quantity,physical::Quantity> pqdata_set;
 
-using olson_tools::xml::XMLDoc;
-using olson_tools::xml::XMLContext;
+namespace xml = olson_tools::xml;
 
-void prepareCalculator(const XMLDoc & doc) {
+void prepareCalculator(const xml::Doc & doc) {
   /* prepare infix units calculator. */
   using physical::calc::InfixCalc;
   using physical::calc::symbol;
@@ -30,10 +29,10 @@ void prepareCalculator(const XMLDoc & doc) {
   calc.addMathLib();
   calc.addPhysicalUnits();
 
-  XMLContext::list xl = doc.eval("//calc-commands/command");
-  XMLContext::list::iterator i = xl.begin();
+  xml::Context::list xl = doc.eval("//calc-commands/command");
+  xml::Context::list::iterator i = xl.begin();
   for (; i != xl.end(); i++) {
-    const XMLContext & x = (*i);
+    const xml::Context & x = (*i);
     calc.exec(x.parse<std::string>());
   }
 }
@@ -73,17 +72,17 @@ enum query_type {
   RAW
 };
 
-void showResults( std::ostream & out, XMLDoc & db,
+void showResults( std::ostream & out, xml::Doc & db,
                   const enum query_type qt, const char * query ) {
   using namespace olson_tools::xml;
   using physical::Quantity;
   using olson_tools::data_set;
   //using olson_tools::convert_data_set;
 
-  XMLContext::list xl = db.eval(query);
-  XMLContext::list::iterator i = xl.begin();
+  xml::Context::list xl = db.eval(query);
+  xml::Context::list::iterator i = xl.begin();
   for (; i != xl.end(); ++i) {
-    const XMLContext & x = (*i);
+    const xml::Context & x = (*i);
     switch (qt) {
       case RAW:
         out << x.text() << std::endl;
@@ -124,8 +123,7 @@ int main(int argc, char **argv) {
   if ( !xml_filename )
     xml_filename = XML_FILENAME;
 
-  using olson_tools::xml::XMLDoc;
-  XMLDoc db(xml_filename);
+  xml::Doc db(xml_filename);
   prepareCalculator(db);
 
 

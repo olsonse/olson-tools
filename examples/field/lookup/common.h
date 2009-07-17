@@ -6,7 +6,7 @@
 #include <physical/physical.h>
 #include <olson-tools/force-lookup.h>
 
-using namespace physical::constants;
+using namespace physical::constants::si;
 using namespace physical::units;
 
 const double I = 300.0 * Ampere;

@@ -1,7 +1,7 @@
 #ifndef OLSON_TOOLS_DATA_SET_H
 #define OLSON_TOOLS_DATA_SET_H
 
-#include <olson-tools/xml/XMLDoc.h>
+#include <olson-tools/xml/Doc.h>
 
 #include <map>
 
@@ -45,7 +45,7 @@ namespace olson_tools {
     }
 
     template <class A, class B>
-    static void parse_item(data_point<A,B> & out, const xml::XMLContext & x) {
+    static void parse_item(data_point<A,B> & out, const xml::Context & x) {
         A a = x.query<A>("@x");
         B b = x.query<B>("@y");
         out = data_point<A,B>(a,b);
@@ -53,15 +53,15 @@ namespace olson_tools {
 
 
     template <class A, class B>
-    static void parse_item(data_set<A,B> & out, const xml::XMLContext & x) {
+    static void parse_item(data_set<A,B> & out, const xml::Context & x) {
         A xscale = x.query<A>("@xscale");
         B yscale = x.query<B>("@yscale");
 
-        xml::XMLContext::list x_list = x.eval("val");
-        xml::XMLContext::list::iterator i = x_list.begin();
+        xml::Context::list x_list = x.eval("val");
+        xml::Context::list::iterator i = x_list.begin();
 
         for(; i != x_list.end(); ++i) {
-            const xml::XMLContext & x1 = (*i);
+            const xml::Context & x1 = (*i);
             data_point<A,B> dp = x1.parse< data_point<A,B> >();
             dp.first  *= xscale;
             dp.second *= yscale;

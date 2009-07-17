@@ -8,7 +8,7 @@
 #include <olson-tools/strutil.h>
 
 using namespace physical::units;
-using namespace physical::constants;
+using namespace physical::constants::si;
 using namespace olson_tools::indices;
 
 using olson_tools::SQR;
