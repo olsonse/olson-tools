@@ -11,6 +11,7 @@ namespace olson_tools {
         Iter f;
       public:
         typedef Iter iter_type;
+        typedef Iter iterator;
     
         IteratorRange(const Iter & i = Iter(),
                       const Iter & f = Iter()) : i(i), f(f) {}

@@ -351,7 +351,7 @@ struct powNImpl<4> {
   }
 };
 
-/** Implementation of x^y where y = (int)4. */
+/** Implementation of x^y where y = (int)5. */
 template<>
 struct powNImpl<5> {
   template < typename T >
