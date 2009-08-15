@@ -5,7 +5,7 @@
 #define QUIET
 
 #include "simfit.h"
-#include <math.h>
+#include <cmath>
 #ifndef QUIET
 #  include <iostream>
 #endif
@@ -13,7 +13,7 @@
 namespace olson_tools{ namespace fit {
 
 template <typename T, typename fitT>
-fitT LsqFit<T,fitT>::minfunc(T p[]){
+fitT LsqFit<T,fitT>::minfunc( T p[] ) {
   fitT sum=0.0;
   for(unsigned int i=0;i<Npts;i++) {
     fitT term = fitfunc(xp[i], p) - yp[i];
@@ -23,13 +23,15 @@ fitT LsqFit<T,fitT>::minfunc(T p[]){
 } // LsqFit<T,fitT>::minfunc
 
 template <typename T, typename fitT>
-fitT Fit<T,fitT>::simplex(T min, T max, fitT tol,
-                    unsigned MaxIterations){
+fitT Fit<T,fitT>::simplex( T min,
+                           T max,
+                           fitT tol,
+                           unsigned MaxIterations){
 
   if (minval) {
-      /* clean up from previous. */
-      delete[] minval;
-      delete[] maxval;
+    /* clean up from previous. */
+    delete[] minval;
+    delete[] maxval;
   }
   minval=new T[ndim];
   maxval=new T[ndim];
@@ -41,13 +43,14 @@ fitT Fit<T,fitT>::simplex(T min, T max, fitT tol,
 } // Fit<T,fitT>::simplex
 
 template <typename T, typename fitT>
-fitT Fit<T,fitT>::simplex(T min[],
-                                  T max[], fitT tol,
-                    unsigned MaxIterations){
+fitT Fit<T,fitT>::simplex( T min[],
+                           T max[],
+                           fitT tol,
+                           unsigned MaxIterations ) {
   if (minval) {
-      /* clean up from previous. */
-      delete[] minval;
-      delete[] maxval;
+    /* clean up from previous. */
+    delete[] minval;
+    delete[] maxval;
   }
   minval=new T[ndim];
   maxval=new T[ndim];
@@ -59,14 +62,14 @@ fitT Fit<T,fitT>::simplex(T min[],
 } // Fit<T,fitT>::simplex
 
 template <typename T, typename fitT>
-fitT Fit<T,fitT>::simplex(fitT tol, unsigned MaxIterations){
+fitT Fit<T,fitT>::simplex( fitT tol, unsigned MaxIterations ) {
   if (minval) {
-      /* clean up from previous. */
-      delete[] minval;
-      delete[] maxval;
+    /* clean up from previous. */
+    delete[] minval;
+    delete[] maxval;
 
-      /* we won't use min/maxval here. */
-      minval = maxval = NULL;
+    /* we won't use min/maxval here. */
+    minval = maxval = NULL;
   }
 
   ftol = tol;
@@ -81,18 +84,18 @@ fitT Fit<T,fitT>::simplex(fitT tol, unsigned MaxIterations){
 
 ///
 template <typename T, typename fitT>
-Fit<T,fitT>::Fit(T params[], unsigned nParams) : smplx(nParams),
-  ndim(nParams), par(params){
-  y=new fitT[nParams+1];
-  pr=new T[nParams];
-  prr=new T[nParams];
-  pbar=new fitT[nParams];
+Fit<T,fitT>::Fit(T params[], unsigned nParams)
+  : smplx(nParams), ndim(nParams), par(params) {
+  y      = new fitT[nParams+1];
+  pr     = new T[nParams];
+  prr    = new T[nParams];
+  pbar   = new fitT[nParams];
   minval = NULL;
   maxval = NULL;
   setParTol(0.2); // set default tolerance to 0.2 (sets partol)
   itLimit=10;  // safe default
-  iter=0;
-  ftol=100; // should be reset by simplex
+  iter   =0;
+  ftol   =100; // should be reset by simplex
 } // Fit<T,fitT>::Fit
 
 template <typename T, typename fitT>
@@ -149,7 +152,7 @@ void Fit<T,fitT>::Amoeba(){
     } // for
     // Compute the fractional range from highest to lowest and return
     // if satisfactory.
-    rtol = 2.0*fabs(y[ihi]-y[ilo])/(fabs(y[ihi])+fabs(y[ilo]));
+    rtol = 2.0*std::abs(y[ihi]-y[ilo])/(std::abs(y[ihi])+std::abs(y[ilo]));
     if (rtol < ftol) {
       return;
     }
@@ -163,10 +166,10 @@ void Fit<T,fitT>::Amoeba(){
       cin>>ans;
 #endif
       if (ans == 'Y' || ans == 'y') {
-	itmax = itmax + itLimit;
+        itmax = itmax + itLimit;
       } else {
-	// exit gracefully
-	return;
+        // exit gracefully
+        return;
       }
     } // if itmax is reached
     for (j=0;j<ndim;j++)
@@ -177,7 +180,7 @@ void Fit<T,fitT>::Amoeba(){
     // the ray from the high point through that center.
     for(i=0;i<=mpts;i++) 
       if (i != ihi)
-	for (j=0;j<ndim;j++) pbar[j] = pbar[j]+smplx(i,j);
+        for (j=0;j<ndim;j++) pbar[j] = pbar[j]+smplx(i,j);
     // Extrapolate by a factor alpha through the face, i.e. reflect
     // the simplex from the high point.
     for(j=0;j<ndim;j++){
@@ -185,6 +188,11 @@ void Fit<T,fitT>::Amoeba(){
       pr[j] = T( (1.0+alpha)*pbar[j]-alpha*smplx(ihi,j) );
     }
     ypr = minfunc(pr);  /* Evaluate the function at reflected point */
+
+    /* We'll now define the bounds penalty with respect to the first evaluation
+     * of minfunc(...).  The factor of 20 is arbitrarily chosen. */
+    const fitT bounds_penalty = std::abs(ypr) * 20;
+
     for (i=0;i<ndim;i++) {
       /* some one forgot to comment: I guess the following is a hack
        * done by someone here at BYU to make it not want to make
@@ -195,7 +203,7 @@ void Fit<T,fitT>::Amoeba(){
        * value.
       */ 
       if( minval && ((pr[i]<minval[i]) || (pr[i]>maxval[i])) )
-	ypr += 20;
+        ypr += bounds_penalty;
     }
     if (ypr <= y[ilo]){
       // There was an improvement, try an additional extrapolation by
@@ -205,67 +213,66 @@ void Fit<T,fitT>::Amoeba(){
       /* see above note about minimum values */
       for (i=0;i<ndim;i++) {
         if( minval && ((prr[i]<minval[i]) || (prr[i]>maxval[i])) )
-	  yprr += 20;
+          yprr += bounds_penalty;
       }
       if (yprr < y[ilo]){
-	// The additional extrapolation succeeded, and replaces
-	// the high point.
-	for(j=0;j<ndim;j++) smplx(ihi,j) = prr[j];
-	y[ihi] = yprr;
+        // The additional extrapolation succeeded, and replaces
+        // the high point.
+        for(j=0;j<ndim;j++) smplx(ihi,j) = prr[j];
+        y[ihi] = yprr;
       } else{
-	//  The additional extrapolation failed, but we can still
-	// use the reflected point.
-	for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
-	y[ihi] = ypr;
+        //  The additional extrapolation failed, but we can still
+        // use the reflected point.
+        for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
+        y[ihi] = ypr;
       }
     } // if there was improvement
     else
       if (ypr >= y[inhi]) {
-	//  The reflected is worse than the second-highest.  If it's
-	// better than the highest, then replace the highest, but look
-	// for an intermediate lower point.
-	if(ypr < y[ihi]) {
-	  for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
-	  y[ihi] = ypr;
-	}
-	for(j=0;j<ndim;j++)
-	  // Check for intermediate lower point by performing a
-	  // contraction of the simplex along one dimension.  Then
-	  // evaluate the function.
-	  prr[j] = T( beta*smplx(ihi,j)+(1.0-beta)*pbar[j] );
-	yprr = minfunc(prr);
+        //  The reflected is worse than the second-highest.  If it's
+        // better than the highest, then replace the highest, but look
+        // for an intermediate lower point.
+        if(ypr < y[ihi]) {
+          for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
+          y[ihi] = ypr;
+        }
+        for(j=0;j<ndim;j++)
+          // Check for intermediate lower point by performing a
+          // contraction of the simplex along one dimension.  Then
+          // evaluate the function.
+          prr[j] = T( beta*smplx(ihi,j)+(1.0-beta)*pbar[j] );
+        yprr = minfunc(prr);
         /* see above note for minimum values */
-	for (i=0;i<ndim;i++) {
+        for (i=0;i<ndim;i++) {
           if( minval && ((prr[i]<minval[i]) || (prr[i]>maxval[i])) )
-	    yprr += 20;
-	}
-	if (yprr < y[ihi]) {
-	  // Contraction gives an improvement, so accept it.
-	  for(j=0;j<ndim;j++) smplx(ihi,j) = prr[j];
-	  y[ihi] = yprr;
-	} else {
-	  // Can't seem to get rid of that high point.  Better contract
-	  // around the lowest (best) point.
-	  for(i=0;i<=mpts;i++) 
-	    if (i != ilo) {
-	      for (j=0;j<ndim;j++) {
-		pr[j] = T( 0.5*(smplx(i,j)+smplx(ilo,j)) );
-		smplx(i,j) = pr[j];
-	      }
-	      y[i] = minfunc(pr);
+            yprr += bounds_penalty;
+        }
+        if (yprr < y[ihi]) {
+          // Contraction gives an improvement, so accept it.
+          for(j=0;j<ndim;j++) smplx(ihi,j) = prr[j];
+          y[ihi] = yprr;
+        } else {
+          // Can't seem to get rid of that high point.  Better contract
+          // around the lowest (best) point.
+          for(i=0;i<=mpts;i++) 
+            if (i != ilo) {
+              for (j=0;j<ndim;j++) {
+                pr[j] = T( 0.5*(smplx(i,j)+smplx(ilo,j)) );
+                smplx(i,j) = pr[j];
+              }
+              y[i] = minfunc(pr);
               /* see above note for minimum values */
-	      for (j=0;j<ndim;j++) {
+              for (j=0;j<ndim;j++) {
                 if( minval && ((pr[j]<minval[j]) || (pr[j]>maxval[j])) )
-		  y[i] += 20;
-	      }
-	    }
-	}
-      }
-      else {
-	// The original reflection gives a middling point.  Replace
-	// the old high point and continue.
-	for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
-	y[ihi] = ypr; 
+                  y[i] += bounds_penalty;
+              }
+            }
+        }
+      } else {
+        // The original reflection gives a middling point.  Replace
+        // the old high point and continue.
+        for(j=0;j<ndim;j++) smplx(ihi,j) = pr[j];
+        y[ihi] = ypr; 
       } 
   } /* while TRUE */
 } /** Amoeba */
@@ -275,10 +282,10 @@ void Fit<T,fitT>::initSimplex(){
   if(partol){
     for(unsigned int i=0;i<=ndim;i++)
       for(unsigned int j=0;j<ndim;j++){
-	if (i==(j+1))
-	  smplx(i,j) = par[j] * T(1.0+partol);
-	else
-	  smplx(i,j) = par[j];
+        if (i==(j+1))
+          smplx(i,j) = par[j] * T(1.0+partol);
+        else
+          smplx(i,j) = par[j];
       }
   } // if parameter ranges aren't set individually
 } // Fit<T,fitT>::initSimplex
@@ -289,9 +296,9 @@ void Fit<T,fitT>::setParVal(T parstep[]){
   for(unsigned int i=0;i<=ndim;i++)
     for(unsigned int j=0;j<ndim;j++){
       if (i==(j+1))
-	smplx(i,j) = par[j] * (1.0+parstep[j]);
+        smplx(i,j) = par[j] * (1.0+parstep[j]);
       else
-	smplx(i,j) = par[j];
+        smplx(i,j) = par[j];
     }
 } // Fit<T,fitT>::setParVal
 

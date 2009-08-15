@@ -125,9 +125,9 @@ class LsqFit: public Fit<T,fitT>{
      *     Length of the x and y arrays.
      **/
     LsqFit(T ppar[], unsigned nParams,
-	   T x[], fitT yy[], unsigned nData
-	  ):
-	    Fit<T,fitT>(ppar, nParams),xp(x),yp(yy),Npts(nData){ }
+           T x[], fitT yy[], unsigned nData
+          ):
+            Fit<T,fitT>(ppar, nParams),xp(x),yp(yy),Npts(nData){ }
 
     /** Destructor. */
     virtual ~LsqFit() {}
