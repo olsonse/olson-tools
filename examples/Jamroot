@@ -18,6 +18,7 @@ build-project options ;
 build-project random ;
 build-project readdata ;
 build-project rk ;
+build-project threadcache ;
 build-project timer ;
 build-project timing ;
 build-project trapfe ;
