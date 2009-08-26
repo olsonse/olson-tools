@@ -5,35 +5,46 @@
 
 struct Task : olson_tools::PThreadTask {
   /* MEMBER STORAGE */
-  double x;
+  double xi, xf, dx;
   double retval;
 
   /* MEMBER FUNCTIONS */
-  Task(const double & x) : x(x), retval(0) {}
+  Task(const double & xi, const double & xf, const double dx)
+    : xi(xi), xf(xf), dx(dx), retval(0) {}
   virtual ~Task() {}
   virtual void exec() {
-    retval = std::log(x);
+    for ( double x = xi; x <= xf; x+= dx ) {
+      retval += std::log(x);
+    }
   };
 };
 
 int main() {
-  pthreadCache.set_max_threads(2);
+  using olson_tools::pthreadCache;
+  using olson_tools::PThreadTaskSet;
+  //pthreadCache.set_max_threads(2);
   PThreadTaskSet tasks;
 
-  for (double i = 0; i< 1.0; i+= 3e-8) {
-    Task * t = new Task(i);
+  double dx = 3e-2;
+  for (double i = 1; i< 10.0; i+= dx) {
+    Task * t = new Task(i, i+dx, dx*1e-5);
     tasks.insert(t);
     pthreadCache.addTask(t);
   }
 
+  std::cout << "queued " << tasks.size() << " tasks" << std::endl;
+
+  int n_finished = 0;
   double sum = 0;
   while ( tasks.size() ) {
     PThreadTaskSet finished = pthreadCache.waitForTasks(tasks);
+    n_finished += finished.size();
 
     for ( PThreadTaskSet::iterator i = finished.begin();
           i != finished.end(); ++i ) {
-      sum += (*i)->retval;
-      delete (*i);
+      Task * t = static_cast<Task*>(*i);
+      sum += t->retval;
+      delete t;
     }
 
     PThreadTaskSet tmp;
@@ -43,7 +54,8 @@ int main() {
     tasks.swap(tmp);
   }
 
-  std::cout << "sum:  " << sum << std::endl;
+  std::cout << "sum:  " << sum << "\n"
+               "finished " << n_finished << " tasks" << std::endl;
 
   return EXIT_SUCCESS;
 }
