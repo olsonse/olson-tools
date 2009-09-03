@@ -68,166 +68,111 @@
  */
 
 
-#ifndef GENERATION_H
-#define GENERATION_H
+#ifndef olson_tools_fit_Generation_h
+#define olson_tools_fit_Generation_h
 
-// If the following is defined, a hybrid algorithm is used (simplex in
-// conjunction with ga)
-#define HYBRID
+#include <olson-tools/fit/io.h> // out and input
+#include <olson-tools/fit/Individual.h>
+#include <olson-tools/fit/Histogram.h>
+#include <olson-tools/fit/NullLocalFit.h>
 
-#include "io.h" // out and input
-#include "Individual.h"
-#include "Histogram.h"
+namespace olson_tools{
+  namespace fit {
 
-#ifdef HYBRID
-#  include "simfit.h"
-#endif
+    ///
+    template < typename optionsT >
+    class Generation {
+      /* NON-LOCAL STORAGE */
+    public:
+      //?? Can't remember
+      static bool stop;
 
-namespace olson_tools{ namespace fit {
-
-///
-class Generation{
-public:
-  /// only storage with non initialization
-  Generation(int pop, const Gene & igene,
-             CREATE_IND_FUNC createind = NULL,
-             void * meritfnc = NULL,
-             void * obj_ptr = NULL );
-  /// will we need to redo this?
-  Generation(const Generation& gen);
-  /// only copy so many
-  Generation(const Generation&, int max_individuals);
-  ///
-  ~Generation();
-
-  /// intialize with random population members
-  void randinit();
-  ///
-  merit_t merit();
-  /// sort and set gene to member[0]->gene
-  void sort();
-  ///
-  void tournament();
-  ///
-  void proportional();
-
-  /** start with some good solutions.
-   * For the sake of GA efficiency, seed_fraction should be very low, no more
-   * than 1-5% (I think).
-   * @param seed_fraction
-   *     The fraction of the population to seed with this gene.l
-   * @returns the number of Individual/s seeded.
-   */
-  int seed(const Gene &,float seed_fraction);
-
-  /// histogram to check random number generation
-  void hist();
-  ///
-  const Gene & bestgene() const;
-
-  /**Some algorithm parameters which are changeable.
-  */
-  //@{
-    ///Percentage of population to use fitting algorithm on.
-  float local_fit_max_individuals_prctage;
-
-    ///Fraction of each generation to be replaced(.5).
-  float replace;
-
-    ///Crossover probability(.75).
-  float crossprob;
-
-    ///Mutation probability(.05).
-  float mutprob;
-
-    // fitting algorithm parameters
-    /// maximum number of iterations of fitting algorithms
-  int local_fit_max_iteration;
-
-    /// tolerance of local fitting algorithms
-  float local_fit_tolerance;
-  //@}
-
-  /** This is for stopping the algorithm during operation and
-   * should be called by a signal handler from the OS.
-   *@memo If true, then STOP!!
-  */
-  static void setStop(int inSignal);
-  //?? Can't remember
-  static bool stop;
-  ///
-  friend std::ostream & operator<<(std::ostream &,const Generation &);
-
-  /** Do Histogramming. 
-   * If true, the program tries to improve diversity by penalizing
-   * too many individuals of the same species in the population.
-   */
-  bool do_resource_competition;
-
-  // Histogram parameters
-  /** This is the grid spacing of coordinate-system type genes in
-   * histogramming. */
-  int hist_cont_grid_cols;
-
-private:
-  /// return the total of the merit functions
-  merit_t total();
-  ///
-  int tselect(merit_t rtot, int skip);
-  ///
-  int population;
-  /// copy of initial ranges and will hold the best gene of the population
-  Gene gene;
-
-  /// Creator function for the Individuals.
-  CREATE_IND_FUNC createind;
-
-  ///
-  Individual **member;
-}; // Generation class
-
-#ifdef HYBRID
-
-/** This is an implemented class of the simplex algorithm
- * which will nicely find the local extrema of the
- * merit function which will be passed in through the Individual's
- * Gene.
- *@memo Simplex for Genes.
-*/
-class Gene_Simplex: public Fit<merit_t,merit_t> {
-public:
-  /**@param ppar[] should be an array of type Allele\_t of all of
-   * the alleles which are of type: ALLELE\_DYNAMIC\_COORD.
-   *@param nparams should be the size of ppar[].
-   *@param ml should then be a pointer to the appropriate Individual object.
-   *@memo Gene\_Simplex constructor.
-  */
-  Gene_Simplex(Allele_t ppar[], int nparams, Individual * ml);
-  ///
-  virtual ~Gene_Simplex();
-  ///
-  virtual merit_t minfunc(Allele_t p[]);
-private:
-  ///
-  Individual * member;
-}; // Gene_Simplex class
-
-/** simplex_fit(...) is a wrapper for the Gene\_Simplex.  It will create
- * a Gene\_Simplex and pass to it all pertinant arrays and information.
- * Perhaps we should combine this function into the constructor
- * of the Gene\_Simplex.
- *@memo Runs simplex algorithm on an Individual.
-*/
-merit_t simplex_fit( Individual * member,
-                     int local_fit_max_iteration,
-                     float local_fit_tolerance);
-
-#endif //HYBRID
-
-///The Generation print function.
-std::ostream & operator<<(std::ostream &, const Generation &);
+      /* MEMBER STORAGE */
+    public:
+      /** options reference */
+      const optionsT & options;
 
 
-}}/*namespace olson_tools::fit */
+    private:
 
-#endif // GENERATION_H
+      /// copy of initial ranges and will hold the best gene of the population
+      Gene gene;
+
+      ///
+      Individual **member;
+
+
+      /* MEMBER FUNCTIONS */
+    public:
+      /// only storage with non initialization
+      Generation( const optionsT & options, const Gene & igene );
+
+      /// will we need to redo this?
+      Generation( const Generation& gen );
+
+      /// only copy so many
+      Generation( const Generation&, int max_individuals );
+
+      /// Destructor
+      ~Generation();
+
+      /// intialize with random population members
+      void randinit();
+
+      ///
+      merit_t merit();
+
+      /// sort and set gene to member[0]->gene
+      void sort();
+
+      ///
+      void tournament();
+
+      ///
+      void proportional();
+
+      /** start with some good solutions.
+       * For the sake of GA efficiency, seed_fraction should be very low, no more
+       * than 1-5% (I think).
+       * @param seed_fraction
+       *     The fraction of the population to seed with this gene.l
+       * @returns the number of Individual/s seeded.
+       */
+      int seed( const Gene &, float seed_fraction );
+
+      /// histogram to check random number generation
+      void hist();
+
+      ///
+      const Gene & bestgene() const;
+
+      /* STATIC FUNCTIONS */
+
+      /** This is for stopping the algorithm during operation and
+       * should be called by a signal handler from the OS.
+       *@memo If true, then STOP!!
+      */
+      static void setStop(int inSignal);
+
+      ///
+      template < typename T >
+      friend std::ostream & operator<<(std::ostream &,const Generation<T> &);
+
+    private:
+      /// return the total of the merit functions
+      merit_t total();
+
+      ///
+      int tselect(merit_t rtot, int skip);
+    }; // Generation class
+
+    /// The Generation print function.
+    template < typename T >
+    std::ostream & operator<<(std::ostream &, const Generation<T> &);
+
+  }/*namespace olson_tools::fit */
+}/*namespace olson_tools */
+
+#include <olson-tools/fit/Generation.cpp>
+
+#endif // olson_tools_fit_Generation_h

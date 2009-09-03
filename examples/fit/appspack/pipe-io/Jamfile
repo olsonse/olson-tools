@@ -1,0 +1,6 @@
+use-project /pstreams : ../../../../../pstreams ;
+
+exe testThreadedExecutor
+    : ../testThreadedExecutor.cpp
+      /pstreams//pstreams
+    : <define>USE_PIPE ;

@@ -1,1 +1,2 @@
-exe testGA : testGA.cpp /olson-tools//olson-tools ;
+exe testGA : testGA.cpp /olson-tools//olson-tools : <define>RECORD_EVALS ;
+exe test : test.cpp /olson-tools//olson-tools : <define>RECORD_EVALS ;

@@ -15,15 +15,17 @@
  */
 
 
-#include "Histogram.h"
+#include <olson-tools/fit/Histogram.h>
+
+#include <olson-tools/ompexcept.h>
+
 #include <stdexcept>
-#include <math.h>
-#include "../ompexcept.h"
+#include <cmath>
 
 namespace olson_tools{ namespace fit {
 
 Histogram::Histogram(int population, int cont_grid_cols, const Individual & member):
-    grid_spacing(0.0), mfact(1.0 - 1.0/sqrt(float(population))) {
+    grid_spacing(0.0), mfact(1.0 - 1.0/std::sqrt(float(population))) {
     // allocate some space for the accumulation arrays
     if(!(rows = member.DNA.numAlleles(ALLELE_DYNAMIC))) {
       THROW(std::runtime_error,"DNA has zero dynamic alleles(bad!).");

@@ -86,241 +86,247 @@
 #include <cassert>
 
 
-namespace olson_tools{ namespace fit {
+namespace olson_tools{
+  namespace fit {
 
-/* *****       stopGeneticAlg portion ******* */
+    /* *****       stopGeneticAlg portion ******* */
 
-///
-void Generation::setStop(int inSignal) {
-  stop = true;//stop is static, so we can do this from any where
-}// GeneticAlg::stopGeneticAlg
+    ///
+    template < typename optionsT >
+    void Generation<optionsT>::setStop(int inSignal) {
+      stop = true;//stop is static, so we can do this from any where
+    }// GeneticAlg::stopGeneticAlg
 
-bool Generation::stop = false;
+    template < typename optionsT >
+    bool Generation<optionsT>::stop = false;
 
-/* *****   end    stopGeneticAlg portion ******* */
+    /* *****   end    stopGeneticAlg portion ******* */
 
-///
-Individual ** new_Individual_list(const Gene & gn,
-                                  long population,
-                                  CREATE_IND_FUNC createind = NULL,
-                                  void * meritfnc = NULL,
-                                  void * obj_ptr = NULL );
+    ///
+    Individual ** new_Individual_list(  const Gene & gn,
+                                        long population,
+                                        CREATE_IND_FUNC createind = NULL,
+                                        void * meritfnc = NULL,
+                                        void * obj_ptr = NULL );
 
-///
-void delete_Individual_list(Individual ** ilist);
+    ///
+    void delete_Individual_list(Individual ** ilist);
 
-///
-merit_t Generation::merit(){
-    // return the average of the top 4 merit functions,
-    // assuming the list has already been sorted
-    return ( member[0]->Merit()+
-             member[1]->Merit()+
-             member[2]->Merit()+
-             member[3]->Merit() ) /4;
-} // Generation::merit
+    ///
+    template < typename optionsT >
+    merit_t Generation<optionsT>::merit() {
+      // return the average of the top 4 merit functions,
+      // assuming the list has already been sorted
+      return 0.25 * ( member[0]->Merit()+
+                      member[1]->Merit()+
+                      member[2]->Merit()+
+                      member[3]->Merit() );
+    } // Generation::merit
 
-merit_t Generation::total(){
-  // return the total of the merit functions
-  merit_t sum=0;
-  for(int i=0; i<population; i++)
-    sum += member[i]->Merit();
-  return sum;
-} // Generation::total
+    template < typename optionsT >
+    merit_t Generation<optionsT>::total() {
+      // return the total of the merit functions
+      merit_t sum=0;
+      for(int i=0; i<options.population; ++i)
+        sum += member[i]->Merit();
+      return sum;
+    } // Generation::total
 
-const Gene & Generation::bestgene() const {
-  // we should not allow others to change this guy's information
-  return gene;
-} // Generation::bestgene
+    template < typename optionsT >
+    const Gene & Generation<optionsT>::bestgene() const {
+      // we should not allow others to change this guy's information
+      return gene;
+    } // Generation::bestgene
 
-void Generation::sort(){
-    int fit_max_individuals = int(population*local_fit_max_individuals_prctage);
-    // Update merit functions, then sort list with best values first
+    template < typename optionsT >
+    void Generation<optionsT>::sort(){
+      int fit_max_individuals =
+        int(options.population * options.local_fit_max_individuals_prctage);
+      // Update merit functions, then sort list with best values first
 
-    Histogram * hist = NULL;
+      // use fitting algorithm to maximize merit
+      for ( int i = 0; i < fit_max_individuals; ++i ) {
+        typename optionsT::LocalFit() ( member[i], options.localParam );
+      }
 
-    if (do_resource_competition) {
-        hist = new Histogram(population, hist_cont_grid_cols, *member[0]);
-    }
+      /* encourage diversity if requested. */
+      if (options.encourage_diversity) {
+        Histogram * hist = new Histogram( options.population,
+                                          options.diversity_grid_cols,
+                                          *member[0] );
 
-    for(int i=0; i<population; i++){
-#ifdef HYBRID
-        if(i<fit_max_individuals){
-            // use fitting algorithm to maximize merit
-            simplex_fit( member[i], local_fit_max_iteration, local_fit_tolerance);
-        }
-#endif
-        if (do_resource_competition) {
-            hist->update(*member[i]);
-            merit_t mf = hist->meritfact(*member[i]);
-            member[i]->multMerit(mf);
-        }
-    } // for i
+        for(int i=0; i<options.population; ++i) {
+          hist->update(*member[i]);
+          merit_t mf = hist->meritfact(*member[i]);
+          member[i]->multMerit(mf);
+        } // for i
 
-    if (do_resource_competition) {
         delete hist;
-    }
+      }
 
-    /* Note that qsort will sort from least to greatest.  Since I want
-     * from greatest to least, set comparison in mcomp so that it is
-     * backwards.  Also, because member[i] is now a pointer to
-     * an Individual, our qsort will only move around pointer
-     * values (much faster).
-     */
-    qsort(member, population, sizeof(member[0]), mcomp);
-    // now set gene of the generation to member[0].gene of the population
-    gene = member[0]->DNA;
-} // Generation::sort
+      /* Note that qsort will sort from least to greatest.  Since I want
+       * from greatest to least, set comparison in mcomp so that it is
+       * backwards.  Also, because member[i] is now a pointer to
+       * an Individual, our qsort will only move around pointer
+       * values (much faster).
+       */
+      qsort(member, options.population, sizeof(member[0]), mcomp);
 
-Generation::Generation(int pop, const Gene & igene,
-                       CREATE_IND_FUNC createind_fnc /* = NULL */,
-                       void * meritfnc /* = NULL */,
-                       void * obj_ptr /* = NULL */ ):
-  population(pop),gene(igene), createind( createind_fnc ) {
-  // using default values for the time being
-  replace = 0.5;
-  crossprob = 0.75;
-  mutprob = 0.05;
+#ifdef USE_THIS_NEW_CODE_BECAUSE_IT_SHOULD_BE_BETTER
+      /* This code should be better, I think, for applying the local fit.
+       * I think that for the local fit, I should try one of two approaches:
+       *   1.  apply the local fit to members randomly through the population until
+       *       quota has been reached.
+       *   2.  apply the local fit to only the best members.  Right now, I'm doing
+       *       neither of these--I'm doing something like locally fitting some of
+       *       those at the top and some randomly near the top and perhaps some
+       *       even not near the top.    
+       * There is only one problem that I can see by using this code:  The
+       * histogramming stuff will not work quite as well as it will only encourage
+       * diversity of the members BEFORE they are locally fitted.  */
 
-  //Histogram defaults
-  hist_cont_grid_cols = 100;
-  do_resource_competition = false;
+      if (fit_max_individuals > 0) {
+        for ( int i = 0; i < fit_max_individuals; ++i ) {
+          typename optionsT::LocalFit() ( member[i], options.localParam );
+        }
 
-  // fitting algorithm defaults
-  local_fit_max_individuals_prctage = .01;
-  local_fit_max_iteration = 100;
-  local_fit_tolerance = 0.01;
-  member = new_Individual_list( gene, population, createind,
-                                meritfnc, obj_ptr );
-  assert(member); // member better be point to an Individual pointer
-} // Generation constructor
-
-Generation::Generation(const Generation& gen):
-  local_fit_max_individuals_prctage(gen.local_fit_max_individuals_prctage),
-  replace(gen.replace), crossprob(gen.crossprob),
-  mutprob(gen.mutprob),local_fit_max_iteration(gen.local_fit_max_iteration),
-  local_fit_tolerance(gen.local_fit_tolerance),
-  do_resource_competition(gen.do_resource_competition),
-  hist_cont_grid_cols(gen.hist_cont_grid_cols),
-  population(gen.population), gene(gen.gene),
-  createind( gen.createind ) {
-  //cast the gene[-1] to a function of the correct kind
-  member = new_Individual_list( gene, population, createind );
-  for(int i=0; i<population;i++) *member[i] = *gen.member[i];
-} // Generation copy constructor
-
-Generation::Generation(const Generation& gen, int max_individuals):
-  local_fit_max_individuals_prctage(gen.local_fit_max_individuals_prctage),
-  replace(gen.replace), crossprob(gen.crossprob),
-  mutprob(gen.mutprob), local_fit_max_iteration(gen.local_fit_max_iteration), 
-  local_fit_tolerance(gen.local_fit_tolerance),
-  do_resource_competition(gen.do_resource_competition),
-  hist_cont_grid_cols(gen.hist_cont_grid_cols),
-  population(gen.population), gene(gen.gene),
-  createind( gen.createind ) {
-    //cast the gene[-1] to a function of the correct kind
-    member = new_Individual_list( gene, population, createind );
-    for(int i=0; i<max_individuals;i++) *member[i] = *gen.member[i];
-} // Generation partial copy constructor
-
-void Generation::randinit(){//initialize the population with random genes
-  for(int i=0; i<population; i++){
-    member[i]->randinit();
-  }
-} // Generation::init
-
-Generation::~Generation(){
-    delete_Individual_list(member);
-} // Generation destructor
-
-void Generation::proportional(){
-  // Use a proportional strategy with a steady state model to replace this
-  // generation by the next one 
-  merit_t rtot=total();
-  // fill the children array with the best parents of the preceding
-  // generation by making a partial copy of this generation
-  int nchild = int( replace * population ); // number of children to create
-  int ichild = population - nchild; // this is child index in new generation
-  Generation chld( *this, ichild ); // make partial copy
-  Individual **parent = new_Individual_list( gene, 2 , createind );
-  // now for the new children
-  while( ichild < population && !stop ){
-    // select parents
-    int ip1 = tselect( rtot, -1 ); // first parent, all in list
-    // make a copy so crossover and mutation don't change original
-    *parent[0] = *member[ ip1 ];
-    // remove merit of removed parent from total
-    merit_t rtot2 = rtot - member[ ip1 ] -> Merit( );
-    int ip2 = tselect( rtot2, ip1 );  // make second selection with
-          // parent 1 removed
-    // make a copy so crossover and mutation don't change original
-    *parent[1] = *member[ ip2 ];
-    // breed by doing crossover and mutation on parents
-    float p = MTRNGrand();
-    if ( p <= crossprob )
-      crossover( parent[0], parent[1] );
-    p = MTRNGrand();
-    if ( p <= mutprob )
-      parent[0]->mutate();
-    p = MTRNGrand();
-    if ( p <= mutprob )
-      parent[1]->mutate();
-    // Add these children to the population
-    *chld.member[ ichild++ ] = *parent[0];
-    if( ichild < population )
-      *chld.member[ ichild++ ] = *parent[1];
-  } // for the rest of the child list
-  /* Replace previous generation with this one.
-   * ichild should only at most be equal to population.
-  */
-#ifdef DEBUG
-  if ( ichild > population && debug_level == GA ) {
-    gaerr << "Generation::proportional: ichild > population\n";
-    pausel();
-  } //if
+        /* now resort the fitted individuals again. */
+        qsort(member, fit_max_individuals, sizeof(member[0]), mcomp);
+      }
 #endif
-  for ( int i=0; i<ichild; i++ ) {
-    *member[i] = *chld.member[i];
-  } // for i
-  delete_Individual_list(parent);
-} // Generation::proportional
 
-void Generation::tournament() {
-    /* Use a tournament strategy with a steady state model to replace this
-     * generation by the next one 
-     * fill the children array with the best parents of the preceding
-     * generation by making a partial copy of this generation
-     */
-    int nchild = int(replace*population);// number of children to create
-    int ichild=population-nchild; // this is the child index in the new generation
-    Generation chld(*this,ichild);// make partial copy
-    Individual **children = new_Individual_list( gene, 2, createind );
+      // now set gene of the generation to member[0].gene of the population
+      gene = member[0]->DNA;
+    } // Generation::sort
 
-    // now for the new children
-    while( ichild < population && !stop ) {
+    template < typename optionsT>
+    Generation<optionsT>::Generation( const optionsT & options, const Gene & igene )
+      : options(options), gene(igene) {
+      member = new_Individual_list( gene, options.population, options.createind,
+                                    options.meritfnc, options.exterior_pointer );
+      assert(member); // member better be point to an Individual pointer
+    } // Generation constructor
+
+    template < typename optionsT>
+    Generation<optionsT>::Generation(const Generation& gen)
+      : options(gen.options), gene( gen.gene ) {
+      //cast the gene[-1] to a function of the correct kind
+      member = new_Individual_list( gene, options.population, options.createind );
+      for( int i = 0; i < options.population; ++i )
+        *member[i] = *gen.member[i];
+    } // Generation copy constructor
+
+    template < typename optionsT>
+    Generation<optionsT>::Generation(const Generation& gen, int max_individuals)
+      : options( gen.options), gene( gen.gene ) {
+      //cast the gene[-1] to a function of the correct kind
+      member = new_Individual_list( gene, options.population, options.createind );
+      for( int i = 0; i < max_individuals; ++i )
+        *member[i] = *gen.member[i];
+    } // Generation partial copy constructor
+
+    template < typename optionsT>
+    void Generation<optionsT>::randinit(){//initialize the population with random genes
+      for( int i = 0; i < options.population; ++i )
+        member[i]->randinit();
+    } // Generation::init
+
+    template < typename optionsT>
+    Generation<optionsT>::~Generation(){
+      delete_Individual_list(member);
+    } // Generation destructor
+
+    template < typename optionsT>
+    void Generation<optionsT>::proportional(){
+      // Use a proportional strategy with a steady state model to replace this
+      // generation by the next one 
+      merit_t rtot=total();
+      // fill the children array with the best parents of the preceding
+      // generation by making a partial copy of this generation
+      int nchild = int( options.replace * options.population ); // number of children to create
+      int ichild = options.population - nchild; // this is child index in new generation
+      Generation chld( *this, ichild ); // make partial copy
+      Individual **parent = new_Individual_list( gene, 2 , options.createind );
+      // now for the new children
+      while( ichild < options.population && !stop ){
+        // select parents
+        int ip1 = tselect( rtot, -1 ); // first parent, all in list
+        // make a copy so crossover and mutation don't change original
+        *parent[0] = *member[ ip1 ];
+        // remove merit of removed parent from total
+        merit_t rtot2 = rtot - member[ ip1 ] -> Merit( );
+        int ip2 = tselect( rtot2, ip1 );  // make second selection with
+              // parent 1 removed
+        // make a copy so crossover and mutation don't change original
+        *parent[1] = *member[ ip2 ];
+        // breed by doing crossover and mutation on parents
+        float p = MTRNGrand();
+        if ( p <= options.crossprob )
+          crossover( parent[0], parent[1] );
+        p = MTRNGrand();
+        if ( p <= options.mutprob )
+          parent[0]->mutate();
+        p = MTRNGrand();
+        if ( p <= options.mutprob )
+          parent[1]->mutate();
+        // Add these children to the population
+        *chld.member[ ichild++ ] = *parent[0];
+        if( ichild < options.population )
+          *chld.member[ ichild++ ] = *parent[1];
+      } // for the rest of the child list
+      /* Replace previous generation with this one.
+       * ichild should only at most be equal to population.
+      */
+    #ifdef DEBUG
+      if ( ichild > options.population && debug_level == GA ) {
+        gaerr << "Generation::proportional: ichild > population\n";
+        pausel();
+      } //if
+    #endif
+      for ( int i=0; i<ichild; ++i ) {
+        *member[i] = *chld.member[i];
+      } // for i
+      delete_Individual_list(parent);
+    } // Generation::proportional
+
+    template < typename optionsT>
+    void Generation<optionsT>::tournament() {
+      /* Use a tournament strategy with a steady state model to replace this
+       * generation by the next one 
+       * fill the children array with the best parents of the preceding
+       * generation by making a partial copy of this generation
+       */
+      int nchild = int(options.replace*options.population);// number of children to create
+      int ichild=options.population-nchild; // this is the child index in the new generation
+      Generation chld(*this,ichild);// make partial copy
+      Individual **children = new_Individual_list( gene, 2, options.createind );
+
+      // now for the new children
+      while( ichild < options.population && !stop ) {
         // select parents by tournament
-        int ip1 = int((population-0.001)*MTRNGrand());
+        int ip1 = int((options.population-0.001)*MTRNGrand());
         int ip2=ip1;
         while(ip2 == ip1) {
-            ip2 = int((population-0.001)*MTRNGrand());
+          ip2 = int((options.population-0.001)*MTRNGrand());
         } // while parents are identical
 
         // compare parents and keep the best one
         if (member[ip1]->Merit() < member[ip2]->Merit())
-            ip1 = ip2; // second parent in tournament is better
+          ip1 = ip2; // second parent in tournament is better
 
         {// Now do it again for another parent
-            ip2 = ip1;
-            while(ip2==ip1)
-                ip2 = int((population-0.001)*MTRNGrand());
+          ip2 = ip1;
+          while(ip2==ip1)
+            ip2 = int((options.population-0.001)*MTRNGrand());
 
-            int ip3 = ip2;
-            while((ip3 == ip2) || (ip3 == ip1)){
-                ip3 = int((population-0.001)*MTRNGrand());
-            } // while parents are identical
+          int ip3 = ip2;
+          while((ip3 == ip2) || (ip3 == ip1)){
+            ip3 = int((options.population-0.001)*MTRNGrand());
+          } // while parents are identical
 
-            // compare parents and keep the best one
-            if (member[ip2]->Merit() < member[ip3]->Merit())
-                ip2 = ip3; // second parent in tournament is better
+          // compare parents and keep the best one
+          if (member[ip2]->Merit() < member[ip3]->Merit())
+            ip2 = ip3; // second parent in tournament is better
 
         }// Okay, parents are selected (ip1 and ip2)
     
@@ -330,218 +336,141 @@ void Generation::tournament() {
 
         // breed by doing crossover and mutation on parents' DNA
         float p = MTRNGrand();
-        if (p <= crossprob)
-            crossover(children[0], children[1]);
+        if (p <= options.crossprob)
+          crossover(children[0], children[1]);
 
         p = MTRNGrand();
-        if (p <= mutprob)
-            children[0]->mutate();
+        if (p <= options.mutprob)
+          children[0]->mutate();
 
         p = MTRNGrand();
-        if ( p <= mutprob )
-            children[1]->mutate();
+        if ( p <= options.mutprob )
+          children[1]->mutate();
 
         // Add these children to the population
         *chld.member[ ichild++ ] = *children[0];
-        if( ichild < population )
-            *chld.member[ ichild++ ] = *children[1];
+        if( ichild < options.population )
+          *chld.member[ ichild++ ] = *children[1];
 
-    } // for the rest of the child list
+      } // for the rest of the child list
 
-    /* Replace previous generation with this one.
-     * ichild should only at most be equal to population.
-    */
-#ifdef DEBUG
-    if ( ichild > population && debug_level == GA ) {
+      /* Replace previous generation with this one.
+       * ichild should only at most be equal to population.
+      */
+
+      #ifdef DEBUG
+      if ( ichild > options.population && debug_level == GA ) {
         gaerr << "Generation::tournament: ichild > population\n";
         pausel();
-    } //if
-#endif
-    for ( int i=0; i<ichild; i++ ) {
-        *member[i] = *chld.member[i];
-    } // for i
-    delete_Individual_list(children);
-} // Generation::tournament
+      } //if
+      #endif
 
-int Generation::tselect(merit_t rtot, int skip){
-    // select a parent using tournament selection
-    // rtot is the sum of the merit functions
-    // if skip>=0, that parent will be skipped in the selection
-    float p = MTRNGrand();
-    merit_t ptot=0;
-    int ipar=-1;
-    if(skip){
+      for ( int i=0; i<ichild; ++i ) {
+        *member[i] = *chld.member[i];
+      } // for i
+      delete_Individual_list(children);
+    } // Generation::tournament
+
+    template < typename optionsT>
+    int Generation<optionsT>::tselect(merit_t rtot, int skip) {
+      // select a parent using tournament selection
+      // rtot is the sum of the merit functions
+      // if skip>=0, that parent will be skipped in the selection
+      float p = MTRNGrand();
+      merit_t ptot=0;
+      int ipar=-1;
+      if(skip){
         // I am not skipping the first element, begin there
         ipar = 0;
         ptot = member[0]->Merit()/rtot;
-    } else {
+      } else {
         // I am skipping the first element, begin with the second
         ipar = 1;
         ptot = member[1]->Merit()/rtot;
-    } // if skip!=0
-    while(ptot<p && ipar<population){
+      } // if skip!=0
+      while(ptot<p && ipar<options.population){
         // scan the list until ptot exceeds p
         if(++ipar != skip) // don't do this for the skipped element
-            ptot += member[ipar]->Merit()/rtot;
-    } // while ptot<p
-    if(ipar>=population)
-      return population-1;
-    return ipar;
-} // Generation::tselect
+          ptot += member[ipar]->Merit()/rtot;
+      } // while ptot<p
+      if(ipar>=options.population)
+        return options.population-1;
+      else
+        return ipar;
+    } // Generation::tselect
 
-int Generation::seed(const Gene & seedgene, float seed_fraction){
-    // insure inclusion of a specific solution in the set
-    if (seed_fraction > 1.0) {
+    template < typename optionsT>
+    int Generation<optionsT>::seed( const Gene & seedgene,
+                                      float seed_fraction ) {
+      // insure inclusion of a specific solution in the set
+      if (seed_fraction > 1.0) {
         THROW(std::runtime_error,"Generation::seed:  seed fraction must be <= 1.0");
-    }
-
-    int numseed = int(seed_fraction * population);
-    for(int i=0;i<numseed; i++) {
-        member[i]->regene(seedgene); 
-    }//for
-    return numseed;
-} // Generation::seed
-
-void Generation::hist(){
-  // print a histogram of the random selections
-  Histogram hist(population, hist_cont_grid_cols, *member[0]);
-  for(int i=0; i<population; i++){
-    hist.update(*member[i]);
-  }
-  gaout<<hist;
-} // Generation::hist
-
-#ifdef HYBRID
-
-///
-Gene_Simplex::Gene_Simplex(Allele_t ppar[], int nparams,Individual * ml):
-  Fit<>(ppar,nparams),member(ml){
-}//Gene_Simplex constructor
-
-Gene_Simplex::~Gene_Simplex(){
-}//Gene_Simplex destructor
-
-merit_t Gene_Simplex::minfunc(Allele_t p[]){
-  /* Update the layer thicknesses using the parameters and return the
-   * new merit function.  Actually, I need to return minus the merit
-   * function since simplex is set up to minimize, rather than
-   * maximize a function.
-  */
-  return -member->test_Merit(p,ALLELE_DYNAMIC_CONT);
-} // Gene_Simplex::minfunc
-
-merit_t simplex_fit( Individual *member, int local_fit_max_iteration,
-           float local_fit_tolerance ){
-  // find a minimum of this population member
-  // by doing local_fit_max_iteration steps using the simplex
-  // algorithm
-  int nalleles = member->DNA.numAlleles( ALLELE_DYNAMIC_CONT );
-  if(!nalleles) {
-    THROW(std::runtime_error,"simplex_fit: DNA has zero dynamic alleles(bad!).");
-  }
-  Allele_t *ppar    = new Allele_t[nalleles];
-  Allele_t *minvals = new Allele_t[nalleles];
-  Allele_t *maxvals = new Allele_t[nalleles];
-  // Initialize fit parameters
-  //Spencer Olson is going to get married next month to a 
-  // very nice individual.  he seems pretty happy and is 
-  // even willing to write about it in his code. -- Bob Bradford
-  for(int i=0; i<nalleles; i++) {
-    ppar[i] = member->DNA.Allele( i, ALLELE_DYNAMIC_CONT ).val;
-    minvals[i] = member->DNA.Allele( i, ALLELE_DYNAMIC_CONT ).min;
-    maxvals[i] = member->DNA.Allele( i, ALLELE_DYNAMIC_CONT ).max;
-  }//for
-  Gene_Simplex fit(ppar, nalleles, member);
-
-  /* get member's merit before simplex.
-   * NOTE:  I am obtaining bmerit and amerit
-   * before and after applying the simplex,
-   * respectively.  The reason for this is just
-   * to keep the logic clear.  One could get these
-   * values in any order (I think). */
-  merit_t bmerit = member->Merit();
-
-  fit.simplex(minvals,maxvals,local_fit_tolerance, local_fit_max_iteration);
-
-  /* force a range onto the fit. */
-  bool had_to_force_genes = false;
-  for (int i = 0; i < nalleles; i++) {
-      if (ppar[i] < minvals[i]) {
-          ppar[i] = minvals[i];
-          had_to_force_genes = true;
-      } else if (ppar[i] > maxvals[i]) {
-          ppar[i] = maxvals[i];
-          had_to_force_genes = true;
       }
-  }
 
-  /* Now get the merit after having applied the simplex. */
-  merit_t amerit = member->test_Merit(ppar,ALLELE_DYNAMIC_CONT);
+      int numseed = int(seed_fraction * options.population);
+      for(int i=0;i<numseed; ++i) {
+        member[i]->regene(seedgene); 
+      }//for
+      return numseed;
+    } // Generation::seed
 
-  if (had_to_force_genes) {
-      gaerr <<  "simplex_fit:  Simplex moved parameters outside of allowed "
-                "ranges.  Coerced to extrema."
-            << std::endl;
-  }
+    template < typename optionsT>
+    void Generation<optionsT>::hist() {
+      // print a histogram of the random selections
+      Histogram hist(options.population, options.diversity_grid_cols, *member[0]);
+      for(int i=0; i<options.population; ++i){
+        hist.update(*member[i]);
+      }
+      gaout<<hist;
+    } // Generation::hist
 
-  if( bmerit > amerit ) {//compare the two to see if the simplex worked
-#ifdef DEBUG
-   if ( debug_level == GA )
-    gaerr<<"simplex_fit: Simplex went goofy\n"
-         <<"\tmerit before= "<<bmerit
-         <<"\n\tmerit after= "<<amerit<<std::endl;
-#endif //DEBUG
-  }
-  else { //only regene if the simplex helped the design
-    member->regene(ppar,ALLELE_DYNAMIC_CONT);
-  }
-  delete[] ppar; // only need this thing for this method
-  delete[] minvals; // only need this thing for this method
-  delete[] maxvals; // only need this thing for this method
-  return amerit;
-} // simplex_fit
-#endif //HYBRID
+    ///
+    Individual ** new_Individual_list(const Gene & gn, long population,
+                                      CREATE_IND_FUNC createind /* = NULL */,
+                                      void * meritfnc /* = NULL */,
+                                      void * obj_ptr /* = NULL */ ) {
+      /* With the following, we will create an array of pointers
+       * each to its own new Individiual, except for the first pointer
+       * in the array.  In ilist[0] we will store the value of population
+       * after casting appropriately.  We will then return a pointer to
+       * to the ilist[1] to the user.  We do this, so that, when deleting
+       * the list, we can find the size of the population without
+       * having it given explicitly to us again. (see delete_Individual_list)
+       */
+      if(!population)
+        return NULL;//will do nothing for this case
 
-///
-Individual ** new_Individual_list(const Gene & gn, long population,
-                                  CREATE_IND_FUNC createind /* = NULL */,
-                                  void * meritfnc /* = NULL */,
-                                  void * obj_ptr /* = NULL */ ) {
-  /* With the following, we will create an array of pointers
-   * each to its own new Individiual, except for the first pointer
-   * in the array.  In ilist[0] we will store the value of population
-   * after casting appropriately.  We will then return a pointer to
-   * to the ilist[1] to the user.  We do this, so that, when deleting
-   * the list, we can find the size of the population without
-   * having it given explicitly to us again. (see delete_Individual_list)
-   */
-  if(!population) return NULL;//will do nothing for this case
-  Individual **ilist = new Individual *[population+1];
-  if( !createind ) createind = create_Individual;
-  for(long i = 1; i<(population+1);i++) {
-    ilist[i] = createind( gn, meritfnc, obj_ptr );
-  }//for
-  ilist[0] = (Individual *)(population);
-  return ++ilist;
-} // new_population_list
+      Individual **ilist = new Individual *[population+1];
 
-void delete_Individual_list(Individual ** ilist) {
-  --ilist;
-  long population = (long)ilist[0];
-  ilist++;
-  for(long i = 0; i<population; delete ilist[i++]);
-  delete[] --ilist;
-} //delete_population_list
+      if( !createind )
+        createind = create_Individual;
 
-std::ostream & operator<<(std::ostream &output, const Generation & gen) {
-    output<<"Top four Individuals in Generation\n";
-    for(int i=0; i<4; i++){
+      for(long i = 1; i<(population+1);++i)
+        ilist[i] = createind( gn, meritfnc, obj_ptr );
+
+      ilist[0] = (Individual *)(population);
+      return ++ilist;
+    } // new_population_list
+
+    void delete_Individual_list(Individual ** ilist) {
+      --ilist;
+      long population = (long)ilist[0];
+      ++ilist;
+      for(long i = 0; i<population; delete ilist[i++]);
+      delete[] --ilist;
+    } //delete_population_list
+
+    template < typename T >
+    std::ostream & operator<<(std::ostream &output, const Generation<T> & gen) {
+      output<<"Top four Individuals in Generation\n";
+      for(int i=0; i<4; ++i){
         //output.width(2);
         output<<"member["<<i<<"]: "
               <<*gen.member[i]
-              <<std::endl<<std::endl;
-    } // for first items in list
-  return output;
-} // operator << Generation
+              << "\n\n" << std::flush;
+      } // for first items in list
+      return output;
+    } // operator << Generation
 
-}}/*namespace olson_tools::fit */
+  }/*namespace olson_tools::fit */
+}/*namespace olson_tools */

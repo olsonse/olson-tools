@@ -58,50 +58,68 @@
  */
 
 
-#ifndef GENETICALG_H
-#define GENETICALG_H
+#ifndef olson_tools_fit_GeneticAlg_h
+#define olson_tools_fit_GeneticAlg_h
 
+#include <olson-tools/fit/Generation.h>
+#include <olson-tools/fit/Gene.h>
+#include <olson-tools/fit/make_options.h>
+
+#include <limits>
 #include <string>
-#include "Generation.h"
-#include "Gene.h"
-#include "GeneticAlgArgs.h"
 
-
-namespace olson_tools{ namespace fit {
-
-///
-class GeneticAlg {
-  public:
-    ///
-    GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args );
-    ///
-    ~GeneticAlg() {}
-    ///
-    merit_t fit( std::ostream * output = NULL, float tolerance = 0, merit_t maxmerit = -1e60 );
-    ///
-    friend std::ostream & operator<<(std::ostream &,const GeneticAlg &);
-  private:
-    ///The arguments
-    GeneticAlgArgs args;
+namespace olson_tools{
+  namespace fit {
 
     ///
-    Generation parents;
+    template < typename _options = make_options<>::type >
+    class GeneticAlg {
+      /* TYPEDEFS */
+    public:
+      typedef _options optionsT;
 
-    ///The actual generation that we have just iterated.
-    int generation_iter;
+      /// Defining the exception class for GeneticAlg (not in use currently).
+      class stopGeneticAlg { };
 
-    ///Initialized to gene and will contain the gene fit by the GeneticAlg.
-    Gene *fitgene;
+      /* MEMBER STORAGE */
+    private:
+      ///The arguments
+      optionsT options;
 
-  public:
-    /// Defining the exception class for GeneticAlg (not in use currently).
-    class stopGeneticAlg { };
-};
+      ///
+      Generation<optionsT> parents;
 
-///The GeneticAlg print function.
-std::ostream & operator<<(std::ostream &, const GeneticAlg &);
+      ///The actual generation that we have just iterated.
+      int generation_iter;
 
-}}/*namespace olson_tools::fit */
+      ///Initialized to gene and will contain the gene fit by the GeneticAlg.
+      Gene *fitgene;
 
-#endif //  GENETICALG_H
+      /* MEMBER FUNCTIONS */
+    public:
+      ///
+      GeneticAlg(Gene &gene, const optionsT & options = optionsT() );
+      ///
+      ~GeneticAlg() {}
+      ///
+      merit_t fit( std::ostream * output = NULL,
+                   float tolerance = 0,
+                   merit_t maxmerit = -std::numeric_limits<merit_t>::infinity() );
+
+      /* FRIEND FUNCTIONS */
+      ///
+      template < typename T >
+      friend std::ostream & operator<<( std::ostream &, const GeneticAlg<T> & );
+    };
+
+    ///The GeneticAlg print function.
+    template < typename T >
+    std::ostream & operator<<( std::ostream &, const GeneticAlg<T> &);
+
+  }/*namespace olson_tools::fit */
+}/*namespace olson_tools */
+
+#include <olson-tools/fit/GeneticAlg.cpp>
+
+#endif //  olson_tools_fit_GeneticAlg_h
 

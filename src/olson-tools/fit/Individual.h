@@ -93,14 +93,25 @@ public:
   virtual ~Individual();
   /// Update organism without changing DNA, return new merit function.
   merit_t test_Merit( Allele_t test_alleles[], unsigned char alleletype = 0 );
+
   /// redo the DNA
   void regene(const Gene &);
+
+  /// redo the DNA and set the merit and updatemerit to false
+  void regene( const Gene &, const merit_t & m );
+
   /// update DNA
-  void regene(Allele_t thick[],int alleletype);
+  void regene( Allele_t thick[], int alleletype );
+
+  /// update DNA and set the merit and updatemerit to false
+  void regene( Allele_t thick[], int alleletype, const merit_t & m );
 
   /** Multiply the merit of this individual by mf to create a new merit.
    */
   void multMerit(merit_t mf);
+
+  /** Explicitly (and arbitrarily?) set the merit. */
+  void setMerit( const merit_t & m );
 
   /**@return Returns Merit unless genes have been updated;
    * in that case merit is set equal to the new meritfunction.

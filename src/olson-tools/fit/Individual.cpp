@@ -91,14 +91,26 @@ void crossover(Individual* i1, Individual* i2){
 
 REDEF_NEW_DEL_C(Individual,0);
 
-void Individual::regene(const Gene &g){
+void Individual::regene( const Gene &g ) {
   updatemerit = true;// we have updated the gene
   DNA = Chromosome(g);
 } // Individual::regene
 
-void Individual::regene(Allele_t alleles[],int alleletype){
+void Individual::regene( const Gene &g, const merit_t & m ) {
+  regene(g);
+  merit = m;
+  updatemerit = false;// we have updated the merit
+} // Individual::regene
+
+void Individual::regene( Allele_t alleles[], int alleletype ) {
   updatemerit = true;// we have updated the gene
   DNA.regene(alleles,alleletype);//alleles better be the correct size, or we'll segfault
+} // Individual::regene
+
+void Individual::regene( Allele_t alleles[],int alleletype, const merit_t & m) {
+  regene(alleles, alleletype);
+  merit = m;
+  updatemerit = false;// we have updated the gene
 } // Individual::regene
 
 Individual::Individual(const Individual & ind):
@@ -190,6 +202,11 @@ void Individual::multMerit(merit_t mf){
   merit = Merit() * mf;
 }// Individual::multMerit
 
+void Individual::setMerit( const merit_t & m ) {
+  merit = m;
+  updatemerit = false;
+}// Individual::setMerit
+
 void Individual::mutate(){
   DNA.mutate();
   updatemerit = true;
@@ -198,7 +215,7 @@ void Individual::mutate(){
 std::ostream & operator<<(std::ostream &output, const Individual & ind) {
   output<<"DNA:"
         << ind.DNA
-        <<"Individual Merit: "<<ind.merit;
+        <<"\nIndividual Merit: "<<ind.merit;
   return output;
 } // operator << Individual
 

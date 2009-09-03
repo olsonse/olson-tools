@@ -57,14 +57,16 @@
  *
  */
 
-#include "Gene.h"
-#include "../random/random.h"
-#include "io.h" // in and output
-#include <stdlib.h>
-#include <assert.h>
+#include <olson-tools/fit/Gene.h>
+#include <olson-tools/fit/io.h> // in and output
+
+#include <olson-tools/random/random.h>
+#include <olson-tools/ompexcept.h>
+
 #include <stdexcept>
 #include <algorithm>
-#include "../ompexcept.h"
+#include <stdlib.h>
+#include <assert.h>
 
 namespace olson_tools{ namespace fit {
 
@@ -173,12 +175,11 @@ void Chromosome::mutate(){
 } // Chromosome::mutate
 
 std::ostream& operator<<(std::ostream &output, const Gene & gene) {
-    output<<'\t';
-    int nalleles=gene.numAlleles();
-    for(int i=0;i<nalleles;i++)
-      output << gene[i].val <<"  ";
-    output<<std::endl;
-    return output;
+  output<<'\t';
+  int nalleles=gene.numAlleles();
+  for(int i=0;i<nalleles;i++)
+    output << gene[i].val <<"  ";
+  return output;
 } // operator<<  Gene
 
 

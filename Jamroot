@@ -52,7 +52,6 @@ project /olson-tools
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
         <library>/physical//physical
-    #: build-dir build
     ;
 
 lib olson-tools :
@@ -64,10 +63,8 @@ lib olson-tools :
       src/olson-tools/3j.c
       src/olson-tools/fit/debug.cpp
       src/olson-tools/fit/Gene.cpp
-      src/olson-tools/fit/Generation.cpp
+      src/olson-tools/fit/GeneSimplex.cpp
       src/olson-tools/fit/Histogram.cpp
-      src/olson-tools/fit/GeneticAlg.cpp
-      src/olson-tools/fit/GeneticAlgArgs.cpp
       src/olson-tools/fit/Individual.cpp
       src/olson-tools/fit/io.cpp
       src/olson-tools/util.cpp

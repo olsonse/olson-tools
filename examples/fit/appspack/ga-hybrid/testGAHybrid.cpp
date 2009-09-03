@@ -1,6 +1,6 @@
 
 #include <olson-tools/fit/GeneticAlg.h>
-#include <olson-tools/fit/GeneSimplex.h>
+#include <olson-tools/fit/GeneAppsPack.h>
 #include <olson-tools/fit/make_options.h>
 #include <iostream>
 #include <fstream>
@@ -11,7 +11,7 @@ using olson_tools::fit::ALLELE_DYNAMIC_CONT;
 using olson_tools::fit::Gene;
 using olson_tools::fit::Individual;
 using olson_tools::fit::GeneticAlg;
-using olson_tools::fit::GeneSimplex;
+using olson_tools::fit::GeneAppsPack;
 using olson_tools::fit::make_options;
 
 #define A(a,b,c)       Allele_struct((a),(b),(c), ALLELE_DYNAMIC_CONT)
@@ -20,17 +20,11 @@ using olson_tools::fit::make_options;
 #  define N_GENES 2
 #endif
 
+#define RECORD_EVALS
+
 static int n_eval = 0;
 #ifdef RECORD_EVALS
 static std::ofstream frec("record");
-
-#  define POPULATION                          10
-#  define LOCAL_FIT_MAX_INDIVIDUALS_PRCTAGE  0.00
-#  define REPLAC                             0.97
-#else
-#  define POPULATION                          10000
-#  define LOCAL_FIT_MAX_INDIVIDUALS_PRCTAGE  0.0003
-#  define REPLAC                             0.60
 #endif
 
 template < int scale = 1, int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0 >
@@ -73,17 +67,25 @@ merit_t meritfnc( const Gene & gene, void * nothing ) {
 }
 
 int main() {
-  typedef make_options<GeneSimplex>::type options;
+  typedef make_options<GeneAppsPack>::type options;
   options opts;
   opts.meritfnc = (void*)meritfnc;
-  opts.population = 10000;
-  opts.local_fit_max_individuals_prctage = 0.0003;
-  opts.localParam.tolerance = 0.0000000001;
+  opts.population = 10;
+  opts.local_fit_max_individuals_prctage = 1.00;
   opts.tolerance = 1e-15;
-  opts.encourage_diversity = true;
+  //opts.encourage_diversity = false;
   opts.max_merit = 0.9;
-  opts.replace = 0.60;
+  opts.replace = 0.67;
   opts.maxgeneration = 1000;
+  opts.localParam.sublist("Solver").setParameter("Cache Output File", std::string("eval_output"));
+  opts.localParam.sublist("Solver").setParameter("Cache Input File", std::string("eval_output"));
+  opts.localParam.sublist("Solver").setParameter("Debug", static_cast<int>(0));
+  opts.localParam.sublist("Solver").setParameter("Initial Step", static_cast<double>(0.10));
+  //opts.generation_delay = .5;
+  //opts.mutprob = .1;
+  //opts.crossprob = .1;
+
+
   Gene dna;
 
   for ( int i = 0; i < N_GENES; ++i )
@@ -102,7 +104,7 @@ int main() {
   std::cout << "evals of merit function :  " << n_eval << std::endl;
   n_eval = 0;
 
-  merit = GeneSimplex() ( &indiv, opts.localParam );
+  merit = GeneAppsPack() ( &indiv, opts.localParam );
 
   dna = indiv.DNA;
 

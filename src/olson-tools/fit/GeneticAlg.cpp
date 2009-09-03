@@ -56,153 +56,153 @@
 #include <olson-tools/fit/Generation.h>
 #include <olson-tools/fit/GeneticAlg.h>
 #include <olson-tools/fit/Gene.h>
+#include <olson-tools/fit/debug.h>
 
 #include <olson-tools/random/random.h>
 #include <olson-tools/ompexcept.h>
 
 #include <stdexcept>
 #include <ostream>
+#include <limits>
 
-#include <signal.h> // This is so we can issue ^C to stop the ga in its tracks
-#include <assert.h>
+#include <cassert>
+#include <csignal> // This is so we can issue ^C to stop the ga in its tracks
+#include <unistd.h>
 
-namespace olson_tools{ namespace fit {
+namespace olson_tools {
+  namespace fit {
 
-typedef void (*sighandler_t)(int);
+    template < typename optionsT >
+    GeneticAlg<optionsT>::GeneticAlg( Gene &gene, const optionsT & options ):
+      options( options ),
+      parents( options, gene ),
+               fitgene( &gene ) { }
 
-GeneticAlg::GeneticAlg(Gene &gene, GeneticAlgArgs & ga_args ):
-  args(ga_args),
-  parents( ga_args.population, gene,
-           ga_args.createind,
-           ga_args.meritfnc,
-           ga_args.exterior_pointer ),
-           fitgene(&gene) {
-
-    parents.replace = args.replace;
-    parents.local_fit_max_individuals_prctage =
-        args.local_fit_max_individuals_prctage;
-    parents.local_fit_tolerance = args.local_fit_tolerance;
-    parents.crossprob = args.crossprob;
-    parents.mutprob = args.mutprob;
-
-    /* histogram stuff */
-    parents.do_resource_competition = args.encourage_diversity;
-    parents.hist_cont_grid_cols = args.diversity_grid_cols;
-} // GeneticAlg constructor
-
-merit_t GeneticAlg::fit( std::ostream * output /* = NULL */,
-                         float tolerance /* = 0 */, 
-                         merit_t maxmerit /* = -1e60 */) {
-    if( output ) {
+    template < typename optionsT >
+    merit_t GeneticAlg<optionsT>::fit( std::ostream * output /* = NULL */,
+                                       float tolerance /* = 0 */, 
+                                       merit_t maxmerit /* = -INF */) {
+      if( output ) {
         assert(output);
         gaout.tie(output);
         gaerr.tie(output);
-    }
-    if( ! tolerance ) {
-        tolerance = args.tolerance;
-        maxmerit = args.max_merit;
-    }//if
+      }
 
-    /* The following line reset the the 'memory buffer'
-     * that will be kept for the Individual:: class.
-     * We do this so that each allocation of a new generation
-     * will be quicker.
-     */
-    Individual::freetoheap( args.population + 2 );
+      if( ! tolerance )
+        tolerance = options.tolerance;
 
-    merit_t merit(0),lmerit(0);
+      if ( maxmerit == -std::numeric_limits<merit_t>::infinity() )
+        maxmerit = options.max_merit;
 
-    //set the SIGINT signal so we can stop
-    sighandler_t old_signal_handler = signal(SIGINT, Generation::setStop);
+      /* The following line reset the the 'memory buffer'
+       * that will be kept for the Individual:: class.
+       * We do this so that each allocation of a new generation
+       * will be quicker.
+       */
+      Individual::freetoheap( options.population + 2 );
 
-    TRY {
-        parents.stop = false; // reset the stop boolean
-        parents.randinit(); // init with random population
-        if (args.seed_fraction > 0) {
-            /* seed a percentage of the parents with the given gene. */
-            int seeded = parents.seed(*fitgene, args.seed_fraction);
+      merit_t merit(0),lmerit(0);
 
-            if (output) {
-                (*output) << "Number of parents seeded:  " << seeded << std::endl;
-            }
-        }
-        parents.sort();
-        merit=parents.merit();
+      //set the SIGINT signal so we can stop
+      typedef void (*SigHandler)(int);
+      SigHandler old_signal_handler = signal(SIGINT, Generation<optionsT>::setStop);
 
-        /* start with the running average of merit at the current merit -
-         * divided. */
-        lmerit=0.5*merit;
+      TRY {
+          parents.stop = false; // reset the stop boolean
+          parents.randinit(); // init with random population
+          if (options.seed_fraction > 0) {
+              /* seed a percentage of the parents with the given gene. */
+              int seeded = parents.seed(*fitgene, options.seed_fraction);
 
-        if(output) {
-            (*output)<<"Generation 1\n";
-            (*output)<<parents;
-        }//if
-        generation_iter=2;
-        // Loop until merit function can be improved no further (less than tolerable)
-        // or until the desired merit is reached
-        while(   ( fabs(merit-lmerit) >= tolerance )
-              && !parents.stop
-              && ( merit <= maxmerit )
-              && ( generation_iter < args.maxgeneration ) ){
-            parents.tournament(); // provide darwinism and create new generation
-            parents.sort();
+              if (output) {
+                  (*output) << "Number of parents seeded:  " << seeded << std::endl;
+              }
+          }
+          parents.sort();
+          merit=parents.merit();
 
-            /* record the new exponential average of merit */
-            lmerit *= 0.75;
-            lmerit += 0.25 * merit;
+          /* start with the running average of merit at the current merit -
+           * divided. */
+          lmerit=0.5*merit;
 
-            merit=parents.merit();
-            if(output) {
-               (*output) << "Generation " << generation_iter++ << std::endl
-                         << parents 
-                         << "Average Merit of Top Four =" << merit << std::endl << std::endl 
-                         << "Generation Merit Increase =" << (merit-lmerit) << std::endl << std::endl;
-            }//if
-        } // while merit has decreased
+          if(output) {
+              (*output)<<"Generation 1\n";
+              (*output)<<parents;
+          }//if
+          generation_iter=2;
+          // Loop until merit function can be improved no further (less than tolerable)
+          // or until the desired merit is reached
+          while(   ( fabs(merit-lmerit) >= tolerance )
+                && !parents.stop
+                && ( merit <= maxmerit )
+                && ( generation_iter < options.maxgeneration ) ) {
+              parents.tournament(); // provide darwinism and create new generation
+              parents.sort();
 
-        /* Now copy over the best gene in the population to the
-         * gene that we are to return to the caller.
-        */
+              /* record the new exponential average of merit */
+              lmerit *= 0.75;
+              lmerit += 0.25 * merit;
 
-        *fitgene = parents.bestgene();
+              merit=parents.merit();
+              if(output) {
+                 (*output) << "Generation " << generation_iter++ << std::endl
+                           << parents 
+                           << "Average Merit of Top Four =" << merit << std::endl << std::endl 
+                           << "Generation Merit Increase =" << (merit-lmerit) << std::endl << std::endl;
+              }//if
 
-        if(parents.stop && output) {
-            (*output) << "I was asked to stop; you only get what is best so far"
-                      << std::endl;
-        }//if
+              if (options.generation_delay < 0)
+                pausel();
+              else if (options.generation_delay > 0)
+                usleep( static_cast<useconds_t>(options.generation_delay * 1e6) );
+          } // while merit has decreased
 
-    } CATCH( std::runtime_error & e,
-        if(output) {
-          (*output) << "GenticAlg exception caught:\n"
-                    << e.what() << std::endl;
-        }//if
-    ) CATCH(...,
-        if(output) {
-            (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" << std::endl;
-        }//if
-    )/* catch */
+          /* Now copy over the best gene in the population to the
+           * gene that we are to return to the caller.
+          */
 
-    /* Now we take care of getting the system back to what it should be. */
+          *fitgene = parents.bestgene();
 
-    /* We'll return the memory buffer set up for the Individual class
-     * and have the size of this buffer reset to its default value (0).
-     */
-    Individual::freetoheap();
+          if(parents.stop && output) {
+              (*output) << "I was asked to stop; you only get what is best so far"
+                        << std::endl;
+          }//if
 
-    //Reset the signal so that it isn't passed to us.
-    if( old_signal_handler == SIG_ERR ||
-        old_signal_handler == Generation::setStop )
-        signal(SIGINT, SIG_DFL);
-    else signal(SIGINT, old_signal_handler);
+      } CATCH( std::runtime_error & e,
+          if(output) {
+            (*output) << "GenticAlg exception caught:\n"
+                      << e.what() << std::endl;
+          }//if
+      ) CATCH(...,
+          if(output) {
+              (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" << std::endl;
+          }//if
+      )/* catch */
 
-    return merit;
-} // ga
+      /* Now we take care of getting the system back to what it should be. */
 
-std::ostream & operator<<(std::ostream & output,const GeneticAlg & ga){
-  output<<"Genetic Algorithm output:\n"
-        <<"Generation "<<ga.generation_iter<< std::endl
-        <<ga.parents<< std::endl;
-  return output;
-} // operator<< GeneticAlg
+      /* We'll return the memory buffer set up for the Individual class
+       * and have the size of this buffer reset to its default value (0).
+       */
+      Individual::freetoheap();
 
-}}/*namespace olson_tools::fit */
+      //Reset the signal so that it isn't passed to us.
+      if( old_signal_handler == SIG_ERR ||
+          old_signal_handler == Generation<optionsT>::setStop )
+          signal(SIGINT, SIG_DFL);
+      else signal(SIGINT, old_signal_handler);
+
+      return merit;
+    } // ga
+
+    template < typename T >
+    std::ostream & operator<< ( std::ostream & output,
+                                const GeneticAlg<T> & ga ) {
+      output<< "Genetic Algorithm output:\n"
+            << "Generation " << ga.generation_iter << '\n'
+            << ga.parents << std::endl;
+      return output;
+    } // operator<< GeneticAlg
+
+  }/*namespace olson_tools::fit */
+}/*namespace olson_tools */
