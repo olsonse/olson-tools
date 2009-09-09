@@ -111,7 +111,7 @@ public:
   void multMerit(merit_t mf);
 
   /** Explicitly (and arbitrarily?) set the merit. */
-  void setMerit( const merit_t & m );
+  void setMerit( const merit_t & m, const bool & do_not_updatemerit = true );
 
   /**@return Returns Merit unless genes have been updated;
    * in that case merit is set equal to the new meritfunction.
@@ -124,14 +124,16 @@ public:
   /// Assign operator.
   virtual const Individual & operator=(const Individual &);
 
-  ///
-  void mutate();
+  /** Mutate the DNA of this Individual.
+   * @returns the number of alleles actually mutated.
+   */
+  int mutate( const float & mutprob );
   ///The pointer to the merit function.
   MERIT_FUNCTION meritfnc;
   ///
-  friend void crossover(Individual& i1, Individual& i2);
+  friend bool crossover( Individual& i1, Individual& i2, const float & crossprob );
   ///
-  friend void crossover(Individual *i1, Individual *i2);
+  friend bool crossover( Individual *i1, Individual *i2, const float & crossprob );
   ///
   friend std::ostream & operator<<(std::ostream &, const Individual &);
   ///

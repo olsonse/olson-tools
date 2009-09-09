@@ -68,25 +68,29 @@ int mcomp(const void* l1, const void* l2){
     // need to cast then dereference
     Individual *v1=*(Individual**)l1;
     Individual *v2=*(Individual**)l2;
-    if(v1->Merit()<v2->Merit()) return 1;
-    if(v1->Merit()>v2->Merit()) return -1;
+    if( v1->Merit() < v2->Merit() ) return 1;
+    if( v1->Merit() > v2->Merit() ) return -1;
     return 0;
 } // mcomp
 
-void crossover(Individual& i1, Individual& i2){
-    // Do a crossover on the genes from i1 and i2 (other parts of multilayer are
-    // not updated).  (Huh?? --spencer may12,1999)
-    crossover(i1.DNA, i2.DNA);
+bool crossover( Individual& i1, Individual& i2, const float & crossprob ) {
+  // Do a crossover on the genes from i1 and i2 (other parts of multilayer are
+  // not updated).  (Huh?? --spencer may12,1999)
+  if ( crossover(i1.DNA, i2.DNA, crossprob) ) {
     i1.updatemerit = true;
     i2.updatemerit = true;
+  } else
+    return false;
 } // crossover
 
-void crossover(Individual* i1, Individual* i2){
-    // Do a crossover on the genes from i1 and i2 (other parts of multilayer are
-    // not updated).  (Huh?? --spencer may12,1999)
-    crossover(i1->DNA, i2->DNA);
+bool crossover( Individual* i1, Individual* i2, const float & crossprob ) {
+  // Do a crossover on the genes from i1 and i2 (other parts of multilayer are
+  // not updated).  (Huh?? --spencer may12,1999)
+  if ( crossover(i1->DNA, i2->DNA, crossprob) ) {
     i1->updatemerit = true;
     i2->updatemerit = true;
+  } else
+    return false;
 } // crossover
 
 REDEF_NEW_DEL_C(Individual,0);
@@ -202,14 +206,18 @@ void Individual::multMerit(merit_t mf){
   merit = Merit() * mf;
 }// Individual::multMerit
 
-void Individual::setMerit( const merit_t & m ) {
+void Individual::setMerit( const merit_t & m,
+                           const bool & do_not_updatemerit /* = true */ ) {
   merit = m;
-  updatemerit = false;
+  updatemerit = !do_not_updatemerit;
 }// Individual::setMerit
 
-void Individual::mutate(){
-  DNA.mutate();
-  updatemerit = true;
+int Individual::mutate( const float & mutprob ){
+  int retval = DNA.mutate( mutprob );
+  if ( retval > 0 )
+    updatemerit = true;
+
+  return retval;
 }//Individual::mutate
 
 std::ostream & operator<<(std::ostream &output, const Individual & ind) {

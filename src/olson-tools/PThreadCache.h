@@ -231,35 +231,37 @@ namespace olson_tools {
     inline void set_max_threads(int mx) {
       pthread_mutex_lock(&max_threads_mutex);
 
-      if(max_threads > 1) {
-        /* we previously set up threads, so lets tell them to stop. */
-        signalSlavesQuit();
+      if( max_threads != mx ) {
+        if(max_threads > 1) {
+          /* we previously set up threads, so lets tell them to stop. */
+          signalSlavesQuit();
 
-        /* join each of the threads. */
-        for (int i = 0; i < max_threads; i++) {
-          pthread_join(threads[i],NULL);
-        }
+          /* join each of the threads. */
+          for (int i = 0; i < max_threads; i++) {
+            pthread_join(threads[i],NULL);
+          }
 
-        resetSlavesQuit();
+          resetSlavesQuit();
 
-        /* free up the old list of thread ids. */
-        delete[]threads;
-        threads = NULL;
-      }
+          /* free up the old list of thread ids. */
+          delete[]threads;
+          threads = NULL;
+        }/* if we have to join some threads */
 
-      max_threads = mx > 1 ? mx : 1;
+        max_threads = mx > 1 ? mx : 1;
 
-      /* only create new threads IF more than one are requested. 
-       * If there is only one thread, the tasks will be executed serially at
-       * the point of addTask(). */
-      if(max_threads > 1) {
-        /* we are instructed to prepare for threaded processing. */
-        threads = new pthread_t[max_threads];
+        /* only create new threads IF more than one are requested. 
+         * If there is only one thread, the tasks will be executed serially at
+         * the point of addTask(). */
+        if(max_threads > 1) {
+          /* we are instructed to prepare for threaded processing. */
+          threads = new pthread_t[max_threads];
 
-        for (int i = 0; i < max_threads; i++) {
-          pthread_create(&threads[i], &pthread_attr, (void*(*)(void*))taskSlave, this);
-        }
-      }
+          for (int i = 0; i < max_threads; i++) {
+            pthread_create(&threads[i], &pthread_attr, (void*(*)(void*))taskSlave, this);
+          }
+        }/* if more than one thread requested */
+      }/* if the request is a change */
 
       pthread_mutex_unlock(&max_threads_mutex);
     }

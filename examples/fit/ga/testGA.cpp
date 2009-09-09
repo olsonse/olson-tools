@@ -83,7 +83,7 @@ int main() {
   opts.encourage_diversity = true;
   opts.max_merit = 0.9;
   opts.replace = 0.60;
-  opts.maxgeneration = 1000;
+  opts.max_generation = 1000;
   Gene dna;
 
   for ( int i = 0; i < N_GENES; ++i )

@@ -1,0 +1,14 @@
+1.  Implement a cache manager interface for the ga.  This should be a template
+    parameter so that we can easily use the APPSPACK cache manager.   
+
+2.  Get the multiple instances of APPSPACK sharing cache manager, or at least
+    merging cached results.  
+DONE
+
+3.  Code up a wrapper of the appspack::[P]ExecMinFunc class for the ga.  It has
+    to be a wrapper class because the ga maximizes merit instead of trying to
+    minimize a function.  
+MOSTLY DONE
+
+4.  Make the Merit functions as executed directly by the GA run in parallel as
+    much as possible.  

@@ -21,6 +21,6 @@ use-project /appspack : $(EXAMPLES_TOP)/../../appspack ;
 
 
 build-project file-io ;
-# build-project pipe-io ;
+build-project pipe-io ;
 build-project ga-hybrid ;
 

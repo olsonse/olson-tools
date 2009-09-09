@@ -74,7 +74,10 @@
 #include <olson-tools/fit/io.h> // out and input
 #include <olson-tools/fit/Individual.h>
 #include <olson-tools/fit/Histogram.h>
-#include <olson-tools/fit/NullLocalFit.h>
+
+#ifdef USE_PTHREAD
+#  include <olson-tools/PThreadCache.h>
+#endif
 
 namespace olson_tools{
   namespace fit {
@@ -87,6 +90,12 @@ namespace olson_tools{
       //?? Can't remember
       static bool stop;
 
+    #ifdef USE_PTHREAD
+    private:
+      static olson_tools::PThreadCache thread_cache;
+    #endif
+
+
       /* MEMBER STORAGE */
     public:
       /** options reference */
@@ -97,6 +106,10 @@ namespace olson_tools{
 
       /// copy of initial ranges and will hold the best gene of the population
       Gene gene;
+
+      /** Copy of the best merit acheived by the population (should be the merit
+       * value of the exiting gene. */
+      merit_t bestmerit;
 
       ///
       Individual **member;
@@ -119,16 +132,24 @@ namespace olson_tools{
       /// intialize with random population members
       void randinit();
 
-      ///
+      /** Return the average of the top 4 merit functions,
+       * assuming the list has already been sorted.
+       */
       merit_t merit();
 
       /// sort and set gene to member[0]->gene
       void sort();
 
-      ///
+      /** Use a tournament strategy with a steady state model to replace this
+       * generation by the next one.
+       * Fill the children array with the best parents of the preceding
+       * generation by making a partial copy of this generation
+       */
       void tournament();
 
-      ///
+      /** Use a proportional strategy with a steady state model to replace this
+       * generation by the next one.  This code is not currently in use. 
+       */
       void proportional();
 
       /** start with some good solutions.
@@ -137,14 +158,24 @@ namespace olson_tools{
        * @param seed_fraction
        *     The fraction of the population to seed with this gene.l
        * @returns the number of Individual/s seeded.
+       *
+       * FIXME:  Allow the user to specify a normal distribution width to use
+       * when randomly assigning new genes based on the seed.
+       * FIXME:  Note in this documentation when the appropriate time is to call
+       * this function.
        */
       int seed( const Gene &, float seed_fraction );
 
-      /// histogram to check random number generation
+      /** Histogram to check random number generation. */
       void hist();
 
-      ///
-      const Gene & bestgene() const;
+      /** Return the gene recorded as the best in the generation after sort().
+       */
+      const Gene & bestGene() const;
+
+      /** Return the gene recorded as the best in the generation after sort().
+       */
+      const merit_t & bestMerit() const;
 
       /* STATIC FUNCTIONS */
 

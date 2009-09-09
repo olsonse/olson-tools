@@ -76,7 +76,7 @@ namespace olson_tools {
     GeneticAlg<optionsT>::GeneticAlg( Gene &gene, const optionsT & options ):
       options( options ),
       parents( options, gene ),
-               fitgene( &gene ) { }
+      fitgene( &gene ) { }
 
     template < typename optionsT >
     merit_t GeneticAlg<optionsT>::fit( std::ostream * output /* = NULL */,
@@ -135,8 +135,8 @@ namespace olson_tools {
           while(   ( fabs(merit-lmerit) >= tolerance )
                 && !parents.stop
                 && ( merit <= maxmerit )
-                && ( generation_iter < options.maxgeneration ) ) {
-              parents.tournament(); // provide darwinism and create new generation
+                && ( generation_iter < options.max_generation ) ) {
+              parents.tournament(); // provide Darwinism and create new generation
               parents.sort();
 
               /* record the new exponential average of merit */
@@ -161,7 +161,8 @@ namespace olson_tools {
            * gene that we are to return to the caller.
           */
 
-          *fitgene = parents.bestgene();
+          *fitgene = parents.bestGene();
+          merit    = parents.bestMerit();
 
           if(parents.stop && output) {
               (*output) << "I was asked to stop; you only get what is best so far"
@@ -169,14 +170,14 @@ namespace olson_tools {
           }//if
 
       } CATCH( std::runtime_error & e,
-          if(output) {
+          if(output)
             (*output) << "GenticAlg exception caught:\n"
                       << e.what() << std::endl;
-          }//if
+          merit = 0;
       ) CATCH(...,
-          if(output) {
+          if(output)
               (*output)<<"GenticAlg exception caught:\n"<< "Unknown error" << std::endl;
-          }//if
+          merit = 0;
       )/* catch */
 
       /* Now we take care of getting the system back to what it should be. */

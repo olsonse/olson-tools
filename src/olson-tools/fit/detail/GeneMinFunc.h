@@ -11,7 +11,6 @@
 #define olson_tools_fit_GeneMinFunc_hpp
 
 #include <olson-tools/fit/Individual.h>
-#include <olson-tools/fit/appspack/ThreadedExecutor.hpp>
 
 #include <fstream>
 #include <iterator>

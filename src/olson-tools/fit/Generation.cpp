@@ -77,10 +77,18 @@
 #include <olson-tools/fit/debug.h>
 #include <olson-tools/fit/Gene.h>
 
+#ifdef USE_PTHREAD
+#  include <olson-tools/fit/detail/EvalMeritFunctor.h>
+#  include <olson-tools/fit/detail/LocalFitFunctor.h>
+#  include <olson-tools/PThreadEval.h>
+#endif
+
+
 #include <olson-tools/random/random.h>
 #include <olson-tools/ompexcept.h>
 
 #include <stdexcept>
+#include <set>
 
 #include <cstdlib>
 #include <cassert>
@@ -99,6 +107,12 @@ namespace olson_tools{
 
     template < typename optionsT >
     bool Generation<optionsT>::stop = false;
+
+    #ifdef USE_PTHREAD
+    template < typename optionsT >
+    olson_tools::PThreadCache
+      Generation<optionsT>::thread_cache = olson_tools::PThreadCache();
+    #endif
 
     /* *****   end    stopGeneticAlg portion ******* */
 
@@ -133,20 +147,60 @@ namespace olson_tools{
     } // Generation::total
 
     template < typename optionsT >
-    const Gene & Generation<optionsT>::bestgene() const {
+    const Gene & Generation<optionsT>::bestGene() const {
       // we should not allow others to change this guy's information
       return gene;
-    } // Generation::bestgene
+    } // Generation::bestGene
 
     template < typename optionsT >
-    void Generation<optionsT>::sort(){
-      int fit_max_individuals =
-        int(options.population * options.local_fit_max_individuals_prctage);
+    const merit_t & Generation<optionsT>::bestMerit() const {
+      // we should not allow others to change this guy's information
+      return bestmerit;
+    } // Generation::bestMerit
+
+    template < typename optionsT >
+    void Generation<optionsT>::sort() {
+      assert( options.population > 0 );
+
+      unsigned int fit_max_individuals =
+        int( options.population *
+             std::max( 0.0f,
+                       std::min(1.0f,options.local_fit_max_individuals_prctage)
+             )
+        );
       // Update merit functions, then sort list with best values first
 
-      // use fitting algorithm to maximize merit
-      for ( int i = 0; i < fit_max_individuals; ++i ) {
-        typename optionsT::LocalFit() ( member[i], options.localParam );
+      #ifdef USE_PTHREAD
+      {
+        /* We will evaluate Merit() for each individual in the population, each
+         * evaluation in its own threads.  Doing so now will cache the result in
+         * the individual.  
+         */
+        olson_tools::PThreadEval< detail::EvalMeritFunctor >
+          evaluator(Generation::thread_cache);
+        for ( int i = 0; i < options.population; ++i ) {
+          evaluator.eval( detail::EvalMeritFunctor( *member[i] ) );
+        }
+        evaluator.joinAll();
+      }
+      #endif
+
+      if ( options.local_fit_random ) {
+        // use fitting algorithm to maximize merit
+        std::set<int> fitted;
+
+        while ( fitted.size() < fit_max_individuals ) {
+          /* first choose which one to fit. */
+          int i = 0;
+          do {
+            i = static_cast<int>(MTRNGrand() * options.population * .9999999);
+          } while ( fitted.find(i) == fitted.end() );
+
+          fitted.insert(i);
+
+          /* now perform fit. */
+          typename optionsT::LocalFit() ( member[i], options.localParam );
+        }
       }
 
       /* encourage diversity if requested. */
@@ -156,9 +210,15 @@ namespace olson_tools{
                                           *member[0] );
 
         for(int i=0; i<options.population; ++i) {
-          hist->update(*member[i]);
-          merit_t mf = hist->meritfact(*member[i]);
-          member[i]->multMerit(mf);
+          Individual & ind = *member[i];
+
+          hist->update(ind);
+          /* make sure that we are doing the right thing for +- merits.
+           * To do this we multiply merit by:  (1 +- ( 1 - hist->mf() ) )
+           * where +sign is for merit< 0 and -sign is for merit> 0.
+           */
+          merit_t mf = 1 - ::copysign( 1 - hist->meritfact(ind), ind.Merit() );
+          ind.multMerit(mf);
         } // for i
 
         delete hist;
@@ -172,44 +232,72 @@ namespace olson_tools{
        */
       qsort(member, options.population, sizeof(member[0]), mcomp);
 
-#ifdef USE_THIS_NEW_CODE_BECAUSE_IT_SHOULD_BE_BETTER
-      /* This code should be better, I think, for applying the local fit.
-       * I think that for the local fit, I should try one of two approaches:
-       *   1.  apply the local fit to members randomly through the population until
-       *       quota has been reached.
-       *   2.  apply the local fit to only the best members.  Right now, I'm doing
-       *       neither of these--I'm doing something like locally fitting some of
-       *       those at the top and some randomly near the top and perhaps some
-       *       even not near the top.    
-       * There is only one problem that I can see by using this code:  The
-       * histogramming stuff will not work quite as well as it will only encourage
-       * diversity of the members BEFORE they are locally fitted.  */
+      if ( !options.local_fit_random ) {
+        /* This code should be better, I think, for applying the local fit.
+         * I think that for the local fit, I should try one of two approaches:
+         *   1.  apply the local fit to members randomly through the population until
+         *       quota has been reached.
+         *   2.  apply the local fit to only the best members.  Right now, I'm doing
+         *       neither of these--I'm doing something like locally fitting some of
+         *       those at the top and some randomly near the top and perhaps some
+         *       even not near the top.    
+         * There is only one problem that I can see by using this code:  The
+         * histogramming stuff will not work quite as well as it will only encourage
+         * diversity of the members BEFORE they are locally fitted.  */
 
-      if (fit_max_individuals > 0) {
-        for ( int i = 0; i < fit_max_individuals; ++i ) {
-          typename optionsT::LocalFit() ( member[i], options.localParam );
+        if (fit_max_individuals > 0) {
+          #ifdef USE_PTHREAD
+          {
+            /* We will evaluate Merit() for each individual in the population, each
+             * evaluation in its own threads.  Doing so now will cache the result in
+             * the individual.  
+             */
+            using detail::LocalFitFunctor;
+            using olson_tools::PThreadEval;
+
+            typedef LocalFitFunctor< typename optionsT::LocalFit > Functor;
+            PThreadEval<Functor> localFitter(Generation::thread_cache);
+            for ( unsigned int i = 0; i < fit_max_individuals; ++i ) {
+              Functor f( typename optionsT::LocalFit(),
+                         options.localParam,
+                         member[i] );
+              localFitter.eval( f );
+            }
+            localFitter.joinAll();
+          }
+          #else
+            for ( unsigned int i = 0; i < fit_max_individuals; ++i ) {
+              typename optionsT::LocalFit() ( member[i], options.localParam );
+            }
+          #endif
+
+          /* now resort the fitted individuals again. */
+          qsort(member, fit_max_individuals, sizeof(member[0]), mcomp);
         }
-
-        /* now resort the fitted individuals again. */
-        qsort(member, fit_max_individuals, sizeof(member[0]), mcomp);
-      }
-#endif
+      }/* if not local_fit_random */
 
       // now set gene of the generation to member[0].gene of the population
       gene = member[0]->DNA;
+      bestmerit = member[0]->Merit();
     } // Generation::sort
 
     template < typename optionsT>
     Generation<optionsT>::Generation( const optionsT & options, const Gene & igene )
-      : options(options), gene(igene) {
+      : options(options), gene(igene), bestmerit(0) {
       member = new_Individual_list( gene, options.population, options.createind,
                                     options.meritfnc, options.exterior_pointer );
       assert(member); // member better be point to an Individual pointer
+
+      #ifdef USE_PTHREAD
+      /* we'll only set this option for non-copy constructors. */
+      if ( options.num_pthreads > 0 )
+        thread_cache.set_max_threads( options.num_pthreads );
+      #endif
     } // Generation constructor
 
     template < typename optionsT>
     Generation<optionsT>::Generation(const Generation& gen)
-      : options(gen.options), gene( gen.gene ) {
+      : options(gen.options), gene( gen.gene ), bestmerit( gen.bestmerit )  {
       //cast the gene[-1] to a function of the correct kind
       member = new_Individual_list( gene, options.population, options.createind );
       for( int i = 0; i < options.population; ++i )
@@ -218,7 +306,7 @@ namespace olson_tools{
 
     template < typename optionsT>
     Generation<optionsT>::Generation(const Generation& gen, int max_individuals)
-      : options( gen.options), gene( gen.gene ) {
+      : options( gen.options), gene( gen.gene ), bestmerit( gen.bestmerit ) {
       //cast the gene[-1] to a function of the correct kind
       member = new_Individual_list( gene, options.population, options.createind );
       for( int i = 0; i < max_individuals; ++i )
@@ -259,16 +347,12 @@ namespace olson_tools{
               // parent 1 removed
         // make a copy so crossover and mutation don't change original
         *parent[1] = *member[ ip2 ];
+
         // breed by doing crossover and mutation on parents
-        float p = MTRNGrand();
-        if ( p <= options.crossprob )
-          crossover( parent[0], parent[1] );
-        p = MTRNGrand();
-        if ( p <= options.mutprob )
-          parent[0]->mutate();
-        p = MTRNGrand();
-        if ( p <= options.mutprob )
-          parent[1]->mutate();
+        crossover( parent[0], parent[1], options.crossprob );
+        parent[0]->mutate( options.mutprob );
+        parent[1]->mutate( options.mutprob );
+
         // Add these children to the population
         *chld.member[ ichild++ ] = *parent[0];
         if( ichild < options.population )
@@ -304,10 +388,10 @@ namespace olson_tools{
       // now for the new children
       while( ichild < options.population && !stop ) {
         // select parents by tournament
-        int ip1 = int((options.population-0.001)*MTRNGrand());
+        int ip1 = static_cast<int>(MTRNGrand() * options.population * .9999999);
         int ip2=ip1;
         while(ip2 == ip1) {
-          ip2 = int((options.population-0.001)*MTRNGrand());
+          ip2 = static_cast<int>(MTRNGrand() * options.population * .9999999);
         } // while parents are identical
 
         // compare parents and keep the best one
@@ -317,11 +401,11 @@ namespace olson_tools{
         {// Now do it again for another parent
           ip2 = ip1;
           while(ip2==ip1)
-            ip2 = int((options.population-0.001)*MTRNGrand());
+            ip2 = static_cast<int>(MTRNGrand() * options.population * .9999999);
 
           int ip3 = ip2;
           while((ip3 == ip2) || (ip3 == ip1)){
-            ip3 = int((options.population-0.001)*MTRNGrand());
+            ip3 = static_cast<int>(MTRNGrand() * options.population * .9999999);
           } // while parents are identical
 
           // compare parents and keep the best one
@@ -335,17 +419,9 @@ namespace olson_tools{
         *children[1] = *member[ip2];
 
         // breed by doing crossover and mutation on parents' DNA
-        float p = MTRNGrand();
-        if (p <= options.crossprob)
-          crossover(children[0], children[1]);
-
-        p = MTRNGrand();
-        if (p <= options.mutprob)
-          children[0]->mutate();
-
-        p = MTRNGrand();
-        if ( p <= options.mutprob )
-          children[1]->mutate();
+        crossover( children[0], children[1], options.crossprob );
+        children[0]->mutate( options.mutprob );
+        children[1]->mutate( options.mutprob );
 
         // Add these children to the population
         *chld.member[ ichild++ ] = *children[0];

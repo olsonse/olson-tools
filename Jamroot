@@ -13,6 +13,8 @@
 
 # 
 
+path-constant OLSON_TOOLS_TOP : . ;
+
 constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
 
 import mpi ;

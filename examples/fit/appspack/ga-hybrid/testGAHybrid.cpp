@@ -2,6 +2,8 @@
 #include <olson-tools/fit/GeneticAlg.h>
 #include <olson-tools/fit/GeneAppsPack.h>
 #include <olson-tools/fit/make_options.h>
+#include <olson-tools/memory.h>
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -11,8 +13,8 @@ using olson_tools::fit::ALLELE_DYNAMIC_CONT;
 using olson_tools::fit::Gene;
 using olson_tools::fit::Individual;
 using olson_tools::fit::GeneticAlg;
-using olson_tools::fit::GeneAppsPack;
 using olson_tools::fit::make_options;
+typedef olson_tools::fit::GeneAppsPack<> GeneAppsPack;
 
 #define A(a,b,c)       Allele_struct((a),(b),(c), ALLELE_DYNAMIC_CONT)
 
@@ -25,6 +27,11 @@ using olson_tools::fit::make_options;
 static int n_eval = 0;
 #ifdef RECORD_EVALS
 static std::ofstream frec("record");
+
+# ifdef USE_PTHREAD
+static olson_tools::MemGooLock memLock;
+# endif
+
 #endif
 
 template < int scale = 1, int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0 >
@@ -61,7 +68,13 @@ merit_t meritfnc( const Gene & gene, void * nothing ) {
 
   ++n_eval;
 #ifdef RECORD_EVALS
+# ifdef USE_PTHREAD
+  memLock.lock();
+# endif
   frec << gene << '\t' << m << '\n' << std::flush;
+# ifdef USE_PTHREAD
+  memLock.unlock();
+# endif
 #endif
   return m;
 }
@@ -74,16 +87,16 @@ int main() {
   opts.local_fit_max_individuals_prctage = 1.00;
   opts.tolerance = 1e-15;
   //opts.encourage_diversity = false;
-  opts.max_merit = 0.9;
-  opts.replace = 0.67;
-  opts.maxgeneration = 1000;
+  opts.max_merit = 50.0;
+  opts.max_generation = 1000;
   opts.localParam.sublist("Solver").setParameter("Cache Output File", std::string("eval_output"));
   opts.localParam.sublist("Solver").setParameter("Cache Input File", std::string("eval_output"));
   opts.localParam.sublist("Solver").setParameter("Debug", static_cast<int>(0));
-  opts.localParam.sublist("Solver").setParameter("Initial Step", static_cast<double>(0.10));
-  //opts.generation_delay = .5;
-  //opts.mutprob = .1;
-  //opts.crossprob = .1;
+  opts.localParam.sublist("Solver").setParameter("Step Tolerance", static_cast<double>(0.05));
+  opts.localParam.sublist("Solver").setParameter("Initial Step", static_cast<double>(0.50));
+  //opts.replace = 0.60;
+  //opts.mutprob = .3;
+  //opts.crossprob = .8;
 
 
   Gene dna;
@@ -94,16 +107,25 @@ int main() {
 
   GeneticAlg<options> ga(dna, opts);
 
-  ga.fit(&std::cout);
+  merit_t ga_merit = ga.fit(&std::cout);
   Individual indiv(dna, (void*)meritfnc);
   merit_t merit = indiv.Merit();
 
-  std::cout << "global(/local) fit merit:  " <<  merit << "\t:  "
+  std::cout << "global(/local) fit merit:  " << merit << "\t:  "
             << dna << std::endl;
+
+  if ( ga_merit > merit ) {
+    std::cout << "WARNING:   ga returned " << ga_merit << " as merit "
+                 "and re-evaluated merit returned " << merit
+              << std::endl;
+  }
 
   std::cout << "evals of merit function :  " << n_eval << std::endl;
   n_eval = 0;
 
+  opts.localParam.sublist("Solver").setParameter("Initial Step", static_cast<double>(0.10));
+  opts.localParam.sublist("Solver").setParameter("Step Tolerance", static_cast<double>(0.005));
+  APPSPACK::Cache::Point::setStaticTolerance(0.005);
   merit = GeneAppsPack() ( &indiv, opts.localParam );
 
   dna = indiv.DNA;
@@ -119,8 +141,8 @@ int main() {
   {
     std::ofstream f("func.dat");
 
-    for ( dna[0].val = -5; dna[0].val <= 5; dna[0].val += .1 ) {
-      for ( dna[1].val = -5; dna[1].val <= 5; dna[1].val += .1 ) {
+    for ( dna[0].val = dna[0].min; dna[0].val <= dna[0].max; dna[0].val += .1 ) {
+      for ( dna[1].val = dna[0].min; dna[1].val <= dna[0].max; dna[1].val += .1 ) {
         double m = meritfnc( dna, 0x0 );
         f << dna << '\t' << m << '\n';
       }

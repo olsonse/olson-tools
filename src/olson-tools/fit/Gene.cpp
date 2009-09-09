@@ -65,10 +65,49 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <cassert>
 #include <stdlib.h>
-#include <assert.h>
 
 namespace olson_tools{ namespace fit {
+
+bool crossover( Chromosome& c1, Chromosome& c2, const float & crossprob ) {
+  if (crossprob <= 0.0)
+    return false;
+
+  int nalleles = c1.numAlleles( ALLELE_DYNAMIC );
+  if ( nalleles != c2.numAlleles( ALLELE_DYNAMIC ) ) {
+    THROW(std::runtime_error,"crossover:  Number of alleles of both chromosomes does not match.");
+  }
+
+#ifndef DO_SINGLE_CROSSOVER
+  /* This crossover type allows for multiple random crossovers, up to the number
+   * of alleles. */
+  double nf_crossovers = 0.99999999 * nalleles * MTRNGrand();
+
+  /* first promote/demote the fractional probability */
+  {
+    double frac = nf_crossovers - static_cast<int>(nf_crossovers);
+    if ( MTRNGrand() <= frac )
+      nf_crossovers += 1;
+  }
+  int n_crossovers = static_cast<int>( nf_crossovers );
+
+  bool did_crossover = false;
+  for ( int i = 0; i < n_crossovers; ++i ) {
+    if ( MTRNGrand() <= crossprob )
+      crossover_once( c1, c2 ), did_crossover = true;
+  }
+
+  return did_crossover;
+
+#else /* defined DO_SINGLE_CROSSOVER */
+  if ( MTRNGrand() <= crossprob )
+    return crossover_once( c1, c2 ), true;
+  else
+    return false;
+#endif
+}
+
 
 /* All of the following needs to be changed where we
    use Allele definitions, so that, if ALLELE_STATIC
@@ -76,17 +115,10 @@ namespace olson_tools{ namespace fit {
    and the same with ALLELE_DYNAMIC and with ALLELE_ALL
 */
 
-Chromosome::Chromosome(const Gene& cgene): Gene(cgene) {
-} // create chromosome with this gene make-up
+void crossover_once( Chromosome& c1, Chromosome& c2 ) {
+  int nalleles=c1.numAlleles(ALLELE_DYNAMIC);
+  assert( nalleles == c2.numAlleles(ALLELE_DYNAMIC) );
 
-Chromosome::~Chromosome(){
-}// Chromosome destructor
-
-void crossover(Chromosome& c1, Chromosome& c2){
-  int nalleles=c1.numAlleles();
-  if (nalleles!=c2.numAlleles()) {
-     THROW(std::runtime_error,"crossover:  Number of alleles of both chromosomes does not match.");
-  }
   // make t1 and t2 a copy of c1 and c2
   Chromosome t1(c1);
   Chromosome t2(c2);
@@ -100,7 +132,7 @@ void crossover(Chromosome& c1, Chromosome& c2){
     unsigned short int mask=0;
     // This may need to be changed in the future because we might
     // use doubles in gene
-    int bit = int(15.99*MTRNGrand());  // there are only eight possible bits
+    int bit = static_cast<int>(15.999999 * MTRNGrand());// there are only eight possible bits
     for(int j=bit; j<16; j++)
       mask = mask | (1<<j);
     if (CROSSOVER==CREAL){
@@ -110,8 +142,8 @@ void crossover(Chromosome& c1, Chromosome& c2){
     // random weights for each child
       // in the following, we should have w compatiblly typed with Alleles
       Allele_t w= MTRNGrand();//get random # between 0 and 1
-      t1[gloc].val = w * c1[gloc].val + (1-w) * c2[gloc].val;
-      t2[gloc].val = (1-w) * c1[gloc].val + w * c2[gloc].val;
+      t1[gloc].val =     w * c1[gloc].val + (1-w) * c2[gloc].val;
+      t2[gloc].val = (1-w) * c1[gloc].val +     w * c2[gloc].val;
     }
     else { //if (CROSSOVER==CBIT)
       //t1[gloc].val |= c1[gloc].val & mask;
@@ -122,12 +154,12 @@ void crossover(Chromosome& c1, Chromosome& c2){
     }
     // copy the switched genes (may be a zero pass loop)
     // make the second parts of t1 and t2 copies of c2 and c1 (switch)
-    for(int i = ( gloc + 1 ); i<nalleles; i++){
+    for( int i = ( gloc + 1 ); i < nalleles; ++i ) {
       t1[i].val = c2[i].val;
       t2[i].val = c1[i].val;
     }
     // replace original chromosomes with crossover ones
-    if(t1.valid() && t2.valid()){
+    if( t1.isValid() && t2.isValid() ) {
       c1=t1;
       c2=t2;
       return;// it's valid, so let's finish this
@@ -141,37 +173,100 @@ void crossover(Chromosome& c1, Chromosome& c2){
   }//while
 } // crossover
 
-void Chromosome::mutate(){
+int Chromosome::mutate( const float & mutprob ) {
+  if (mutprob <= 0.0)
+    return 0;
+
+  int did_n_mutations = 0;
+
+#ifdef DO_SINGLE_MUTATION
+
+  if ( MTRNGrand() <= mutprob )
+    return mutate_once( randgene() ), 1;
+  else
+    return 0;
+
+#elif defined(MULTIPLE_MUTATIONS)
+  /* This mutation type can do multiple mutations for each allele. */
+  double nf_mutations = 0.99999999 * numAlleles(ALLELE_DYNAMIC) * MTRNGrand();
+
+  /* first promote/demote the fractional probability */
+  {
+    double frac = nf_mutations - static_cast<int>(nf_mutations);
+    if ( MTRNGrand() <= frac )
+      nf_mutations += 1;
+  }
+  int n_mutations = static_cast<int>( nf_mutations );
+
+  for ( int i = 0; i < n_mutations; ++i ) {
+    if ( MTRNGrand() <= mutprob )
+      mutate_once( randgene() ), ++did_n_mutations;
+  }
+#elif !defined(MUTATE_ALL)
+  /* This mutation type possibly mutates each, but the probability is evaluated
+   * separately.  THIS IS THE DEFAULT!
+   */
+  for ( int i = 0; i < numAlleles(); ++i ) {
+    if ( ! TESTALLELETYPE( (*this)[i].allele_type, ALLELE_DYNAMIC ) )
+      continue;
+
+    if ( MTRNGrand() <= mutprob )
+      mutate_once(i), ++did_n_mutations;
+  }
+#else /* defined (MUTATE_ALL) */
+  /* This mutation type evaluates probability once (for the whole process).  If
+   * any mutate, they all mutate. 
+   */
+  if ( MTRNGrand() > mutprob )
+    return;
+
+  for ( int i = 0; i < numAlleles(); ++i ) {
+    if ( ! TESTALLELETYPE( (*this)[i].allele_type, ALLELE_DYNAMIC ) )
+      continue;
+
+    mutate_once(i);
+    ++did_n_mutations;
+  }
+#endif
+
+  return did_n_mutations;
+}
+
+void Chromosome::mutate_once( const int & gloc ) {
   // turn a random gene from a 1 to a 0 or vice-a-versa
   // with CROSSOVER==CREAL, this works a little different.  The real genes if 
   // mutated, take a random value in their range
-  // First find a random gene
-  //
-  // This used to be recursive, but I got a stack overflow sometimes.
+
+  //int gloc = randgene();//gene random gene index
+
+#if CROSSOVER==CBIT
   bool validv=false;
   int loops=0;
   while(!validv){
-    int gloc = randgene();//gene random gene index
-#if CROSSOVER==CBIT
     // Now find a random bit in the gene
-    int bit = int(15.99*MTRNGrand());  // there are only eight possible bits
+    int bit = static_cast<int>(15.999999 * MTRNGrand());// there are only eight possible bits
     (*this)[gloc].val ^= 1<<bit;
-#elif CROSSOVER==CREAL
-    (*this)[gloc].val = __my_rand.rand((*this)[gloc].max - (*this)[gloc].min) + (*this)[gloc].min;
+    validv = isValid();
+    if( !validv ) {
+      if( ++loops > 100 ) {
+        THROW(std::runtime_error,"mutate:  Too many invalid loops.");
+      } // if too many loops
+
+      // For this method, we need to be able to switch back to the original
+      (*this)[gloc].val ^= 1<<bit;   // switch back
+    } // if not valid
+  } // while not valid
+
+#elif CROSSOVER == CREAL
+
+  (*this)[gloc].val = __my_rand.rand((*this)[gloc].max - (*this)[gloc].min) + (*this)[gloc].min;
+  if( !isValid() )
+    THROW( std::runtime_error,
+           "mutate:  Invalid. CREAL mutations should never be invalid!" );
+
 #else
 #error "CROSSOVER has unrecognized value"
 #endif
-    validv=valid();
-    if(!validv){
-      if(++loops > 100){
-        THROW(std::runtime_error,"mutate:  Too many invalid loops.");
-      } // if too many loops
-// For this method, we need to be able to switch back to the original
-#if CROSSOVER==CBIT
-	(*this)[gloc].val ^= 1<<bit;   // switch back
-#endif
-    } // if not valid
-  } // while not valid
 } // Chromosome::mutate
 
 std::ostream& operator<<(std::ostream &output, const Gene & gene) {
@@ -212,10 +307,6 @@ Gene::Gene(const Gene& gn):
 
 }//Gene copy constructor
 
-Gene::~Gene(){
-  delete[] alleles;
-}//Gene destructor
-
 void Gene::randinit() {
   // initialize gene to random, but valid value
   // init gene randomly
@@ -225,7 +316,7 @@ void Gene::randinit() {
   } // for i
 } // Gene::randinit
 
-bool Gene::valid() const {
+bool Gene::isValid() const {
   // Check to see if specific alleles are within the allowed range
   // otherwise return false.
   for (int i=0;i<numalleles;i++){
@@ -239,25 +330,26 @@ bool Gene::valid() const {
 } // Gene::valid
 
 int Gene::randgene() const {
-  // Get a random gene index where Max(i)-Min(i)>0.
-  // We will just get a random number between 0 and numalleles, 
-  // and just circulate
-  // through the alleles until we find an allele that can be modified.
-  int rgint = int((numalleles-0.001)*MTRNGrand());
-  int i=0;
-  while( i < numalleles ){ // no need to circulate more than once
-    // if beyond range, start at the first allele
-    if( rgint >= numalleles) rgint=0;
-    if( TESTALLELETYPE( alleles[rgint].allele_type, ALLELE_DYNAMIC ) )
-        return rgint;
-    i++;// increment iteration number
-    rgint++;
+  // Get a ALLELE_DYNAMIC random gene index.
+  int i = static_cast<int>(numAlleles(ALLELE_DYNAMIC) * .999999 * MTRNGrand());
+  return realIndex( i, ALLELE_DYNAMIC );
+}//Gene::randgene
+
+int Gene::realIndex( const int & i, const unsigned char & alleletype ) const {
+  for ( int real_i = 0, type_i = 0; real_i < numalleles; ++real_i ) {
+    if( TESTALLELETYPE( alleles[real_i].allele_type, alleletype ) ) {
+      if (type_i == i)
+        return real_i;
+
+      ++type_i;
+    }
   }
-  THROW(std::runtime_error,"Gene::randgene(): Too many iterations.  Nothing can be modified");
+
+  THROW(std::runtime_error,"Gene::realIndex(): Allele index invalid");
 #ifdef _OPENMP
   return 0; /* shut the compiler up */
 #endif
-}//Gene::randgene
+}
 
 void Gene::regene(const Allele_t newalleles[], const unsigned char alleletype){
   //This thing only updates the Allele_struct.val's
@@ -301,15 +393,13 @@ const Allele_struct & Gene::operator[](int i) const{
 #endif
 }//Gene::operator[]
 
-int Gene::numAlleles() const {
-  return numalleles;
-}// Gene::numAlleles
-
 int Gene::numAlleles(unsigned char alleletype) const {
   // refer to gene.h for the definitions of the alleletypes
   int nalleles=0;
-  for ( int i=0; i < numalleles; i++ ) 
-    if( TESTALLELETYPE( alleles[i].allele_type, alleletype ) ) nalleles++;
+  for ( int i=0; i < numalleles; ++i )
+    if ( TESTALLELETYPE( alleles[i].allele_type, alleletype ) )
+      ++nalleles;
+
   return nalleles;
 }// Gene::numAlleles(unsigned char alleletype) const
 

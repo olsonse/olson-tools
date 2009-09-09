@@ -64,14 +64,14 @@ merit_t Histogram::meritfact(Individual& member){
     merit_t factor=1;
     //  Go through the accuml. arrays and get a total factor
     // based upon how many total members use the same genes as this member
-    for(int i=0; i<rows; i++) {
+    for(int i=0; i<rows; ++i) {
         // now we need to find the second index
         /*  Get the exact alleletype. */
         int j = member.DNA.Allele( i, ALLELE_DYNAMIC ).allele_type;
 
         // in the following, we shouldn't need to '% colsize', but just in case
 
-        if( j == ALLELE_DYNAMIC_CONT) {//if match, set j to second index
+        if ( j == ALLELE_DYNAMIC_CONT ) { //if match, set j to second index
             j = int(
                       (member.DNA.Allele( i, ALLELE_DYNAMIC ).max - member.DNA.Allele( i, ALLELE_DYNAMIC ).val)
                       / grid_spacing
@@ -88,10 +88,10 @@ merit_t Histogram::meritfact(Individual& member){
 
 void Histogram::update(Individual& member) {
     // Go through the accumul. arrays and accumulate! (histogram this guy's gene)
-    for(int i=0; i<rows; i++) {
-        int j = member.DNA.Allele( i, ALLELE_DYNAMIC).allele_type;
+    for(int i=0; i<rows; ++i) {
+        int j = member.DNA.Allele( i, ALLELE_DYNAMIC ).allele_type;
         // in the following, we shouldn't need to '% colsize', but just in case
-        if(j==ALLELE_DYNAMIC_CONT) {
+        if ( j == ALLELE_DYNAMIC_CONT ) {
             j = int(
                       (member.DNA.Allele( i, ALLELE_DYNAMIC ).max - member.DNA.Allele( i, ALLELE_DYNAMIC ).val)
                       / grid_spacing
@@ -101,7 +101,7 @@ void Histogram::update(Individual& member) {
                      - member.DNA.Allele( i, ALLELE_DYNAMIC ).val
                    ) % colsize[i];
         }
-        histtable[i][j]++;
+        ++(histtable[i][j]);
     }
 } // Histogram::update
 

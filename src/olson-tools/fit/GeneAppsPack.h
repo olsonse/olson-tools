@@ -73,18 +73,21 @@
 
 #include <olson-tools/fit/Individual.h>
 #include <olson-tools/fit/detail/GeneMinFunc.h>
-#include <olson-tools/fit/appspack/ThreadedExecutor.hpp> // <-- Provides user-defined custom executor
+#include <olson-tools/fit/appspack/ThreadedExecutor.hpp>
+#include <olson-tools/fit/appspack/SharedCacheManager.hpp>
 #include <olson-tools/ompexcept.h>
 
 #include <appspack/APPSPACK_Parameter_List.hpp> // <-- Provides APPSPACK::Vector 
 #include <appspack/APPSPACK_Vector.hpp>   // <-- Provides APPSPACK::Vector 
 #include <appspack/APPSPACK_Solver.hpp>   // <-- Provides APPSPACK::Vector 
 #include <appspack/APPSPACK_Constraints_Linear.hpp>      // <-- Provides APPSPACK::Constraints::Linear
+#include <appspack/APPSPACK_make_options.hpp>
 
 #include <stdexcept>
 
 namespace olson_tools{
   namespace fit {
+    namespace ota = olson_tools::fit::appspack;
 
     /** This is an implemented class of the simplex algorithm
      * which will nicely find the local extrema of the
@@ -92,6 +95,11 @@ namespace olson_tools{
      * Gene.
      *@memo AppsPack for Genes.
     */
+    template <
+      typename appspack_options =
+        APPSPACK::make_options<>::type
+        ::setCacheManager< ota::SharedCacheManager<> >::type
+    >
     class GeneAppsPack {
       /* TYPEDEFS */
     public:
@@ -154,7 +162,8 @@ namespace olson_tools{
         Executor executor(minFunc);
         
         // *** Create the solver ***
-        APPSPACK::Solver solver(lparam.sublist("Solver"), executor, linear);
+        APPSPACK::Solver<appspack_options>
+          solver( lparam.sublist("Solver"), executor, linear );
         
         // *** Run the solver ***
         /* APPSPACK::Solver::State state = */ solver.solve();

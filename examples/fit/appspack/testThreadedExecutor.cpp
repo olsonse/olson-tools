@@ -13,12 +13,12 @@
 
 #ifdef USE_PIPE
 #  define PROB_FILE "./prob-pipe-io.py"
-#  include <olson-tools/fit/appspack/PExecMinFunc.hpp>   // <-- Provides user-defined custom executor
-typedef olson_tools::fit::appspack::PExecMinFunc MinFunc;
+#  include <olson-tools/fit/PExecFunc.hpp>   // <-- Provides user-defined custom executor
+typedef olson_tools::fit::PExecFunc MinFunc;
 #else // USE_FILE
 #  define PROB_FILE "./prob-file-io.py"
-#  include <olson-tools/fit/appspack/ExecMinFunc.hpp>    // <-- Provides user-defined custom executor
-typedef olson_tools::fit::appspack::ExecMinFunc MinFunc;
+#  include <olson-tools/fit/ExecFunc.hpp>    // <-- Provides user-defined custom executor
+typedef olson_tools::fit::ExecFunc MinFunc;
 #endif
 
 #include <olson-tools/fit/appspack/ThreadedExecutor.hpp> // <-- Provides user-defined custom executor

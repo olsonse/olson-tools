@@ -122,14 +122,15 @@ class Gene{
    Gene( int nalleles = 0, Allele_struct alls[] = 0 );
    ///
    Gene(const Gene& gn);
-   ///
-   ~Gene();
+
+   /** Gene destructor. */
+   ~Gene() { delete[] alleles; }
 
    ///
    void randinit();
 
    /// Whether alleles are inside ranges.
-   bool valid() const;
+   bool isValid() const;
 
    /// Write function.
    Allele_struct & operator[](int i);
@@ -147,7 +148,10 @@ class Gene{
    const Gene & operator+=( const Allele_struct & a );
 
    ///
-   int numAlleles() const;
+   int size() const { return numalleles; }
+
+   ///
+   int numAlleles() const { return numalleles; }
 
    /// Returns num of certain types of alleles (see above for types).
    int numAlleles(unsigned char alleletype) const ;
@@ -157,6 +161,10 @@ class Gene{
 
    /// Returns the ith value of alleletype alleles.
    const Allele_struct & Allele(int i, unsigned char alleletype) const;
+
+   /** Convert the index of the ith alleleltype allele into an absolute index.
+    * */
+   int realIndex( const int & i, const unsigned char & alleletype ) const;
 
    /// Get a random gene index where Max(i)-Min(i)>0.
    int randgene() const ;
@@ -192,11 +200,17 @@ class Gene{
 class Chromosome : public Gene {
 public:
   /// create chromosome with this gene make-up
-  Chromosome(const Gene& cgene);
-  /// Chromosome destructor
-  ~Chromosome();
-  /// mutate gene internally
-  void mutate();
+  Chromosome(const Gene& cgene) : Gene(cgene) { }
+
+  /** mutate gene internally.  Up to n mutations will happen, where n is the
+   * number of alleles.
+   *
+   * @returns the number of mutations performed.
+   */
+  int mutate( const float & mutprob );
+
+  /** mutate gene internally only once. */
+  void mutate_once( const int & gloc );
 }; // Chromosome
 
 ///
@@ -204,7 +218,10 @@ std::ostream & operator<<(std::ostream &, const Gene &);
 
 
 ///Chromosome crossover machine.
-void crossover(Chromosome& c1, Chromosome& c2);
+bool crossover( Chromosome& c1, Chromosome& c2, const float & crossprob );
+
+///Chromosome crossover machine.
+void crossover_once( Chromosome& c1, Chromosome& c2 );
 
 /** TESTALLELETYPE is a macro to be used to test whether
  * an allele is of a certain type.  See above for specific

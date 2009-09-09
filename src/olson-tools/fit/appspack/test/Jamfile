@@ -1,0 +1,15 @@
+# olson_tools::fit::appspack unit tests
+
+project :
+    : requirements
+      <library>/appspack//appspack
+#     <cflags>-pthread
+#     <linkflags>-pthread
+    ;
+
+
+
+use-project /appspack : $(OLSON_TOOLS_TOP)/../appspack ;
+
+unit-test SharedCacheManager : SharedCacheManager.cpp ;
+
