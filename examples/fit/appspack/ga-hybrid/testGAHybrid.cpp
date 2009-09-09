@@ -84,7 +84,7 @@ int main() {
   options opts;
   opts.meritfnc = (void*)meritfnc;
   opts.population = 10;
-  opts.local_fit_max_individuals_prctage = 1.00;
+  opts.local_fit_max_individuals_prctage = 0.50;
   opts.tolerance = 1e-15;
   //opts.encourage_diversity = false;
   opts.max_merit = 50.0;
