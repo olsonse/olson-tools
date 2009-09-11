@@ -55,22 +55,34 @@
 #define olson_tools_SyncLock_h
 
 /* We'll only use pthread mutexes if pthread library is being used at all. */
-#if defined(_OPENMP) && !defined(USE_PTHREAD)
+
+#if defined(_OPENMP) && !defined(THREAD_SYS_DEFINED)
 #  include <omp.h>
 #  define IF_OMP(x) x
+#  define THREAD_SYS_DEFINED
 #else
 #  define IF_OMP(x)
 #endif
 
-#ifdef USE_PTHREAD
+#if defined(USE_PTHREAD) && !defined(THREAD_SYS_DEFINED)
 #  include <pthread.h>
 #  include <errno.h>
 #  define IF_PTHREAD(x) x
+#  define THREAD_SYS_DEFINED
 #else
 #  define IF_PTHREAD(x)
 #endif
 
-#if defined(_OPENMP) || defined(USE_PTHREAD)
+#if defined(WIN32) && !defined(THREAD_SYS_DEFINED)
+#  include <windows.h>
+#  define IF_WIN32(x) x
+#  define THREAD_SYS_DEFINED
+#else
+#  define IF_WIN32(x)
+#endif
+
+
+#if defined(THREAD_SYS_DEFINED)
 #  define IF_THREADS(x,y) x
 #else
 #  define IF_THREADS(x,y) y
@@ -81,30 +93,55 @@ namespace olson_tools {
 
   /** SyncLock is a class to facilitate mutual exlusion locks for
    * multi-threaded code.  This should be specialized (by ifdefs) for the
-   * specific type of mutex needed.  Currently, ifdefs are provided for OpenMP
-   * and PThreads.
+   * specific type of mutex needed.
+   *
+   * Currently supported threading systems:
+   * - OpenMP
+   * - PThreads.
+   * - Win32 (Critical Section stuff)
+   * .
+   *
    */
   class SyncLock {
   private:
     IF_OMP(omp_lock_t omplock;)
     IF_PTHREAD(pthread_mutex_t pthread_mutex;)
+    IF_WIN32(CRITICAL_SECTION critical_section;)
 
   public:
+    /** Constructor initializes relevant mutex object. */
     SyncLock() {
       IF_OMP(omp_init_lock(&omplock);)
       IF_PTHREAD(pthread_mutex_init(&pthread_mutex, NULL);)
+      IF_WIN32(InitializeCriticalSection(&critical_section);)
     }
 
+    /** Destructor destroys relevant mutex object. */
     ~SyncLock() {
       IF_OMP(omp_destroy_lock(&omplock);)
       IF_PTHREAD(pthread_mutex_destroy(&pthread_mutex);)
+      IF_WIN32(DeleteCriticalSection(&critical_section);)
     }
 
+    /** Locks relevant mutex object. */
     inline void lock() {
       IF_OMP(omp_set_lock(&omplock);)
       IF_PTHREAD(pthread_mutex_lock(&pthread_mutex);)
+      IF_WIN32(EnterCriticalSection(&critical_section);)
     }
 
+    /** Attempts to lock mutex, but does not block if unsuccessful.
+     * @returns true if successful in locking the mutex.
+     * @returns false if the mutex could not be locked.
+     */
+    inline bool tryLock() {
+      IF_OMP(return omp_test_lock(&omplock);)
+      IF_PTHREAD(return pthread_mutex_trylock(&pthread_mutex) == 0;)
+      IF_WIN32(return TryEnterCriticalSection(&critical_section);)
+      IF_THREADS(/*threads active*/,return true;)
+    }
+
+    /** Tests to see if relevant mutex object is locked. */
     inline bool isLocked() {
       IF_OMP(
         if ( omp_test_lock(&omplock) ) {
@@ -126,12 +163,22 @@ namespace olson_tools {
         }
       )
 
+      IF_WIN32(
+        if ( TryEnterCriticalSection(&critical_section) ) {
+          unlock();
+          return false;
+        } else
+          return true;
+      )
+
       IF_THREADS(/*threads active*/,return false;)
     }
 
+    /** Unlocks relevant mutex object. */
     inline void unlock() {
       IF_OMP(omp_unset_lock(&omplock);)
       IF_PTHREAD(pthread_mutex_unlock(&pthread_mutex);)
+      IF_WIN32(LeaveCriticalSection(&critical_section);)
     }
   };
 

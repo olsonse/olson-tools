@@ -65,6 +65,10 @@ BOOST_AUTO_TEST_CASE( SyncLock_class ) {
   lock.unlock();
 
   BOOST_CHECK_EQUAL( lock.isLocked(), false );
+
+  lock.tryLock();
+    BOOST_CHECK_EQUAL( lock.isLocked(), IF_THREADS(true,false) );
+  lock.unlock();
 }
 
 BOOST_AUTO_TEST_CASE( SyncLock_class_RAII_Key ) {
