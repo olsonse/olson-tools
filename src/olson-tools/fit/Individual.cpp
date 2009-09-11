@@ -79,6 +79,7 @@ bool crossover( Individual& i1, Individual& i2, const float & crossprob ) {
   if ( crossover(i1.DNA, i2.DNA, crossprob) ) {
     i1.updatemerit = true;
     i2.updatemerit = true;
+    return true;
   } else
     return false;
 } // crossover
@@ -89,6 +90,7 @@ bool crossover( Individual* i1, Individual* i2, const float & crossprob ) {
   if ( crossover(i1->DNA, i2->DNA, crossprob) ) {
     i1->updatemerit = true;
     i2->updatemerit = true;
+    return true;
   } else
     return false;
 } // crossover

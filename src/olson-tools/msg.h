@@ -10,7 +10,7 @@
 /** \file
  * Generic c++ classes to help sending arbitrarily sized and typed messages via IPC.
  *
- * I'd be really excited if anyone ever used this stuff.
+ * I'd be really excited (actually amazed) if anyone ever used this stuff.
  *
  * Copyright 2003-2004 Spencer Eugene Olson --- All Rights Reserved
  * 

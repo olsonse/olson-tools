@@ -1,8 +1,34 @@
 // -*- c++ -*-
 // $Id: memory.h,v 1.3 2005/01/26 01:25:00 olsonse Exp $
-/*
- * Copyright 1998-2004 Spencer Eugene Olson --- All Rights Reserved
+/*@HEADER
+ *         olson-tools:  A variety of routines and algorithms that
+ *      I've developed and collected over the past few years.  This collection
+ *      represents tools that are most useful for scientific and numerical
+ *      software.  This software is released under the LGPL license except
+ *      otherwise explicitly stated in individual files included in this
+ *      package.  Generally, the files in this package are copyrighted by
+ *      Spencer Olson--exceptions will be noted.   
+ *                 Copyright 1998-2008 Spencer Olson
  *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version.
+ *  
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *                                                                                 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.                                                                           .
+ * 
+ * Questions? Contact Spencer Olson (olsonse@umich.edu) 
+ */
+
+/*
  * $Log: memory.h,v $
  * Revision 1.3  2005/01/26 01:25:00  olsonse
  * Fixed possible scope issues with double use of 'i' in freetoheap(...).
@@ -22,7 +48,7 @@
  *
  * Written by Spencer Eugene Olson <seo3@email.byu.edu>,<olsonse@umich.edu>
  *
- * Copyright 1998-2004 Spencer Eugene Olson --- All Rights Reserved
+ * Copyright 1998-2008 Spencer Eugene Olson --- All Rights Reserved
  *
  * Because memory allocation can be very expensive time-wise, it is often
  * advisable to avoid extensive allocation/deallocation in your programs.  In spite of
@@ -39,59 +65,9 @@
 #ifndef MEMORY_GOO
 #define MEMORY_GOO
 
+#include <olson-tools/SyncLock.h>
+
 #include <stdlib.h>
-
-/* We'll only use pthread mutexes if pthread library is being used at all. */
-#if defined(_OPENMP) && !defined(USE_PTHREAD)
-#  include <omp.h>
-#  define IFOMP(x) x
-#else
-#  define IFOMP(x)
-#endif
-
-#ifdef USE_PTHREAD
-#  include <pthread.h>
-#  define IFPTHREAD(x) x
-#else
-#  define IFPTHREAD(x)
-#endif
-
-
-namespace olson_tools {
-
-/** MemGooLock is a class to facilitate mutual exlusion locks for
- * multi-threaded code.  This should be specialized (by ifdefs) for the
- * specific type of mutex needed.
- */
-class MemGooLock {
-  private:
-    IFOMP(omp_lock_t omplock;)
-    IFPTHREAD(pthread_mutex_t pthread_mutex;)
-
-  public:
-    MemGooLock() {
-        IFOMP(omp_init_lock(&omplock);)
-        IFPTHREAD(pthread_mutex_init(&pthread_mutex, NULL);)
-    }
-
-    ~MemGooLock() {
-        IFOMP(omp_destroy_lock(&omplock);)
-        IFPTHREAD(pthread_mutex_destroy(&pthread_mutex);)
-    }
-
-    inline void lock() {
-        IFOMP(omp_set_lock(&omplock);)
-        IFPTHREAD(pthread_mutex_lock(&pthread_mutex);)
-    }
-
-    inline void unlock() {
-        IFOMP(omp_unset_lock(&omplock);)
-        IFPTHREAD(pthread_mutex_unlock(&pthread_mutex);)
-    }
-};
-
-} /*namespace olson_tools*/
-
 
 /** Memory Storage Implementation.
  * This begins the overloading of the new and delete operators.  This must be
@@ -110,17 +86,17 @@ class MemGooLock {
   public: \
     inline void* operator new(size_t sz) { \
 	/* get free node from freelist if any */ \
-        memGooLock.lock(); \
+        syncLock.lock(); \
 	if (freelist) { \
 	    /* cerr<< #class <<"::new: returning from free list\n"; */ \
 	    class* p = freelist; \
 	    freelist = freelist->_new_next; \
 	    freelistsz--; \
-            memGooLock.unlock(); \
+            syncLock.unlock(); \
 	    /* cerr<<#class<<": freelistsz = "<<freelistsz<<endl; */ \
 	    return p; \
 	}   \
-        memGooLock.unlock(); \
+        syncLock.unlock(); \
 	/* call malloc() otherwise */ \
 	/* cerr<< #class <<"::new: Allocating memory\n"; */ \
 	return malloc(sz); \
@@ -128,7 +104,7 @@ class MemGooLock {
  \
     inline void operator delete(void* vp) { \
 	class* p = (class*)vp; \
-        memGooLock.lock(); \
+        syncLock.lock(); \
 	if( freelistsz >= freelistlimit ) { \
 	    free( p ); \
 	}/* if */ \
@@ -140,7 +116,7 @@ class MemGooLock {
 	    freelistsz++; \
 	    /* cerr<<#class<<": freelistsz = "<<freelistsz<<endl; */ \
 	}/* else */ \
-        memGooLock.unlock(); \
+        syncLock.unlock(); \
     } /* class::operator delete() */ \
  \
   /** frees freelist back to heap.  \
@@ -151,7 +127,7 @@ class MemGooLock {
   static void freetoheap( int new_memlimit = -1 ); \
   \
 private: \
-  static olson_tools::MemGooLock memGooLock; \
+  static olson_tools::SyncLock syncLock; \
   static class *freelist; /* free-store for stuff already allocated */ \
   static int freelistsz; /* will store the size of the freelist */ \
   static int freelistlimit; /* to store limit for size of freelist */ \
@@ -174,7 +150,7 @@ private: \
 template class* class::freelist = 0; /*init to NULL */ \
 template int class::freelistsz = 0; /* init to zero */ \
 template int class::freelistlimit = memlimit; /* limit number of instances */ \
-template olson_tools::MemGooLock class::memGooLock = olson_tools::MemGooLock(); \
+template olson_tools::SyncLock class::syncLock = olson_tools::SyncLock(); \
  \
  \
 /* The following function will delete \
@@ -183,7 +159,7 @@ template olson_tools::MemGooLock class::memGooLock = olson_tools::MemGooLock(); 
  \
 template void class::freetoheap( int new_memlimit /* = -1 */) { \
   /* cerr<< #class <<"::freetoheap: This was called\n"; */ \
-  memGooLock.lock(); \
+  syncLock.lock(); \
   if(freelist) { \
     for(int i = 0;i<freelistsz;i++) { \
        class* tmp = freelist;freelist=freelist->_new_next; \
@@ -192,7 +168,7 @@ template void class::freetoheap( int new_memlimit /* = -1 */) { \
     freelistsz = 0; \
   } \
   freelistlimit = ( new_memlimit < 0 ) ? memlimit : new_memlimit; \
-  memGooLock.unlock(); \
+  syncLock.unlock(); \
 } /* freetoheap */
 
 

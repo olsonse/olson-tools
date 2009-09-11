@@ -1,4 +1,3 @@
-// $Id$
 /*@HEADER
  *         olson-tools:  A variety of routines and algorithms that
  *      I've developed and collected over the past few years.  This collection
@@ -7,7 +6,7 @@
  *      otherwise explicitly stated in individual files included in this
  *      package.  Generally, the files in this package are copyrighted by
  *      Spencer Olson--exceptions will be noted.   
- *                 Copyright 2002-2004 Spencer E. Olson
+ *                 Copyright 1998-2008 Spencer Olson
  *
  * This library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,14 +26,59 @@
  * Questions? Contact Spencer Olson (olsonse@umich.edu) 
  */
 
-#ifndef olson_tools_XSTR_h
-#define olson_tools_XSTR_h
+#define BOOST_TEST_MODULE  SyncLock
 
-/** Helper macro to change macro values into strings. */
-#define STR(x) #x
+#include <olson-tools/SyncLock.h>
 
-/** Macro to change macro values into strings. */
-#define XSTR(x) STR(x)
+#include <boost/test/unit_test.hpp>
+
+namespace {
+  using olson_tools::Syncronize;
+  using olson_tools::synchronize;
+  using olson_tools::SyncLock;
+
+  struct AStruct {};
+
+  struct Functor {
+    int value;
+
+    Functor() : value(0) { }
+
+    void operator() () {
+      value = 1;
+      BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(),
+                         IF_THREADS(true,false) );
+    }
+  };
+}
 
 
-#endif // olson_tools_XSTR_h
+BOOST_AUTO_TEST_SUITE( SyncLock_tests );
+
+BOOST_AUTO_TEST_CASE( SyncLock_class ) {
+  SyncLock keys;
+  keys.lock();
+    BOOST_CHECK_EQUAL( keys.isLocked(), IF_THREADS(true,false) );
+  keys.unlock();
+
+  BOOST_CHECK_EQUAL( keys.isLocked(), false );
+}
+
+BOOST_AUTO_TEST_CASE( Syncronize_RAII_class ) {
+  {
+    Syncronize<AStruct> sync;
+    BOOST_CHECK_EQUAL( sync.syncLock.isLocked(), IF_THREADS(true,false) );
+  }
+
+  BOOST_CHECK_EQUAL( Syncronize<AStruct>::syncLock.isLocked(), false );
+}
+
+BOOST_AUTO_TEST_CASE( syncronize_Functor_access ) {
+  BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(), false );
+  Functor f = synchronize( Functor() );
+  BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(), false );
+  BOOST_CHECK_EQUAL( f.value, 1 );
+}
+
+BOOST_AUTO_TEST_SUITE_END();
+

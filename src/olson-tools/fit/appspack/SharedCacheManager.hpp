@@ -31,7 +31,7 @@
 #ifndef olson_tools_fit_appspack_SharedCacheManager_hpp
 #define olson_tools_fit_appspack_SharedCacheManager_hpp
 
-#include <olson-tools/memory.h>
+#include <olson-tools/SyncLock.h>
 
 #include <appspack/APPSPACK_Cache_Manager.hpp>
 #include <appspack/APPSPACK_Parameter_List.hpp>
@@ -61,13 +61,14 @@ namespace olson_tools {
       private:
         typedef APPSPACK::Parameter::List ParamList;
         typedef APPSPACK::Vector Vector;
+        /** Auto unlocking syncronize object. */
+        typedef olson_tools::Syncronize<SharedCacheManager> Sync;
 
         /* STATIC STORAGE */
       private:
         static SingleCacheManager * impl;
         static ParamList usedParams;
         static Vector    usedScaling;
-        static olson_tools::MemGooLock memGooLock;
 
 
         /* STATIC FUNCTIONS */
@@ -77,27 +78,25 @@ namespace olson_tools {
          * that the scaling is the same.
          */
         static void createCache( ParamList & params, const Vector & scaling ) {
-          memGooLock.lock();
-            if (impl) {
-              if ( scaling != usedScaling )
-                std::cerr << "one of the users of the shared cache "
-                             "requires a different scaling"
-                          << std::endl;
-            } else {
-              usedScaling = scaling;
-              usedParams = params;
-              impl = new SingleCacheManager( params, scaling );
-            }
-          memGooLock.unlock();
+          Sync sync;/* auto unlocking syncronize object. */
+          if (impl) {
+            if ( scaling != usedScaling )
+              std::cerr << "one of the users of the shared cache "
+                           "requires a different scaling"
+                        << std::endl;
+          } else {
+            usedScaling = scaling;
+            usedParams = params;
+            impl = new SingleCacheManager( params, scaling );
+          }
         }
 
         static void destroyCache() {
-          memGooLock.lock();
-            if ( impl ) {
-              delete impl;
-              impl = NULL;
-            }
-          memGooLock.unlock();
+          Sync sync;/* auto unlocking syncronize object. */
+          if ( impl ) {
+            delete impl;
+            impl = NULL;
+          }
         }
 
 
@@ -118,18 +117,14 @@ namespace olson_tools {
 
         //! Add the given point to the cache.
         bool insert(const Vector & x, const Vector & f) {
-          memGooLock.lock();
-            bool retval = impl->insert( x, f );
-          memGooLock.unlock();
-          return retval;
+          Sync sync;/* auto unlocking syncronize object. */
+          return impl->insert( x, f );
         }
         
         //! Return true if x is cached and fill in the function value.
         bool isCached(const Vector & x, Vector & f) {
-          memGooLock.lock();
-            bool retval = impl->isCached( x, f );
-          memGooLock.unlock();
-          return retval;
+          Sync sync;/* auto unlocking syncronize object. */
+          return impl->isCached( x, f );
         }
 
       };
@@ -142,10 +137,6 @@ namespace olson_tools {
 
       template < typename sing, unsigned int id >
       APPSPACK::Vector SharedCacheManager<sing,id>::usedScaling;
-
-      template < typename sing, unsigned int id >
-      olson_tools::MemGooLock SharedCacheManager<sing,id>::memGooLock
-        = olson_tools::MemGooLock();
 
     } /* namespace olson_tools::fit::appspack */
   } /* namespace olson_tools::fit */
