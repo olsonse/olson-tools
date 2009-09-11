@@ -1,5 +1,38 @@
 // -*- c -*-
 // $Id: logger.c,v 1.1.1.1 2005/01/08 04:27:24 olsonse Exp $
+/*@HEADER
+ *         olson-tools:  A variety of routines and algorithms that
+ *      I've developed and collected over the past few years.  This collection
+ *      represents tools that are most useful for scientific and numerical
+ *      software.  This software is released under the LGPL license except
+ *      otherwise explicitly stated in individual files included in this
+ *      package.  Generally, the files in this package are copyrighted by
+ *      Spencer Olson--exceptions will be noted.   
+ *
+ * NOTE:  This file is one of the exceptions mentioned.  This file is released
+ * under the GPLv2.  The following copyrights apply:
+ *
+ * Partial Copyright 2000-2004 Spencer Eugene Olson --- All Rights Reserved
+ * Partial Copyright Neil Winton <neil@winton.org.uk>
+ *
+ * This file is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ * USA.
+ *
+ * Questions? Contact Spencer Olson (olsonse@umich.edu) 
+ */
+
 /*
  * Partial Copyright 2000-2004 Spencer Eugene Olson --- All Rights Reserved
  * Partial Copyright Neil Winton <neil@winton.org.uk>
