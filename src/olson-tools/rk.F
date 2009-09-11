@@ -1,4 +1,3 @@
-#include "fmacros.h"
 
 ! Copyright 2004 Spencer Eugene Olson --- All Rights Reserved
 double precision function getMachineEPS ()

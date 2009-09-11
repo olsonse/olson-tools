@@ -51,8 +51,7 @@
 **		     **
 \*********************/
 
-#include "logger.h"
-#include "fmacros.h"
+#include <olson-tools/logger.h>
 #define logger_c_rcsid "$Id: logger.c,v 1.1.1.1 2005/01/08 04:27:24 olsonse Exp $"
 
 #include <stdarg.h>
