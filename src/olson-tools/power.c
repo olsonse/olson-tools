@@ -27,12 +27,12 @@
  */
 
 /* Copyright 2004-2009 Spencer Eugene Olson --- All Rights Reserved
- * computes x^y at least twice as fast as pow(...) from gnu math library and
+ * computes x^y up to six times as fast as pow(...) from gnu math library and
  * several times faster than NAG_pow from NAG library.
  *
  */
 
-#include "power.h"
+#include <olson-tools/power.h>
 
 #ifdef USE_SPENCERS_FAST_POW
 
