@@ -33,9 +33,10 @@
 #include <boost/test/unit_test.hpp>
 
 namespace {
-  using olson_tools::Syncronize;
+  using olson_tools::Synchronize;
   using olson_tools::synchronize;
   using olson_tools::SyncLock;
+  using olson_tools::SyncKey;
 
   struct AStruct {};
 
@@ -46,7 +47,7 @@ namespace {
 
     void operator() () {
       value = 1;
-      BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(),
+      BOOST_CHECK_EQUAL( Synchronize<Functor>::lock.isLocked(),
                          IF_THREADS(true,false) );
     }
   };
@@ -56,27 +57,40 @@ namespace {
 BOOST_AUTO_TEST_SUITE( SyncLock_tests );
 
 BOOST_AUTO_TEST_CASE( SyncLock_class ) {
-  SyncLock keys;
-  keys.lock();
-    BOOST_CHECK_EQUAL( keys.isLocked(), IF_THREADS(true,false) );
-  keys.unlock();
+  SyncLock lock;
+  BOOST_CHECK_EQUAL( lock.isLocked(), false );
 
-  BOOST_CHECK_EQUAL( keys.isLocked(), false );
+  lock.lock();
+    BOOST_CHECK_EQUAL( lock.isLocked(), IF_THREADS(true,false) );
+  lock.unlock();
+
+  BOOST_CHECK_EQUAL( lock.isLocked(), false );
+}
+
+BOOST_AUTO_TEST_CASE( SyncLock_class_RAII_Key ) {
+  SyncLock lock;
+  BOOST_CHECK_EQUAL( lock.isLocked(), false );
+  {
+    SyncKey key(lock);
+    BOOST_CHECK_EQUAL( lock.isLocked(), IF_THREADS(true,false) );
+  }
+
+  BOOST_CHECK_EQUAL( lock.isLocked(), false );
 }
 
 BOOST_AUTO_TEST_CASE( Syncronize_RAII_class ) {
   {
-    Syncronize<AStruct> sync;
-    BOOST_CHECK_EQUAL( sync.syncLock.isLocked(), IF_THREADS(true,false) );
+    Synchronize<AStruct> sync;
+    BOOST_CHECK_EQUAL( sync.lock.isLocked(), IF_THREADS(true,false) );
   }
 
-  BOOST_CHECK_EQUAL( Syncronize<AStruct>::syncLock.isLocked(), false );
+  BOOST_CHECK_EQUAL( Synchronize<AStruct>::lock.isLocked(), false );
 }
 
 BOOST_AUTO_TEST_CASE( syncronize_Functor_access ) {
-  BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(), false );
+  BOOST_CHECK_EQUAL( Synchronize<Functor>::lock.isLocked(), false );
   Functor f = synchronize( Functor() );
-  BOOST_CHECK_EQUAL( Syncronize<Functor>::syncLock.isLocked(), false );
+  BOOST_CHECK_EQUAL( Synchronize<Functor>::lock.isLocked(), false );
   BOOST_CHECK_EQUAL( f.value, 1 );
 }
 

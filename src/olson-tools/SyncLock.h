@@ -135,29 +135,39 @@ namespace olson_tools {
     }
   };
 
+  /** An RAII type automatic locking/unlocking key for a SyncLock. 
+   * The given SyncLock is locked upon construction, and automatically release
+   * upon destruction.  
+   */
+  struct SyncKey {
+    SyncLock & lock;
+
+    SyncKey( SyncLock & lock ) : lock(lock) { lock.lock(); }
+    ~SyncKey() { lock.unlock(); }
+  };
+
+  /** Automatic locking/unlocking facility with a typename scope. */
   template < typename T >
-  struct Syncronize {
+  struct Synchronize : SyncKey {
     /* STATIC STORAGE */
-    static SyncLock syncLock;
+    static SyncLock lock;
 
     /* MEMBER FUNCTIONS */
-    /** Default constructor locks sync object. */
-    Syncronize() {
-      syncLock.lock();
-    }
-
-    /** Destructor releases lock. */
-    ~Syncronize() {
-      syncLock.unlock();
-    }
+    /** Default constructor locks sync object.
+     * This uses the SyncKey on a static member.
+     *
+     * @see SyncKey
+     */
+    Synchronize() : SyncKey(Synchronize::lock) { }
   };
 
   template < typename T >
-  SyncLock Syncronize<T>::syncLock = SyncLock();
+  SyncLock Synchronize<T>::lock = SyncLock();
 
+  /** Synchronize the execution of a Functor class. */
   template < typename Functor >
   inline Functor synchronize( const Functor & f ) {
-    Syncronize<Functor> sync;
+    Synchronize<Functor> sync;
     Functor fout(f);
     fout();
     return fout;
