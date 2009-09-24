@@ -73,8 +73,8 @@
 
 #include <olson-tools/fit/Individual.h>
 #include <olson-tools/fit/detail/GeneMinFunc.h>
-#include <olson-tools/fit/appspack/ThreadedExecutor.hpp>
-#include <olson-tools/fit/appspack/SharedCacheManager.hpp>
+#include <olson-tools/fit/appspack/ThreadedExecutor.h>
+#include <olson-tools/fit/appspack/SharedCacheManager.h>
 #include <olson-tools/ompexcept.h>
 
 #include <appspack/APPSPACK_Parameter_List.hpp> // <-- Provides APPSPACK::Vector 

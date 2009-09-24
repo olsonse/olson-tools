@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE  SharedCacheManager
 
-#include <olson-tools/fit/appspack/SharedCacheManager.hpp>
+#include <olson-tools/fit/appspack/SharedCacheManager.h>
 
 #include <appspack/APPSPACK_Parameter_List.hpp>
 

@@ -13,15 +13,15 @@
 
 #ifdef USE_PIPE
 #  define PROB_FILE "./prob-pipe-io.py"
-#  include <olson-tools/fit/PExecFunc.hpp>   // <-- Provides user-defined custom executor
+#  include <olson-tools/fit/PExecFunc.h>   // <-- Provides user-defined custom executor
 typedef olson_tools::fit::PExecFunc MinFunc;
 #else // USE_FILE
 #  define PROB_FILE "./prob-file-io.py"
-#  include <olson-tools/fit/ExecFunc.hpp>    // <-- Provides user-defined custom executor
+#  include <olson-tools/fit/ExecFunc.h>    // <-- Provides user-defined custom executor
 typedef olson_tools::fit::ExecFunc MinFunc;
 #endif
 
-#include <olson-tools/fit/appspack/ThreadedExecutor.hpp> // <-- Provides user-defined custom executor
+#include <olson-tools/fit/appspack/ThreadedExecutor.h> // <-- Provides user-defined custom executor
 #include <appspack/APPSPACK_Solver.hpp>                  // <-- Provides APPSPACK::Solver
 #include <appspack/APPSPACK_Vector.hpp>                  // <-- Provides APPSPACK::Vector 
 #include <appspack/APPSPACK_Constraints_Linear.hpp>      // <-- Provides APPSPACK::Constraints::Linear
@@ -72,10 +72,10 @@ int main(int argc, char* argv[]) {
   
   
   // *** Create the solver ***
-  APPSPACK::Solver solver(params.sublist("Solver"), executor, linear);
+  APPSPACK::Solver<> solver(params.sublist("Solver"), executor, linear);
   
   // *** Run the solver ***
-  APPSPACK::Solver::State state = solver.solve();
+  APPSPACK::Solver<>::State state = solver.solve();
   
   return EXIT_SUCCESS;
 }
