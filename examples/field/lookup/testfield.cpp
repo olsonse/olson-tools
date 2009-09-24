@@ -8,6 +8,7 @@
 #include "common.h"
 
 using olson_tools::Vector;
+using olson_tools::V3;
 using namespace olson_tools::indices;
 
 template <class BSrc1, class BSrc2>

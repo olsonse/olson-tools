@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <stdint.h>
+
 using std::cin;
 using std::cout;
 using std::flush;

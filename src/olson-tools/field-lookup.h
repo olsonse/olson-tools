@@ -36,19 +36,20 @@
 
 
 
-#ifndef __FIELD_LOOKUP_H
-#define __FIELD_LOOKUP_H
+#ifndef olson_tools_field_lookup_h
+#define olson_tools_field_lookup_h
+
+#include <olson-tools/SquareMatrix.h>
+#include <olson-tools/Vector.h>
+#include <olson-tools/indices.h>
+#include <olson-tools/ompexcept.h>
+#include <olson-tools/power.h>
 
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "Vector.h"
-#include "indices.h"
-#include "ompexcept.h"
-#include "power.h"
-
 
 namespace olson_tools {
     using namespace indices;
@@ -677,4 +678,4 @@ public:
 }/* namespace olson_tools */
 
 
-#endif // __FIELD_LOOKUP_H
+#endif // olson_tools_field_lookup_h

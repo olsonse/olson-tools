@@ -19,6 +19,7 @@ using olson_tools::ScaleForce;
 using olson_tools::BgField;
 using olson_tools::Gravity;
 using olson_tools::Vector;
+using olson_tools::V3;
 namespace timing = olson_tools::timing;
 using olson_tools::timing::element::Base;
 using olson_tools::timing::element::Exponential;

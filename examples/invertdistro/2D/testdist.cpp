@@ -16,6 +16,8 @@ using olson_tools::AddField;
 using olson_tools::AddForce;
 using olson_tools::BgField;
 using olson_tools::Vector;
+using olson_tools::V3;
+using olson_tools::make_vector;
 using olson_tools::Gravity;
 using olson_tools::InvCylindricalDist;
 using olson_tools::FlatDistribution;
@@ -139,8 +141,7 @@ int main() {
             potential_integral += 0.5 * 1e6 * X_INCR * (last_potI + potI);
             last_potI = potI;
 
-            Vector<double,2> v(VInit,x[X],potI);
-            potential.push_back(v);
+            potential.push_back( make_vector<double,2>()(x[X], potI) );
         }
 
         std::ofstream potout(("disttest" + to_string(temperature/uK) + "uK.dat").c_str());

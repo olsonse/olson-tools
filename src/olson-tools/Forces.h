@@ -95,12 +95,12 @@ class Gravity : public virtual BaseForce, public BgField< Vector<double,3> > {
     typedef BgField< Vector<double,3> > super1;
 
     Gravity() : super0(), super1() {
-        bg = V3(0,0,-9.81);
+        bg = V3(0.,0.,-9.81);
     }
 
     inline void accel(      Vector<double,3> & a,
-                      const Vector<double,3> & r = V3(0,0,0),
-                      const Vector<double,3> & v = V3(0,0,0),
+                      const Vector<double,3> & r = V3(0.,0.,0.),
+                      const Vector<double,3> & v = V3(0.,0.,0.),
                       const double & t = 0.0,
                       const double & dt = 0.0 ) const {
         a = super1::bg;
@@ -110,7 +110,7 @@ class Gravity : public virtual BaseForce, public BgField< Vector<double,3> > {
      * Gravitational energy is referenced to (0,0,0).
      */
     inline double potential(const Vector<double,3> & r,
-                            const Vector<double,3> & v = V3(0,0,0),
+                            const Vector<double,3> & v = V3(0.,0.,0.),
                             const double & t = 0.0) const {
         return - super0::mass * (super1::bg * r);
     }

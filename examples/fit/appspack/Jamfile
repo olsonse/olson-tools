@@ -14,7 +14,7 @@ project /olson-tools/examples/appspack :
         <library>/olson-tools//olson-tools
         <library>/appspack//appspack
         <cflags>-pthread
-        <linkflags>-pthread
+        <linkflags>-pthread <linkflags>-lcdd
     ;
 
 use-project /appspack : $(EXAMPLES_TOP)/../../appspack ;

@@ -1,10 +1,8 @@
 unit-test m_eps : m_eps.cpp ;
-
 unit-test ref_of : ref_of.cpp ;
-
 unit-test fast_log2 : fast_log2.cpp : <cxxflags>-O3 ;
-
 #unit-test fast_pow : fast_pow.cpp ;
+unit-test Vector : Vector.cpp ;
 
 unit-test SyncLock_nothreads : SyncLock_nothreads_obj ;
 unit-test SyncLock_pthreads
