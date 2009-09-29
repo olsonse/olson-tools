@@ -76,8 +76,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef olson_tools_logger_h
+#define olson_tools_logger_h
 
 #include <olson-tools/XSTR.h>
 
@@ -262,5 +262,5 @@ void setLogFile(const char * logfile);
 }} /*namespace olson_tools::logger */
 #endif 
 
-#endif // LOGGER_H
+#endif // olson_tools_logger_h
 

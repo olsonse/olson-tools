@@ -95,12 +95,12 @@
 #define olson_tools_power_h
 
 
+#ifdef __cplusplus
+
 #ifdef __PGIC__
-/* PGI sucks. */
+/* PGI sucks.  This is only needed for their c++ compiler. */
 extern "C" double log2(double);
 #endif
-
-#ifdef __cplusplus
 
 /* include cmath so that we get log2 and std::pow */
 #  if !defined(USE_SPENCERS_FAST_POW) && !defined(DOXYGEN_SKIP)
