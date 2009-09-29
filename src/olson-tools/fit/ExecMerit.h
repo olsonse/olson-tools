@@ -17,8 +17,11 @@
 #include <fstream>
 #include <iterator>
 #include <limits>
-#include <cstdlib>
 #include <sstream>
+#include <vector>
+
+#include <cstdlib>
+#include <cassert>
 
 namespace olson_tools {
   namespace fit {
@@ -62,7 +65,7 @@ namespace olson_tools {
        * ExecMerit instance.
        */
       static merit_t merit( const Gene & gene, void * ex_instance ) /* const */ {
-        assert( ex_intance != NULL );
+        assert( ex_instance != NULL );
         return static_cast<const ExecMerit*>( ex_instance )->operator()( gene );
       }/* operator() */
 
