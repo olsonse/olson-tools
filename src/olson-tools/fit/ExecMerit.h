@@ -26,21 +26,37 @@
 namespace olson_tools {
   namespace fit {
 
-    struct ExecMerit : ExecFunc {
-      /* MEMBER STORAGE */
+    /** Execute an external program/script as a merit function for the GA.
+     * @param id
+     *    dummy argument to allow multiple ExecMerit instances use different
+     *    static data (e.g. use different external scripts/programs).
+     */
+    template < unsigned int id = 0u >
+    struct ExecMerit {
+      /* NON-LOCAL STORAGE */
       /** The result that will be given if the external program does not return
        * a value [Default -inf].  
        * NOTE:  don't forget that the genetic algorithm seeks to maximize merit
        * and not minimize it.   Therefore, make sure that ERROR_RESULT is set to
        * a reasonably low number.  */
-      const merit_t ERROR_RESULT;
+      static merit_t ERROR_RESULT;
+
+      /** Static instance of ExecFunc class to execute the external program.
+       * This defaults to attempting to open '/dev/null', so you will NEED to
+       * set this appropriately befor ExecMerit::operator() will properly
+       * succeed.
+       *
+       * @see setProgramName
+       */
+      static ExecFunc execFunc;
+
+      /* STATIC FUNCTIONS */
+      /** A simple function to help changing the external program to execute. */
+      static void setProgramName( const std::string & program_name ) {
+        ExecMerit::execFunc = ExecFunc( program_name );
+      }
 
       /* MEMBER FUNCTIONS */
-      ExecMerit( const std::string & program_name,
-                 const merit_t & ERROR_RESULT =
-                   -std::numeric_limits<merit_t>::infinity() )
-        : ExecFunc( program_name ), ERROR_RESULT(ERROR_RESULT) { }
-
       /** Evaluate the merit function. */
       merit_t operator() ( const Gene & gene ) const {
         std::vector<Allele_t> g;
@@ -61,15 +77,14 @@ namespace olson_tools {
           return ERROR_RESULT;
       }/* operator() */
 
-      /** Evaluate the merit function, using ex_instance pointer to the
-       * ExecMerit instance.
-       */
-      static merit_t merit( const Gene & gene, void * ex_instance ) /* const */ {
-        assert( ex_instance != NULL );
-        return static_cast<const ExecMerit*>( ex_instance )->operator()( gene );
-      }/* operator() */
-
     };
+
+    template < unsigned int id >
+    merit_t ExecMerit<id>::ERROR_RESULT =
+      -std::numeric_limits<merit_t>::infinity();
+
+    template < unsigned int id >
+    merit_t ExecMerit<id>::execFunc = ExecFunc("/dev/null");
 
   }/* namespace olson_tools::fit */
 }/* namespace olson_tools */
