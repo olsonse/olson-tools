@@ -83,8 +83,13 @@ namespace olson_tools{
   namespace fit {
 
     ///
-    template < typename optionsT >
+    template < typename _optionsT >
     class Generation {
+      /* TYPEDEFS */
+    public:
+      typedef _optionsT optionsT;
+      typedef fit::Individual< typename optionsT::MeritFunctor> Individual;
+
       /* NON-LOCAL STORAGE */
     public:
       //?? Can't remember
@@ -127,7 +132,7 @@ namespace olson_tools{
       Generation( const Generation&, int max_individuals );
 
       /// Destructor
-      ~Generation();
+      inline ~Generation();
 
       /// intialize with random population members
       void randinit();
@@ -171,11 +176,11 @@ namespace olson_tools{
 
       /** Return the gene recorded as the best in the generation after sort().
        */
-      const Gene & bestGene() const;
+      inline const Gene & bestGene() const;
 
       /** Return the gene recorded as the best in the generation after sort().
        */
-      const merit_t & bestMerit() const;
+      inline const merit_t & bestMerit() const;
 
       /* STATIC FUNCTIONS */
 
@@ -195,6 +200,9 @@ namespace olson_tools{
 
       ///
       int tselect(merit_t rtot, int skip);
+
+      Individual ** new_Individual_list(const Gene & gn, long population );
+      void delete_Individual_list(Individual ** ilist);
     }; // Generation class
 
     /// The Generation print function.

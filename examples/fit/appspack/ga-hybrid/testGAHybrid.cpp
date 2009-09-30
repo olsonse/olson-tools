@@ -61,28 +61,30 @@ struct sinc {
   }
 };
 
-merit_t meritfnc( const Gene & gene, void * nothing ) {
-  double m =         sinc<3, -2, 2>()(gene)
-           + 100.8 * sinc<3,  4, 3>()(gene)
-           + 2.4   * sinc<3,  0,-3>()(gene);
+struct MeritFunctor {
+  merit_t operator() ( const Gene & gene ) const {
+    double m =         sinc<3, -2, 2>()(gene)
+             + 100.8 * sinc<3,  4, 3>()(gene)
+             + 2.4   * sinc<3,  0,-3>()(gene);
 
-  ++n_eval;
-#ifdef RECORD_EVALS
-# ifdef USE_PTHREAD
-  memLock.lock();
-# endif
-  frec << gene << '\t' << m << '\n' << std::flush;
-# ifdef USE_PTHREAD
-  memLock.unlock();
-# endif
-#endif
-  return m;
-}
+    ++n_eval;
+    #ifdef RECORD_EVALS
+    #  ifdef USE_PTHREAD
+    memLock.lock();
+    #  endif
+    frec << gene << '\t' << m << '\n' << std::flush;
+    #  ifdef USE_PTHREAD
+    memLock.unlock();
+    #  endif
+    #endif
+    return m;
+  }
+};
+
 
 int main() {
-  typedef make_options<GeneAppsPack>::type options;
+  typedef make_options< MeritFunctor, GeneAppsPack>::type options;
   options opts;
-  opts.meritfnc = (void*)meritfnc;
   opts.population = 10;
   opts.local_fit_max_individuals_prctage = 0.50;
   opts.tolerance = 1e-15;
@@ -90,9 +92,10 @@ int main() {
   opts.max_merit = 50.0;
   opts.max_generation = 1000;
   opts.localParam.sublist("Solver").setParameter("Cache Output File", std::string("eval_output"));
-  opts.localParam.sublist("Solver").setParameter("Cache Input File", std::string("eval_output"));
+  //opts.localParam.sublist("Solver").setParameter("Cache Input File", std::string("eval_output"));
   opts.localParam.sublist("Solver").setParameter("Debug", static_cast<int>(0));
   opts.localParam.sublist("Solver").setParameter("Step Tolerance", static_cast<double>(0.05));
+  opts.localParam.sublist("Solver").setParameter("Cache Comparison Tolerance", static_cast<double>(0.01));
   opts.localParam.sublist("Solver").setParameter("Initial Step", static_cast<double>(0.50));
   //opts.replace = 0.60;
   //opts.mutprob = .3;
@@ -108,15 +111,20 @@ int main() {
   GeneticAlg<options> ga(dna, opts);
 
   merit_t ga_merit = ga.fit(&std::cout);
-  Individual indiv(dna, (void*)meritfnc);
+  Individual<MeritFunctor> indiv(dna);
   merit_t merit = indiv.Merit();
 
   std::cout << "global(/local) fit merit:  " << merit << "\t:  "
             << dna << std::endl;
 
   if ( ga_merit > merit ) {
-    std::cout << "WARNING:   ga returned " << ga_merit << " as merit "
-                 "and re-evaluated merit returned " << merit
+    std::cout << "NOTE:   ga returned " << ga_merit << " as merit "
+                 "and re-evaluated merit returned " << merit << "\n"
+                 "The reason for this is because the local AppsPack optimizer\n"
+                 "uses a cache with a given cache comparison tolerance\n"
+                 "By decreasing the 'Cache Comparison Tolerance', you can get\n"
+                 "appspack to return merit values closer to what corresponds\n"
+                 "for a given set of parameters."
               << std::endl;
   }
 
@@ -140,10 +148,11 @@ int main() {
 
   {
     std::ofstream f("func.dat");
+    MeritFunctor meritFunctor;
 
     for ( dna[0].val = dna[0].min; dna[0].val <= dna[0].max; dna[0].val += .1 ) {
       for ( dna[1].val = dna[0].min; dna[1].val <= dna[0].max; dna[1].val += .1 ) {
-        double m = meritfnc( dna, 0x0 );
+        double m = meritFunctor( dna );
         f << dna << '\t' << m << '\n';
       }
       f << '\n';

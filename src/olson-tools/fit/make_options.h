@@ -19,11 +19,10 @@
 
 
 
-#ifndef GENETICALGARGS_H
-#define GENETICALGARGS_H
+#ifndef olson_tools_fit_make_options_h
+#define olson_tools_fit_make_options_h
 
 #include <olson-tools/fit/merit_def.h>
-#include <olson-tools/fit/Individual.h>
 #include <olson-tools/fit/NullLocalFit.h>
 
 #include <string>
@@ -33,15 +32,19 @@ namespace olson_tools {
   namespace fit {
 
     /** Options for genetic algorithm.
+     * @param MeritFunctor
+     *    Define the functor that will provide the merit function.
+     *
      * @param _LocalFit
      *    FUnctor that will provide the local fit [Default NullLocalFIt].
      */
-    template <
+    template < typename _MeritFunctor,
                typename _LocalFit = NullLocalFit
     >
     struct make_options {
       struct type {
         /* TYPEDEFS */
+        typedef _MeritFunctor MeritFunctor;
         typedef _LocalFit LocalFit;
 
         ///
@@ -56,9 +59,6 @@ namespace olson_tools {
             encourage_diversity(true),
             diversity_grid_cols(100),
             seed_fraction(-1),
-            createind(create_Individual),
-            meritfnc(NULL),
-            exterior_pointer( NULL ),
             generation_delay(0),
             local_fit_max_individuals_prctage(0),
             local_fit_random(false),
@@ -92,11 +92,6 @@ namespace olson_tools {
         /** The fraction of the population is seeded by the initial gene. */
         float    seed_fraction;
 
-        /// Creator function for the Individuals.
-        CREATE_IND_FUNC   createind;
-        void *   meritfnc;
-        void *   exterior_pointer;
-
         /** Wait after each generation (in fractions of seconds).
          * -1 means to wait for user input. */
         double generation_delay;
@@ -128,4 +123,4 @@ namespace olson_tools {
   }/*namespace olson_tools::fit */
 }/*namespace olson_tools */
 
-#endif //  GENETICALGARGS_H
+#endif //  olson_tools_fit_make_options_h

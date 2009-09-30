@@ -59,141 +59,129 @@
  */
 
 
-#ifndef INDIVIDUAL_H
-#define INDIVIDUAL_H
+#ifndef olson_tools_fit_Individual_h
+#define olson_tools_fit_Individual_h
 
-#include "Gene.h"
-#include "../memory.h"
-#include "io.h"
-#include "merit_def.h"
+#include <olson-tools/fit/Gene.h>
+#include <olson-tools/fit/io.h>
+#include <olson-tools/fit/merit_def.h>
 
-namespace olson_tools{ namespace fit {
+#include <olson-tools/memory.h>
 
-typedef merit_t (*MERIT_FUNCTION)( const Gene &, void * );
+namespace olson_tools{
+  namespace fit {
 
-/** The base class of the population that will be created for
- * the genetic algorithm.
- *@memo Members of GeneticAlg's population.
-*/
-class Individual{
-  ///
-  REDEF_NEW_DEL_H(Individual);
-public:
-  // constructor to create specific DNA
-  // all will need this specific DNA because we need the range values
-  // present in order to create something random.
-  // Therefore, initialize the Individual with a specific gene,
-  // then procede to call randinit(), which will randomize things.
-  ///
-  Individual( const Gene & gene, void * meritfptr = NULL,
-              void * obj_ptr = NULL );
-  ///
-  Individual(const Individual &);
-  /// clean things up
-  virtual ~Individual();
-  /// Update organism without changing DNA, return new merit function.
-  merit_t test_Merit( Allele_t test_alleles[], unsigned char alleletype = 0 );
+    /** The base class of the population that will be created for
+     * the genetic algorithm.
+     *@memo Members of GeneticAlg's population.
+    */
+    template < typename _MeritFunctor >
+    class Individual {
+      /* TYPEDEFS */
+    public:
+      typedef _MeritFunctor MeritFunctor;
 
-  /// redo the DNA
-  void regene(const Gene &);
+      /* MEMBER STORAGE */
+    public:
+      /** The DNA of this Individual. */
+      Chromosome DNA;
 
-  /// redo the DNA and set the merit and updatemerit to false
-  void regene( const Gene &, const merit_t & m );
+    private:
+      /// boolean set to true(1) when DNA has been regened.
+      bool updatemerit;
 
-  /// update DNA
-  void regene( Allele_t thick[], int alleletype );
+      /** The cached merit value of this Individual. */
+      merit_t merit;
 
-  /// update DNA and set the merit and updatemerit to false
-  void regene( Allele_t thick[], int alleletype, const merit_t & m );
+      /** The merit functor. */
+      MeritFunctor meritFunctor;
 
-  /** Multiply the merit of this individual by mf to create a new merit.
-   */
-  void multMerit(merit_t mf);
 
-  /** Explicitly (and arbitrarily?) set the merit. */
-  void setMerit( const merit_t & m, const bool & do_not_updatemerit = true );
+      /* MEMBER FUNCTIONS */
+    public:
+      /** Constructor to create specific DNA.
+       * All will need this specific DNA because we need the range values
+       * present in order to create something random.
+       * Therefore, initialize the Individual with a specific gene,
+       * then procede to call randinit(), which will randomize things.
+       * FIXME:  an option to randomize via a given distribution would be nice.
+       */
+      inline Individual( const Gene & gene );
 
-  /**@return Returns Merit unless genes have been updated;
-   * in that case merit is set equal to the new meritfunction.
-  */
-  virtual merit_t Merit();
+      /// Copy Constructor
+      inline Individual(const Individual &);
 
-  /// inititialize things randomly
-  void randinit();
+      /// clean things up
+      inline ~Individual() { }
 
-  /// Assign operator.
-  virtual const Individual & operator=(const Individual &);
+      /// Assign operator.
+      inline const Individual & operator= ( const Individual & );
 
-  /** Mutate the DNA of this Individual.
-   * @returns the number of alleles actually mutated.
-   */
-  int mutate( const float & mutprob );
-  ///The pointer to the merit function.
-  MERIT_FUNCTION meritfnc;
-  ///
-  friend bool crossover( Individual& i1, Individual& i2, const float & crossprob );
-  ///
-  friend bool crossover( Individual *i1, Individual *i2, const float & crossprob );
-  ///
-  friend std::ostream & operator<<(std::ostream &, const Individual &);
-  ///
-  Chromosome DNA;
-protected:
+      /// Update organism without changing DNA, return new merit function.
+      inline merit_t test_Merit( Allele_t test_alleles[],
+                                 unsigned char alleletype = 0 );
 
-  /// boolean set to true(1) when DNA has been regened.
-  bool updatemerit;
+      /// redo the DNA
+      inline void regene(const Gene &);
 
-  ///
-  merit_t merit;
+      /// redo the DNA and set the merit and updatemerit to false
+      inline void regene( const Gene &, const merit_t & m );
 
-  /// A pointer which can be set to point to any exterior object.
-  void * exterior_pointer;
+      /// update DNA
+      inline void regene( Allele_t thick[], int alleletype );
 
-}; // Individual
+      /// update DNA and set the merit and updatemerit to false
+      inline void regene( Allele_t thick[], int alleletype, const merit_t & m );
 
-/* Every derived class of Individual must provide
- * a create_DerivedClass() function
- * like the following: */
-typedef Individual * (*CREATE_IND_FUNC)( const Gene &,
-                                         void * meritfnc /* = NULL */,
-                                         void * obj_ptr /* = NULL */ );
+      /** Multiply the merit of this individual by mf to create a new merit.  */
+      inline void multMerit(merit_t mf);
 
-/** When you use the GeneticAlg class you can have the 
- * population of the algorithm be a population of any class
- * derived from the Individual class.  To do this, you
- * will need to pass in a pointer to a function similar
- * to create\_Individual(...).  Your function might be
- * something like the following:
+      /** Explicitly (and arbitrarily?) set the merit. */
+      inline void setMerit( const merit_t & m, const bool & do_not_updatemerit = true );
 
-YourDerivedClass * create\_YourDerivedClass( const Gene \& gn,
-                                             void * meritfnc = NULL,
-                                             void * obj\_ptr = NULL );\\
+      /** Set updatemerit to true. */
+      inline void forceUpdate() { updatemerit = true; }
 
- * The (Gene \&) that is passed in is because all individuals
- * need to be initialized with some genetic info wrapped up
- * in a Gene.  You must use the c++ 'new' function to create
- * your class (duh!).  You should also make sure that your
- * derived class takes care of setting the merit-function pointer
- * to something more useful than NULL if nothing is given.
- *@memo Population creator.
- *@return Returns a pointer to the Individual created.
-*/
-Individual * create_Individual( const Gene & gn,
-                                void * meritfnc = NULL,
-                                void * obj_ptr = NULL );
+      /**@return Returns Merit unless genes have been updated;
+       * in that case merit is set equal to the new meritfunction.
+       */
+      inline merit_t Merit();
 
-#ifdef __SC__
-  //
-  int __cdecl mcomp(const void* l1, const void* l2);
-#else
-  //
-  int mcomp(const void* l1, const void* l2);
-#endif
+      /**@return Returns Merit unless genes have been updated;
+       * in that case merit is set equal to the new meritfunction.
+       */
+      inline merit_t getCurrentMerit() const { return merit; }
 
-///The Individual print function.
-std::ostream & operator<<(std::ostream &, const Individual &);
+      /// inititialize things randomly
+      inline void randinit();
 
-}}/*namespace olson_tools::fit */
+      /** Mutate the DNA of this Individual.
+       * @returns the number of alleles actually mutated.
+       */
+      inline int mutate( const float & mutprob );
 
-#endif //INDIVIDUAL_H
+    }; // Individual
+
+    ///
+    template < typename MF >
+    inline bool crossover( Individual<MF> & i1, Individual<MF> & i2,
+                           const float & crossprob );
+
+    ///
+    template < typename MF >
+    inline bool crossover( Individual<MF> * i1, Individual<MF> * i2,
+                           const float & crossprob ) {
+      return crossover( *i1, *i2, crossprob );
+    }
+
+    ///The Individual print function.
+    template < typename MF >
+    inline std::ostream & operator<< ( std::ostream &, const Individual<MF> & );
+
+  }/*namespace olson_tools::fit */
+}/*namespace olson_tools */
+
+#include <olson-tools/fit/Individual.cpp>
+
+#endif //olson_tools_fit_Individual_h
 

@@ -82,6 +82,7 @@ namespace olson_tools{
      * Gene.
      *@memo Simplex for Genes.
     */
+    template < typename MF >
     class GeneSimplex {
       /* TYPEDEFS */
     public:
@@ -100,16 +101,20 @@ namespace olson_tools{
     private:
       class Impl;
 
+      typedef fit::Individual<MF> IndividualT;
+
       /* MEMBER FUNCTIONS */
     public:
       /**  Runs simplex algorithm on an Individual.  */
-      merit_t operator() ( Individual * member,
-                           const Parameters & param ) const ;
+      inline merit_t operator() ( IndividualT * member,
+                                  const Parameters & param ) const ;
 
     }; // GeneSimplex class
 
 
   }/*namespace olson_tools::fit */
 }/*namespace olson_tools */
+
+#include <olson-tools/fit/GeneSimplex.cpp>
 
 #endif // olson_tools_fit_GeneSimplex_h

@@ -23,8 +23,8 @@
  * @see Simplex,Fit
 */
 
-#ifndef SIMFIT_H
-#define SIMFIT_H
+#ifndef olson_tools_fit_simfit_h
+#define olson_tools_fit_simfit_h
 
 #include <unistd.h>
 
@@ -152,7 +152,7 @@ class LsqFit: public Fit<T,fitT>{
 
 }}/*namespace olson_tools::fit */
 
-#include "simfit.cpp"
+#include <olson-tools/fit/simfit.cpp>
 
-#endif // SIMFIT_H
+#endif // olson_tools_fit_simfit_h
 

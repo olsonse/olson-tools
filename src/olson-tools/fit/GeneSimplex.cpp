@@ -9,11 +9,12 @@
 namespace olson_tools {
   namespace fit {
 
-    class GeneSimplex::Impl: public Fit<merit_t,merit_t> {
+    template < typename MF >
+    class GeneSimplex<MF>::Impl: public Fit<merit_t,merit_t> {
       /* MEMBER STORAGE */
     private:
       ///
-      Individual * member;
+      IndividualT * member;
 
       /* MEMBER FUNCTIONS */
     public:
@@ -23,7 +24,7 @@ namespace olson_tools {
        *@param ml should then be a pointer to the appropriate Individual object.
        *@memo Gene\_Simplex constructor.
       */
-      Impl( Allele_t ppar[], int nparams, Individual * ml )
+      Impl( Allele_t ppar[], int nparams, IndividualT * ml )
         : Fit<>(ppar,nparams),member(ml) { }
       ///
       virtual ~Impl() { }
@@ -39,8 +40,10 @@ namespace olson_tools {
       } // GeneSimplex::minfunc
     }; // Impl class
 
-    merit_t GeneSimplex::operator() ( Individual *member,
-                                      const Parameters & param ) const {
+    template < typename MF >
+    inline merit_t
+    GeneSimplex<MF>::operator() ( IndividualT *member,
+                                  const Parameters & param ) const {
       // find a minimum of this population member
       // by doing param.max_iteration steps using the simplex
       // algorithm

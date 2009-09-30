@@ -94,13 +94,6 @@ namespace olson_tools {
       if ( maxmerit == -std::numeric_limits<merit_t>::infinity() )
         maxmerit = options.max_merit;
 
-      /* The following line reset the the 'memory buffer'
-       * that will be kept for the Individual:: class.
-       * We do this so that each allocation of a new generation
-       * will be quicker.
-       */
-      Individual::freetoheap( options.population + 2 );
-
       merit_t merit(0),lmerit(0);
 
       //set the SIGINT signal so we can stop
@@ -181,11 +174,6 @@ namespace olson_tools {
       )/* catch */
 
       /* Now we take care of getting the system back to what it should be. */
-
-      /* We'll return the memory buffer set up for the Individual class
-       * and have the size of this buffer reset to its default value (0).
-       */
-      Individual::freetoheap();
 
       //Reset the signal so that it isn't passed to us.
       if( old_signal_handler == SIG_ERR ||

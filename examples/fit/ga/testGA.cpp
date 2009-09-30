@@ -26,11 +26,11 @@ static std::ofstream frec("record");
 
 #  define POPULATION                          10
 #  define LOCAL_FIT_MAX_INDIVIDUALS_PRCTAGE  0.00
-#  define REPLAC                             0.97
+#  define REPLACE                            0.97
 #else
 #  define POPULATION                          10000
 #  define LOCAL_FIT_MAX_INDIVIDUALS_PRCTAGE  0.0003
-#  define REPLAC                             0.60
+#  define REPLACE                            0.60
 #endif
 
 template < int scale = 1, int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0 >
@@ -60,29 +60,30 @@ struct sinc {
   }
 };
 
-merit_t meritfnc( const Gene & gene, void * nothing ) {
-  double m =         sinc<3, -2, 2>()(gene)
-           + 100.8 * sinc<3,  4, 3>()(gene)
-           + 2.4   * sinc<3,  0,-3>()(gene);
+struct MeritFunctor {
+  merit_t operator() ( const Gene & gene ) const {
+    double m =         sinc<3, -2, 2>()(gene)
+             + 100.8 * sinc<3,  4, 3>()(gene)
+             + 2.4   * sinc<3,  0,-3>()(gene);
 
-  ++n_eval;
-#ifdef RECORD_EVALS
-  frec << gene << '\t' << m << '\n' << std::flush;
-#endif
-  return m;
-}
+    ++n_eval;
+  #ifdef RECORD_EVALS
+    frec << gene << '\t' << m << '\n' << std::flush;
+  #endif
+    return m;
+  }
+};
 
 int main() {
-  typedef make_options<GeneSimplex>::type options;
+  typedef make_options< MeritFunctor, GeneSimplex<MeritFunctor> >::type options;
   options opts;
-  opts.meritfnc = (void*)meritfnc;
-  opts.population = 10000;
-  opts.local_fit_max_individuals_prctage = 0.0003;
+  opts.population = POPULATION;
+  opts.local_fit_max_individuals_prctage = LOCAL_FIT_MAX_INDIVIDUALS_PRCTAGE;
   opts.localParam.tolerance = 0.0000000001;
   opts.tolerance = 1e-15;
   opts.encourage_diversity = true;
   opts.max_merit = 0.9;
-  opts.replace = 0.60;
+  opts.replace = REPLACE;
   opts.max_generation = 1000;
   Gene dna;
 
@@ -93,7 +94,7 @@ int main() {
   GeneticAlg<options> ga(dna, opts);
 
   ga.fit(&std::cout);
-  Individual indiv(dna, (void*)meritfnc);
+  Individual<MeritFunctor> indiv(dna);
   merit_t merit = indiv.Merit();
 
   std::cout << "global(/local) fit merit:  " <<  merit << "\t:  "
@@ -102,7 +103,7 @@ int main() {
   std::cout << "evals of merit function :  " << n_eval << std::endl;
   n_eval = 0;
 
-  merit = GeneSimplex() ( &indiv, opts.localParam );
+  merit = GeneSimplex<MeritFunctor>() ( &indiv, opts.localParam );
 
   dna = indiv.DNA;
 
@@ -116,10 +117,11 @@ int main() {
 
   {
     std::ofstream f("func.dat");
+    MeritFunctor meritFunctor;
 
     for ( dna[0].val = -5; dna[0].val <= 5; dna[0].val += .1 ) {
       for ( dna[1].val = -5; dna[1].val <= 5; dna[1].val += .1 ) {
-        double m = meritfnc( dna, 0x0 );
+        double m = meritFunctor( dna );
         f << dna << '\t' << m << '\n';
       }
       f << '\n';

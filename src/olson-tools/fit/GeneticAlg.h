@@ -63,7 +63,6 @@
 
 #include <olson-tools/fit/Generation.h>
 #include <olson-tools/fit/Gene.h>
-#include <olson-tools/fit/make_options.h>
 
 #include <limits>
 #include <string>
@@ -71,8 +70,11 @@
 namespace olson_tools{
   namespace fit {
 
-    ///
-    template < typename _options = make_options<>::type >
+    /** Genetic algorithm driver.
+     * @param _options
+     *    @see make_options
+     */
+    template < typename _options >
     class GeneticAlg {
       /* TYPEDEFS */
     public:

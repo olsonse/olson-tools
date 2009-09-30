@@ -120,7 +120,8 @@ namespace olson_tools{
       /* MEMBER FUNCTIONS */
     public:
       /**  Runs simplex algorithm on an Individual.  */
-      merit_t operator() ( Individual * member,
+      template < typename MF >
+      merit_t operator() ( Individual<MF> * member,
                            const Parameters & param ) const {
         /* make a copy of the parameters to work with */
         Parameters lparam(param);
@@ -133,7 +134,7 @@ namespace olson_tools{
           );
 
         // *** Create the MinFunc
-        detail::GeneMinFunc minFunc(member);
+        detail::GeneMinFunc<MF> minFunc(member);
 
         // *** get initial point and bounds
         APPSPACK::Vector initialx, minvals, maxvals;
@@ -157,8 +158,8 @@ namespace olson_tools{
         APPSPACK::Constraints::Linear linear(lparam.sublist("Linear"));
 
         // *** Instantiate the custom executor ***
-        typedef olson_tools
-              ::fit::appspack::ThreadedExecutor<detail::GeneMinFunc> Executor;
+        typedef olson_tools::fit::appspack
+              ::ThreadedExecutor< detail::GeneMinFunc<MF> > Executor;
         Executor executor(minFunc);
         
         // *** Create the solver ***

@@ -21,12 +21,13 @@ namespace olson_tools {
   namespace fit {
     namespace detail {
 
+      template < typename MF >
       struct GeneMinFunc {
         /* MEMBER STORAGE */
-        Individual * const member;
+        Individual<MF> * const member;
 
         /* MEMBER FUNCTIONS */
-        GeneMinFunc( Individual * const member )
+        GeneMinFunc( Individual<MF> * const member )
           : member( member ) { }
 
         template < typename V0, typename V1 >

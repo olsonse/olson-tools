@@ -63,14 +63,15 @@ namespace olson_tools {
   /** A PThreads threads cache and associated tasks manager. */
   class PThreadCache {
   private:
-    int max_threads;
+    int max_threads;    /* protected by max_threads_spinlock */
+    int active_threads; /* protected by max_threads_spinlock (yes, same one) */
 
     pthread_attr_t  pthread_attr;
     pthread_mutex_t task_queue_mutex; /* mutex to protect the queue items. */
     pthread_cond_t  task_ready_cond;  /* condition for task queue additions. */
     pthread_cond_t  task_finished_cond;
     pthread_mutex_t task_finished_mutex;/* mutex to protect the finished set. */
-    pthread_mutex_t max_threads_mutex;/* mutex to protect max_threads. */
+    pthread_spinlock_t max_threads_spinlock;/* mutex to protect max_threads. */
 
     pthread_t * threads; /* do we actually need to keep thread ids? */
 
@@ -136,12 +137,28 @@ namespace olson_tools {
        * requested to terminate. */
       PThreadTask * task;
       while ((task = cache->getTask()) != NULL) {
-        /* execute task. */
-        task->exec();
-        cache->signalTaskFinished(task);
+        cache->incrementActiveThreads(); /* inc active    */
+        task->exec();                    /* execute task. */
+        cache->decrementActiveThreads(); /* dec active    */
+        cache->signalTaskFinished(task); /* signal finish */
       }
     }
 
+    /** Increment the active threads counter--this should only ever be called by
+     * the taskSlave function. */
+    void incrementActiveThreads() {
+      pthread_spin_lock(&max_threads_spinlock);
+      ++active_threads;
+      pthread_spin_unlock(&max_threads_spinlock);
+    }
+
+    /** Decrement the active threads counter--this should only ever be called by
+     * the taskSlave function. */
+    void decrementActiveThreads() {
+      pthread_spin_lock(&max_threads_spinlock);
+      --active_threads;
+      pthread_spin_unlock(&max_threads_spinlock);
+    }
 
 
 
@@ -155,13 +172,14 @@ namespace olson_tools {
      * manager.
      */
     PThreadCache() : max_threads(0),
+                     active_threads(0),
                      threads(NULL),
                      task_queue(),
                      finished_tasks() {
       pthread_attr_init(&pthread_attr);
       pthread_mutex_init(&task_queue_mutex, NULL);
       pthread_mutex_init(&task_finished_mutex,NULL);
-      pthread_mutex_init(&max_threads_mutex,NULL);
+      pthread_spin_init(&max_threads_spinlock,0);
       pthread_cond_init(&task_ready_cond, NULL);
       pthread_cond_init(&task_finished_cond, NULL);
 
@@ -188,31 +206,39 @@ namespace olson_tools {
       pthread_attr_destroy(&pthread_attr);
       pthread_mutex_destroy(&task_queue_mutex);
       pthread_mutex_destroy(&task_finished_mutex);
-      pthread_mutex_destroy(&max_threads_mutex);
+      pthread_spin_destroy(&max_threads_spinlock);
       pthread_cond_destroy(&task_ready_cond);
       pthread_cond_destroy(&task_finished_cond);
     }
 
-    /** Add a task to the thread cache task queue. */
-    void addTask(PThreadTask * task) {
-      bool serial = false;
-      pthread_mutex_lock(&max_threads_mutex);
-      if ( max_threads <= 1 )
-        serial = true;
-      pthread_mutex_unlock(&max_threads_mutex);
+    /** Add a task to the thread cache task queue.
+     * @param task
+     *   The task to add the the task queue.
+     * @param self_if_none_avail
+     *   Whether to perform the work by self if no threads are currently
+     *   available [Default false].
+     */
+    void addTask( PThreadTask * task, bool self_if_none_avail = false ) {
+      pthread_spin_lock(&max_threads_spinlock);
+        bool serial = max_threads <= 1 ||
+                      ( self_if_none_avail && 
+                        ( max_threads - active_threads ) == 0 );
+
+        if ( !serial ) {
+          pthread_mutex_lock(&task_queue_mutex);      /* locked queue */
+
+          task_queue.push(task);
+          /* now we should probably signal some thread that there is a task
+           * ready for execution. */
+          pthread_cond_signal(&task_ready_cond);
+
+          pthread_mutex_unlock(&task_queue_mutex);    /* unlocked queue */
+        }
+      pthread_spin_unlock(&max_threads_spinlock);
 
       if ( serial ) {
         task->exec();
         signalTaskFinished(task);
-      } else {
-        pthread_mutex_lock(&task_queue_mutex);      /* locked queue */
-
-        task_queue.push(task);
-        /* now we should probably signal some thread that there is a task
-         * ready for execution. */
-        pthread_cond_signal(&task_ready_cond);
-
-        pthread_mutex_unlock(&task_queue_mutex);    /* unlocked queue */
       }
     }
 
@@ -256,8 +282,8 @@ namespace olson_tools {
     }
 
     /** Change/Set the number of threads used to execute tasks. */
-    inline void set_max_threads(int mx) {
-      pthread_mutex_lock(&max_threads_mutex);
+    inline int set_max_threads(int mx) {
+      pthread_spin_lock(&max_threads_spinlock);
 
       if( max_threads != mx ) {
         if(max_threads > 1) {
@@ -291,16 +317,28 @@ namespace olson_tools {
         }/* if more than one thread requested */
       }/* if the request is a change */
 
-      pthread_mutex_unlock(&max_threads_mutex);
+      mx = max_threads;
+      pthread_spin_unlock(&max_threads_spinlock);
+      return mx;
     }
 
     /** Get the maximum number of threads that will be used to execute tasks.
      * */
     inline int get_max_threads() {
-      pthread_mutex_lock(&max_threads_mutex);
+      pthread_spin_lock(&max_threads_spinlock);
       int mx = max_threads;
-      pthread_mutex_unlock(&max_threads_mutex);
+      pthread_spin_unlock(&max_threads_spinlock);
       return mx;
+    }
+
+    /** Get both maximum number of threads that will be used to execute tasks as
+     * well as the number of currently active threads.
+     * */
+    inline std::pair<int,int> get_active_threads() {
+      pthread_spin_lock(&max_threads_spinlock);
+      std::pair<int,int> retval( max_threads, active_threads );
+      pthread_spin_unlock(&max_threads_spinlock);
+      return retval;
     }
   };
 

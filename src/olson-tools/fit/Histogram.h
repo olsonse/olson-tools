@@ -21,44 +21,58 @@
  */
 
 
-#ifndef HISTOGRAM_H
-#define HISTOGRAM_H
+#ifndef olson_tools_fit_Histogram_h
+#define olson_tools_fit_Histogram_h
 
-#include "Individual.h"
+#include <olson-tools/fit/Individual.h>
 
-namespace olson_tools{ namespace fit {
+namespace olson_tools{
+  namespace fit {
 
-///
-class Histogram{
-public:
-  ///
-  Histogram(int population, int cont_grid_cols, const Individual &);
-  ///
-  ~Histogram();
-  /// return 0 if no error, <>0 otherwise
-  void update(Individual& member);
-  /// return merit factor
-  merit_t meritfact(Individual& member);
-  ///
-  friend std::ostream & operator<<(std::ostream &,const Histogram &);
-private:
-  ///
-  int **histtable;///pointer to an array of accumulation arrays
+    ///
+    class Histogram {
+      /* MEMBER STORAGE */
+    private:
+      ///
+      int **histtable;///pointer to an array of accumulation arrays
 
-  /** refers to grid spacing of histogram for coordinate system gene. */
-  float grid_spacing;
+      /** refers to grid spacing of histogram for coordinate system gene. */
+      float grid_spacing;
 
-  int rows;
-  int *colsize;
+      int rows;
+      int *colsize;
 
-  /** factor to coerce smaller populations to have larger diversity. */
-  merit_t mfact;
-}; // Histogram
+      /** factor to coerce smaller populations to have larger diversity. */
+      merit_t mfact;
+
+      /* MEMBER FUNCTIONS */
+    public:
+      ///
+      template < typename MF >
+      inline Histogram(int population, int cont_grid_cols, const Individual<MF> &);
+
+      ///
+      inline ~Histogram();
+
+      /// return 0 if no error, <>0 otherwise
+      template < typename MF >
+      inline void update(Individual<MF> & member);
+
+      /// return merit factor
+      template < typename MF >
+      inline merit_t meritfact(Individual<MF> & member);
+
+      ///
+      friend inline std::ostream & operator<<(std::ostream &,const Histogram &);
+    }; // Histogram
 
 
-///The Histogram print function.
-std::ostream & operator<<(std::ostream &, const Histogram &);
+    ///The Histogram print function.
+    inline std::ostream & operator<<(std::ostream &, const Histogram &);
 
-}}/*namespace olson_tools::fit */
+  }/*namespace olson_tools */
+}/*namespace olson_tools::fit */
 
-#endif // HISTOGRAM_H
+#include <olson-tools/fit/Histogram.cpp>
+
+#endif // olson_tools_fit_Histogram_h

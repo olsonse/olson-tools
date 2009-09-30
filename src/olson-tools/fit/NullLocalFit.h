@@ -95,7 +95,8 @@ namespace olson_tools{
        * of the Gene\_Simplex.
        *@memo Runs simplex algorithm on an Individual.
       */
-      void fit( Individual * member, const Parameters & param ) { }
+      template < typename IndividualT >
+      void fit( IndividualT * member, const Parameters & param ) { }
 
     }; // NullLocalFit class
 

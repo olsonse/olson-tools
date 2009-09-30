@@ -105,28 +105,28 @@ namespace olson_tools {
   class SyncLock {
   private:
     IF_OMP(omp_lock_t omplock;)
-    IF_PTHREAD(pthread_mutex_t pthread_mutex;)
+    IF_PTHREAD(pthread_spinlock_t pthread_spin;)
     IF_WIN32(CRITICAL_SECTION critical_section;)
 
   public:
     /** Constructor initializes relevant mutex object. */
     SyncLock() {
       IF_OMP(omp_init_lock(&omplock);)
-      IF_PTHREAD(pthread_mutex_init(&pthread_mutex, NULL);)
+      IF_PTHREAD(pthread_spin_init(&pthread_spin, 0);)
       IF_WIN32(InitializeCriticalSection(&critical_section);)
     }
 
     /** Destructor destroys relevant mutex object. */
     ~SyncLock() {
       IF_OMP(omp_destroy_lock(&omplock);)
-      IF_PTHREAD(pthread_mutex_destroy(&pthread_mutex);)
+      IF_PTHREAD(pthread_spin_destroy(&pthread_spin);)
       IF_WIN32(DeleteCriticalSection(&critical_section);)
     }
 
     /** Locks relevant mutex object. */
     inline void lock() {
       IF_OMP(omp_set_lock(&omplock);)
-      IF_PTHREAD(pthread_mutex_lock(&pthread_mutex);)
+      IF_PTHREAD(pthread_spin_lock(&pthread_spin);)
       IF_WIN32(EnterCriticalSection(&critical_section);)
     }
 
@@ -136,7 +136,7 @@ namespace olson_tools {
      */
     inline bool tryLock() {
       IF_OMP(return omp_test_lock(&omplock);)
-      IF_PTHREAD(return pthread_mutex_trylock(&pthread_mutex) == 0;)
+      IF_PTHREAD(return pthread_spin_trylock(&pthread_spin) == 0;)
       IF_WIN32(return TryEnterCriticalSection(&critical_section);)
       IF_THREADS(/*threads active*/,return true;)
     }
@@ -152,7 +152,7 @@ namespace olson_tools {
       )
 
       IF_PTHREAD(
-        int v = pthread_mutex_trylock(&pthread_mutex);
+        int v = pthread_spin_trylock(&pthread_spin);
         switch (v) {
           case EBUSY:
             return true;
@@ -177,7 +177,7 @@ namespace olson_tools {
     /** Unlocks relevant mutex object. */
     inline void unlock() {
       IF_OMP(omp_unset_lock(&omplock);)
-      IF_PTHREAD(pthread_mutex_unlock(&pthread_mutex);)
+      IF_PTHREAD(pthread_spin_unlock(&pthread_spin);)
       IF_WIN32(LeaveCriticalSection(&critical_section);)
     }
   };

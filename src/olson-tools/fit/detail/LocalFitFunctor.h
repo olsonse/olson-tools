@@ -17,7 +17,7 @@ namespace olson_tools {
       /** Creates merit evaluation tasks that are then executed by
        * the default thread cache.
        */
-      template < typename LocalFit >
+      template < typename MF, typename LocalFit >
       struct LocalFitFunctor {
         /* MEMBER STORAGE */
         /** Local fit instance. */
@@ -27,14 +27,14 @@ namespace olson_tools {
         const typename LocalFit::Parameters & params;
 
         /** reference to the relevant child. */
-        Individual * ind;
+        Individual<MF> * ind;
 
 
         /* MEMBER FUNCTIONS */
         /** Constructor. */
         LocalFitFunctor( const LocalFit & localFit,
                          const typename LocalFit::Parameters & params,
-                         Individual * ind )
+                         Individual<MF> * ind )
           : localFit(localFit), params(params), ind(ind) { }
 
         /** Functor operation. */

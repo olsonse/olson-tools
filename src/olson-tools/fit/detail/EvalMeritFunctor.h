@@ -18,11 +18,12 @@ namespace olson_tools {
       /** Creates merit evaluation tasks that are then executed by
        * the default thread cache.
        */
+      template < typename MF >
       struct EvalMeritFunctor {
         /** reference to the relevant child. */
-        Individual & ind;
+        Individual<MF> & ind;
 
-        EvalMeritFunctor( Individual & ind ) : ind(ind) { }
+        EvalMeritFunctor( Individual<MF> & ind ) : ind(ind) { }
 
         void operator() () {
           static_cast<void>( ind.Merit() );

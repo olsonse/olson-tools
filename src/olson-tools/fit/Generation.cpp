@@ -89,6 +89,7 @@
 
 #include <stdexcept>
 #include <set>
+#include <algorithm>
 
 #include <cstdlib>
 #include <cassert>
@@ -117,16 +118,6 @@ namespace olson_tools{
     /* *****   end    stopGeneticAlg portion ******* */
 
     ///
-    Individual ** new_Individual_list(  const Gene & gn,
-                                        long population,
-                                        CREATE_IND_FUNC createind = NULL,
-                                        void * meritfnc = NULL,
-                                        void * obj_ptr = NULL );
-
-    ///
-    void delete_Individual_list(Individual ** ilist);
-
-    ///
     template < typename optionsT >
     merit_t Generation<optionsT>::merit() {
       // return the average of the top 4 merit functions,
@@ -147,16 +138,29 @@ namespace olson_tools{
     } // Generation::total
 
     template < typename optionsT >
-    const Gene & Generation<optionsT>::bestGene() const {
+    inline const Gene & Generation<optionsT>::bestGene() const {
       // we should not allow others to change this guy's information
       return gene;
     } // Generation::bestGene
 
     template < typename optionsT >
-    const merit_t & Generation<optionsT>::bestMerit() const {
+    inline const merit_t & Generation<optionsT>::bestMerit() const {
       // we should not allow others to change this guy's information
       return bestmerit;
     } // Generation::bestMerit
+
+
+
+
+    namespace detail {
+      struct MeritGreaterThan {
+        template < typename MF >
+        bool operator() ( Individual<MF> * const lhs,
+                          Individual<MF> * const rhs ) const {
+          return lhs->Merit() > rhs->Merit();
+        }
+      };
+    }
 
     template < typename optionsT >
     void Generation<optionsT>::sort() {
@@ -176,10 +180,12 @@ namespace olson_tools{
          * evaluation in its own threads.  Doing so now will cache the result in
          * the individual.  
          */
-        olson_tools::PThreadEval< detail::EvalMeritFunctor >
+        typedef EvalMeritFunctor< typename optionsT::MeritFunctor > Functor;
+
+        olson_tools::PThreadEval< Functor >
           evaluator(Generation::thread_cache);
         for ( int i = 0; i < options.population; ++i ) {
-          evaluator.eval( detail::EvalMeritFunctor( *member[i] ) );
+          evaluator.eval( Functor( *member[i] ) );
         }
         evaluator.joinAll();
       }
@@ -230,7 +236,7 @@ namespace olson_tools{
        * an Individual, our qsort will only move around pointer
        * values (much faster).
        */
-      qsort(member, options.population, sizeof(member[0]), mcomp);
+      std::sort(member, member+options.population, detail::MeritGreaterThan());
 
       if ( !options.local_fit_random ) {
         /* This code should be better, I think, for applying the local fit.
@@ -255,7 +261,10 @@ namespace olson_tools{
             using detail::LocalFitFunctor;
             using olson_tools::PThreadEval;
 
-            typedef LocalFitFunctor< typename optionsT::LocalFit > Functor;
+            typedef LocalFitFunctor<
+              typename optionsT::MeritFunctor,
+              typename optionsT::LocalFit
+            > Functor;
             PThreadEval<Functor> localFitter(Generation::thread_cache);
             for ( unsigned int i = 0; i < fit_max_individuals; ++i ) {
               Functor f( typename optionsT::LocalFit(),
@@ -272,7 +281,8 @@ namespace olson_tools{
           #endif
 
           /* now resort the fitted individuals again. */
-          qsort(member, fit_max_individuals, sizeof(member[0]), mcomp);
+          std::sort( member, member+fit_max_individuals,
+                     detail::MeritGreaterThan() );
         }
       }/* if not local_fit_random */
 
@@ -284,8 +294,7 @@ namespace olson_tools{
     template < typename optionsT>
     Generation<optionsT>::Generation( const optionsT & options, const Gene & igene )
       : options(options), gene(igene), bestmerit(0) {
-      member = new_Individual_list( gene, options.population, options.createind,
-                                    options.meritfnc, options.exterior_pointer );
+      member = new_Individual_list( gene, options.population );
       assert(member); // member better be point to an Individual pointer
 
       #ifdef USE_PTHREAD
@@ -299,7 +308,7 @@ namespace olson_tools{
     Generation<optionsT>::Generation(const Generation& gen)
       : options(gen.options), gene( gen.gene ), bestmerit( gen.bestmerit )  {
       //cast the gene[-1] to a function of the correct kind
-      member = new_Individual_list( gene, options.population, options.createind );
+      member = new_Individual_list( gene, options.population );
       for( int i = 0; i < options.population; ++i )
         *member[i] = *gen.member[i];
     } // Generation copy constructor
@@ -308,7 +317,7 @@ namespace olson_tools{
     Generation<optionsT>::Generation(const Generation& gen, int max_individuals)
       : options( gen.options), gene( gen.gene ), bestmerit( gen.bestmerit ) {
       //cast the gene[-1] to a function of the correct kind
-      member = new_Individual_list( gene, options.population, options.createind );
+      member = new_Individual_list( gene, options.population );
       for( int i = 0; i < max_individuals; ++i )
         *member[i] = *gen.member[i];
     } // Generation partial copy constructor
@@ -320,7 +329,7 @@ namespace olson_tools{
     } // Generation::init
 
     template < typename optionsT>
-    Generation<optionsT>::~Generation(){
+    inline Generation<optionsT>::~Generation(){
       delete_Individual_list(member);
     } // Generation destructor
 
@@ -334,7 +343,7 @@ namespace olson_tools{
       int nchild = int( options.replace * options.population ); // number of children to create
       int ichild = options.population - nchild; // this is child index in new generation
       Generation chld( *this, ichild ); // make partial copy
-      Individual **parent = new_Individual_list( gene, 2 , options.createind );
+      Individual **parent = new_Individual_list( gene, 2 );
       // now for the new children
       while( ichild < options.population && !stop ){
         // select parents
@@ -383,7 +392,7 @@ namespace olson_tools{
       int nchild = int(options.replace*options.population);// number of children to create
       int ichild=options.population-nchild; // this is the child index in the new generation
       Generation chld(*this,ichild);// make partial copy
-      Individual **children = new_Individual_list( gene, 2, options.createind );
+      Individual **children = new_Individual_list( gene, 2 );
 
       // now for the new children
       while( ichild < options.population && !stop ) {
@@ -501,10 +510,10 @@ namespace olson_tools{
     } // Generation::hist
 
     ///
-    Individual ** new_Individual_list(const Gene & gn, long population,
-                                      CREATE_IND_FUNC createind /* = NULL */,
-                                      void * meritfnc /* = NULL */,
-                                      void * obj_ptr /* = NULL */ ) {
+    template < typename optionsT>
+    Individual<typename optionsT::MeritFunctor> **
+    Generation<optionsT>::new_Individual_list( const Gene & gn,
+                                               long population ) {
       /* With the following, we will create an array of pointers
        * each to its own new Individiual, except for the first pointer
        * in the array.  In ilist[0] we will store the value of population
@@ -518,19 +527,17 @@ namespace olson_tools{
 
       Individual **ilist = new Individual *[population+1];
 
-      if( !createind )
-        createind = create_Individual;
-
       for(long i = 1; i<(population+1);++i)
-        ilist[i] = createind( gn, meritfnc, obj_ptr );
+        ilist[i] = new Individual( gn );
 
-      ilist[0] = (Individual *)(population);
+      ilist[0] = reinterpret_cast<Individual *>(population);
       return ++ilist;
     } // new_population_list
 
-    void delete_Individual_list(Individual ** ilist) {
+    template < typename optionsT>
+    void Generation<optionsT>::delete_Individual_list(Individual ** ilist) {
       --ilist;
-      long population = (long)ilist[0];
+      long population = reinterpret_cast<long>(ilist[0]);
       ++ilist;
       for(long i = 0; i<population; delete ilist[i++]);
       delete[] --ilist;
