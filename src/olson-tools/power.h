@@ -97,15 +97,23 @@
 
 #ifdef __cplusplus
 
-#ifdef __PGIC__
-/* PGI sucks.  This is only needed for their c++ compiler. */
-extern "C" double log2(double);
-#endif
-
 /* include cmath so that we get log2 and std::pow */
 #  if !defined(USE_SPENCERS_FAST_POW) && !defined(DOXYGEN_SKIP)
-#     include <cmath>
-#  endif
+#    include <cmath>
+
+#    ifdef log2
+       /* some compilers use a define for log2 */
+#      undef log2
+       template < typename T >
+       inline T log2( const T & arg ) {
+         return std::log(arg) / M_LN2;
+       }
+#    elif defined( __PGIC__ )
+       /* PGI sucks.  This is only needed for their c++ compiler. */
+       extern "C" double log2(double);
+#    endif
+
+#  endif // not (USE_SPENCERS_FAST_POW)
 
 namespace olson_tools {
 #else

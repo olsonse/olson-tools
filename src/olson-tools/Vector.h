@@ -66,11 +66,11 @@
 #include <limits>
 #include <sstream>
 #include <ostream>
+#include <algorithm>
 
 #include <cmath>
 #include <cstring>
 #include <cstdarg>
-#include <stdint.h>
 
 
 namespace olson_tools {
