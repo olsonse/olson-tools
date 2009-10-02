@@ -69,7 +69,7 @@ namespace olson_tools {
 
         /* FIXME:  There needs to be a way to pass back messages and error
          * conditions to the genetic algorithm. */
-        std::string msg = ExecFunc::operator() ( g, f );
+        std::string msg = execFunc( g, f );
 
         if ( f.size() > 0 )
           return f[0];
@@ -84,7 +84,7 @@ namespace olson_tools {
       -std::numeric_limits<merit_t>::infinity();
 
     template < unsigned int id >
-    merit_t ExecMerit<id>::execFunc = ExecFunc("/dev/null");
+    ExecFunc ExecMerit<id>::execFunc("/dev/null");
 
   }/* namespace olson_tools::fit */
 }/* namespace olson_tools */

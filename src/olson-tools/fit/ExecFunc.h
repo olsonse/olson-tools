@@ -23,7 +23,7 @@ namespace olson_tools {
 
     struct ExecFunc {
       /* MEMBER STORAGE */
-      const std::string program_name;
+      std::string program_name;
 
       /* MEMBER FUNCTIONS */
       ExecFunc( const std::string & program_name )
