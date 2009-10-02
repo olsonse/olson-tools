@@ -118,7 +118,8 @@ namespace olson_tools{
       inline const Individual & operator= ( const Individual & );
 
       /// Update organism without changing DNA, return new merit function.
-      inline merit_t test_Merit( Allele_t test_alleles[],
+      template < typename AIter >
+      inline merit_t test_Merit( AIter allele_iterator,
                                  unsigned char alleletype = 0 );
 
       /// redo the DNA

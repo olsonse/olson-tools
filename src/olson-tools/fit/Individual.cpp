@@ -133,37 +133,25 @@ namespace olson_tools{
      * violation does not occur.
     */
     template < typename MF >
+    template < typename AIter >
     inline
-    merit_t Individual<MF>::test_Merit( Allele_t test_alleles[],
+    merit_t Individual<MF>::test_Merit( AIter allele_iterator,
                                         unsigned char alleletype /* = 0 */ ){
-      int i,j, N;
-      Allele_struct * a;
-      Allele_t * tmp_alleles = new Allele_t[ N = DNA.numAlleles() ];
+      /* make a copy of original gene */
+      Gene test_dna( DNA );
 
-      /* First make a temporary stor of the original alleles and copy the new
-       * test_alleles over into the genes.
+      /* Copy the new test_alleles over into the genes.
       */
-      for( i = j = 0; i < N; i++ ) {
-        tmp_alleles[i] = ( a = &DNA[i] )->val;
-        a->val = TESTALLELETYPE( a->allele_type, alleletype)
-                     ? test_alleles[j++] : a->val;
-      }//for
-      merit_t tmp1_merit = merit; // Save the old merit value.
-
-      /* Evaluate the merit function. */
-      updatemerit = true;
-      merit_t tmp2_merit = Merit();
-
-      /* Now copy the original values back into place. */
-      updatemerit = false;
-      merit = tmp1_merit; // Reset the merit value.
-      for( i = j = 0; i < N; i++ ) {
-        DNA[i].val = tmp_alleles[i];
+      const unsigned int sz = DNA.size();
+      for( unsigned int i = 0; i < sz; ++i ) {
+        if ( TESTALLELETYPE( DNA[i].allele_type, alleletype) ) {
+          test_dna[i].val = (*allele_iterator);
+          ++allele_iterator;
+        }
       }//for
 
-      /* Now clean up and return a value. */
-      delete[] tmp_alleles;
-      return tmp2_merit;
+      /* Evaluate and return the merit function. */
+      return meritFunctor(test_dna);
     } // test_Merit
 
     template < typename MF >

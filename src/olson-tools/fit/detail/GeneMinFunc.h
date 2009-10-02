@@ -35,14 +35,8 @@ namespace olson_tools {
                                        V1 & f,
                                  const int & tag ) const {
 
-          Allele_t * p = new Allele_t[x.size()];
-          for ( unsigned int i = 0; i < x.size(); ++i )
-            p[i] = x[i];
-
           f.resize(1);
-          f[0] = -member->test_Merit(p,ALLELE_DYNAMIC_CONT);
-
-          delete[] p;
+          f[0] = -member->test_Merit(x.begin(), ALLELE_DYNAMIC_CONT);
 
           return "success";
 
