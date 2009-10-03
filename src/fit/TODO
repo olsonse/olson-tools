@@ -1,3 +1,0 @@
-finish and propogate the libfitError exception classes; try for and catch them
-find a way to do bitwise with other data types in gene: crossover and mutate
-Gene::Numalleles(int) -- I don't think this is doing what it should
