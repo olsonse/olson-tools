@@ -1,0 +1,7 @@
+exe testtiming : testtiming.cpp /olson-tools//olson-tools ;
+
+# FIXME: should we find a way to do the equivalent of automake's:
+# CLEANFILES = gravity-force.dat scalar-field.dat vector-field.dat plot.plt
+#
+# FIXME:  find a way to link to the plot.plt file from the build directory
+# $(shell ln -sf $(srcdir)/plot.plt plot.plt)

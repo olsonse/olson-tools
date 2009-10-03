@@ -1,0 +1,2 @@
+build-project simplex ;
+build-project ga ;

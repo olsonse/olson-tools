@@ -1,0 +1,6 @@
+import feature : feature ;
+
+feature record : on off : composite ;
+feature.compose <record>on : <define>RECORD_EVALS ;
+
+exe testGA : testGA.cpp /olson-tools//olson-tools ;

@@ -1,0 +1,142 @@
+# Copyright 2004 Spencer Olson
+PROCESSOR=@host_cpu@
+
+HOST_VENDOR=@host_vendor@
+
+OS=@host_os@
+
+# Specify OPTIM CFLAGS
+
+#       BEGIN GCC
+OPTIM_gcc_athlon        = -O3 -mcpu=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
+OPTIM_gcc_i686          = -O3 -mcpu=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
+OPTIM_gcc_x86_64        = -O3 -m64 -mcpu=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+OPTIM_gcc_ia64          = -O3
+
+OPTIM_gcc-4.0_athlon    = -O3 -mtune=athlon-xp -march=athlon-xp -malign-double -mmmx -m3dnow -msse -maccumulate-outgoing-args
+OPTIM_gcc-4.0_i686      = -O3 -mtune=pentium4 -march=pentium4 -malign-double -mmmx -msse -msse2 -maccumulate-outgoing-args
+OPTIM_gcc-4.0_x86_64    = -O3 -m64 -mtune=k8 -march=k8 -mmmx -msse -msse2 -m3dnow -maccumulate-outgoing-args
+
+OPTIM_gcc_powerpc       = -O3 -funroll-loops -fstrict-aliasing -fsched-interblock \
+                           -falign-loops=16 -falign-jumps=16 -falign-functions=16 \
+                           -ffast-math -mpowerpc-gpopt -mpowerpc-gfxopt -force_cpusubtype_ALL \
+                           -mtune=powerpc -mcpu=powerpc
+#                          -malign-power \
+
+OPTIM_gcc-3.4.3_powerpc = $(OPTIM_gcc_powerpc)
+OPTIM_gcc_sparc         = -O3 -mcpu=v9 -mtune=v9
+
+
+#We'll use the same optim flags for g77, gfortran, and g++ of the same version
+OPTIM_g++_$(PROCESSOR)          = $(OPTIM_$(CC)_$(PROCESSOR))
+OPTIM_g77_$(PROCESSOR)          = $(OPTIM_gcc_$(PROCESSOR))
+OPTIM_gfortran_$(PROCESSOR)     = $(OPTIM_gcc-4.0_$(PROCESSOR))
+OPTIM_g++-4.0_$(PROCESSOR)      = $(OPTIM_$(CC)_$(PROCESSOR))
+OPTIM_gfortran-4.0_$(PROCESSOR) = $(OPTIM_gcc-4.0_$(PROCESSOR))
+#         END GCC
+
+
+
+
+#       BEGIN PGCC
+OPTIM_pgcc_x86_64       = -tp=k8-64 -Mvect -fastsse  -Mipa=inline:10 -O2
+OPTIM_pgCC_x86_64       = $(OPTIM_pgcc_x86_64)
+OPTIM_pgf90_x86_64      = $(OPTIM_pgcc_x86_64)
+#         END PGCC
+
+
+
+#       BEGIN ICC
+OPTIM_icc_x86_64        = -xW -ip -O3
+OPTIM_icc_athlon        = -xK -ip -O3
+OPTIM_icc_ia64          = -ip -O3
+
+OPTIM_ifort_$(PROCESSOR)        = $(OPTIM_icc_$(PROCESSOR))
+OPTIM_icpc_$(PROCESSOR)         = $(OPTIM_icc_$(PROCESSOR))
+#         END ICC
+
+
+
+#       BEGIN NAGF95
+OPTIM_f95_athlon        = -O3 -Wc,-mcpu=athlon-xp,-march=athlon-xp,-malign-double,-mmmx,-m3dnow,-msse,-maccumulate-outgoing-args
+OPTIM_f95_i686          = -O3 -Wc,-mcpu=pentium4,-march=pentium4,-malign-double,-mmmx,-msse,-msse2
+OPTIM_f95_x86_64        = -O3 -Wc,-m64,-mcpu=k8,-march=k8,-mmmx,-msse,-msse2,-m3dnow
+OPTIM_f95_powerpc       = -O3 -Wc,-fast
+OPTIM_f95_sparc         = -O3 -Wc,-fast
+#         END NAGF95
+
+
+
+OPTIM_CC=$(OPTIM_$(CC)_$(PROCESSOR))
+OPTIM_CXX=$(OPTIM_$(CXX)_$(PROCESSOR))
+OPTIM_F77=$(OPTIM_$(F77)_$(PROCESSOR))
+OPTIM_FC=$(OPTIM_$(FC)_$(PROCESSOR))
+
+
+
+OT_CPPFLAGS=-DF77COMP_$(subst -,_,$(subst .,,$(F77)))=1
+
+
+
+# TODO:  Use autoconf to test Whether we should use -fpic or -fPIC
+# Specify CFLAGS for various architecture/compiler combinations
+OT_FLAGS0_gcc           = -Wall
+OT_FLAGS0_g++           = -Wall
+OT_FLAGS0_gcc-3.4.3     = -Wall 
+OT_FLAGS0_g++-3.4.3     = -Wall 
+OT_FLAGS0_gcc-4.0       = -Wall 
+OT_FLAGS0_g++-4.0       = -Wall 
+OT_FLAGS0_g77           = -Wall -ffree-form -ff90 -fno-second-underscore
+OT_FLAGS0_g77-3.4.3     = -Wall -ffree-form -ff90 -fno-second-underscore
+OT_FLAGS0_gfortran-4.0  = -Wall -ffree-form -x f95-cpp-input
+# I used to have to use -x f95-cpp-input with gfortran.  It is now causing
+# problems and works without.
+OT_FLAGS0_gfortran      = -Wall -ffree-form
+
+
+OT_FLAGS0_icc           = -w1
+OT_FLAGS0_icpc          = -w1
+OT_FLAGS0_ifort         = -warn all -free
+
+OT_FLAGS0_pgcc          = -Minform=warn -B -DPGCC
+OT_FLAGS0_pgCC          = -Minform=warn -B -DPGCC
+OT_FLAGS0_pgf90         = -Minform=warn -Mfree
+
+# NAG fortran (to c) compiler
+OT_FLAGS0_f95           = -free -C=none -w=x77
+
+
+
+
+#  Define the libraries that are needed to add in for each compiler (assuming
+#  that linking is done by the c++ compiler.
+OT_FLIBS_g77           = -lg2c
+OT_FLIBS_gfortran-4.0  = -lgfortran
+OT_FLIBS_gfortran      = -lgfortran
+OT_FLIBS_f95           = /usr/local/NAG/asli/lib/NAGWare/quickfit.o -lf96
+OT_FLIBS_ifort         = -lifport -lifcore -limf
+OT_FLIBS_pgf90         = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl
+
+
+# These flags are required by the library itsself for compiling.
+OT_CFLAGS0     = $(OT_FLAGS0_$(CC))
+OT_CXXFLAGS0   = $(OT_FLAGS0_$(CXX))
+OT_FFLAGS0     = $(OT_FLAGS0_$(F77)) $(REQUIRED_OLSON_TOOLS_FFLAGS)
+OT_FLIBS       = $(REQUIRED_OLSON_TOOLS_FLIBS_$(F77))
+
+
+
+
+# The REQUIRED_OLSON_TOOLS_... variables are required for users of the
+# library.  If the user doesn't include these, lots of error messages will
+# occur.
+
+# This define is necessary to use the preprocessor to include olson-tools
+# headers into fortran code (for subsequent defines, and so on).
+REQUIRED_OLSON_TOOLS_FFLAGS     = -DLANGUAGE_FORTRAN__=1
+
+#  These are used for linking the .so version of the library, or should be
+#  used to link the .a version of the library into a program.
+REQUIRED_OLSON_TOOLS_FLIBS      = $(OT_FLIBS_$(F77))
+REQUIRED_OLSON_TOOLS_LIBS       = $(REQUIRED_OLSON_TOOLS_FLIBS) -lstdc++ -lm
+

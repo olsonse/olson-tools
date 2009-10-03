@@ -1,0 +1,1 @@
+exe testThreadedExecutor : ../testThreadedExecutor.cpp : <define>USE_FILE ;

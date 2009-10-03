@@ -1,0 +1,26 @@
+# Examples for APPSPACK extensions
+
+echo These are examples for extentions of Sandia National Labs' APPSPACK
+     optimization software. ; 
+echo You will obviously need to have appspack to use these. ;
+echo This Jamfile expects appspack to have its own Jamroot properly configured
+     to do the right thing at ../../../appspack ;
+echo ;
+echo If you want to try the PIPE-IO version, you will need to also have
+     pstreams similarly configured at ../../../pstreams ;
+
+project /olson-tools/examples/appspack :
+    : requirements
+        <library>/olson-tools//olson-tools
+        <library>/appspack//appspack
+        <cflags>-pthread
+        <linkflags>-pthread <linkflags>-lcdd
+    ;
+
+use-project /appspack : $(EXAMPLES_TOP)/../../appspack ;
+
+
+build-project file-io ;
+build-project pipe-io ;
+build-project ga-hybrid ;
+

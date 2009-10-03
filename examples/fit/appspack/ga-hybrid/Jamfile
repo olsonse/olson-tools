@@ -1,0 +1,1 @@
+exe testGAHybrid : testGAHybrid.cpp : <define>USE_FILE ;

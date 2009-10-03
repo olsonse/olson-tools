@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Stuff>
+    <calc-commands>
+        <command>from physical::unit import *</command>
+        <command>from physical::constant import *</command>
+        <command>from physical import 'element::.*'</command>
+    </calc-commands>
+
+    <thing name="n0">15*amu</thing>
+    <thing name="n1">25*amu</thing>
+    <thing name="n2">35*amu</thing>
+</Stuff>

@@ -1,0 +1,18 @@
+echo "" ;
+echo "" ;
+echo "Execute \'main --help\' for example usage." ;
+echo "The included \'config\' file is intended to be used with the" ;
+echo "--include=[file]  option." ;
+echo "" ;
+echo "" ;
+echo "" ;
+
+
+exe main : main.cpp /olson-tools//olson-tools ;
+
+#FIXME : figure some way of linking this file to the build directory.
+#$(builddir)/config :
+#	$(shell ln -sf $(srcdir)/config $(builddir)/config)
+
+# FIXME: should we find a way to do the equivalent of automake's:
+# CLEANFILES      = logfile

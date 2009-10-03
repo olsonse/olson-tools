@@ -1,0 +1,7 @@
+Some timings that I've noticed on my
+"AMD Athlon(tm)64 X2 Dual Core Processor 4800+" :
+
+COMPILER        pow     fast_pow
+GCC             16s     3s
+ICC             4s      4s
+PGI             5s      ???

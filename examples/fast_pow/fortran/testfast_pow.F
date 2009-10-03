@@ -1,18 +1,7 @@
 program bob
-#if defined(NAG)
-     use f90_unix
-     TYPE(TMS) :: BUFFER
-#  define clock times(buffer)
-#elif defined(__INTEL_COMPILER)
-#  define clock mclock()
-     integer mclock
-#else
-     integer(KIND=2) mclock8
-#  define clock mclock8()
-#endif
      double precision a,b, fast_pow
      double precision val, mi, ma, su
-     double precision start, finish
+     integer start, finish, rate
      double precision stdpow
      external fast_pow, stdpow
 
@@ -26,37 +15,37 @@ program bob
 
      su = 0.0
      val = mi
-     start = clock
+     call system_clock(start,rate)
      do while (val .lt. ma)
          su = su + fast_pow(a, val)
          val = val + 0.01
      end do
-     finish = clock
+     call system_clock(finish)
 
      write (*,*) "sum is ", su
-     write (*,*) "Elapsed time for fast_pow is ", (finish-start)
+     write (*,*) "Elapsed time for fast_pow is ", (finish-start)*rate
 
      su = 0.0
      val = mi
-     start = clock
+     call system_clock(start)
      do while (val .lt. ma)
          su = su + stdpow(a, val)
          val = val + 0.01
      end do
-     finish = clock
+     call system_clock(finish)
 
      write (*,*) "sum is ", su
-     write (*,*) "Elapsed time for stdpow is ", (finish-start)
+     write (*,*) "Elapsed time for stdpow is ", (finish-start)*rate
 
      su = 0.0
      val = mi
-     start = clock
+     call system_clock(start)
      do while (val .lt. ma)
          su = su + a**val
          val = val + 0.01
      end do
-     finish = clock
+     call system_clock(finish)
 
      write (*,*) "sum is ", su
-     write (*,*) "Elapsed time for ** is ", (finish-start)
+     write (*,*) "Elapsed time for ** is ", (finish-start)*rate
 end program

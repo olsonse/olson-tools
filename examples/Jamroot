@@ -1,0 +1,24 @@
+
+path-constant EXAMPLES_TOP : . ;
+
+project /olson-tools/examples ;
+
+use-project /olson-tools : ../ ;
+
+build-project bin ;
+build-project fast_pow ;
+build-project field ;
+build-project fit ;
+build-project invertdistro ;
+build-project memory ;
+build-project nsort ;
+build-project options ;
+build-project random ;
+build-project readdata ;
+build-project rk ;
+build-project threadcache ;
+build-project timer ;
+build-project timing ;
+build-project trapfe ;
+build-project xml ;
+
