@@ -11,6 +11,4 @@ project
         <define>XML_FILENAME=\\\"$(XML_EXAMPLE)/file.xml\\\"
     ;
 
-exe testXML : testXML_obj /olson-tools//olson-tools ;
-
-obj testXML_obj : testXML.cpp /olson-tools//olson-tools : <optimization>off ;
+exe testXML : testXML.cpp /olson-tools//olson-tools /physical//runtime ;
