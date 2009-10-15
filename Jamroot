@@ -2,7 +2,7 @@
 
 # alias install : install-headers install-lib ;
 
-# install install-lib : particledb ;
+# install install-lib : chimplib ;
 # 
 # install install-headers
 #     : [ glob-tree *.h : .svn ]
