@@ -1,4 +1,4 @@
-exe testtiming : testtiming.cpp /olson-tools//olson-tools ;
+exe testtiming : testtiming.cpp /olson-tools//headers ;
 
 # FIXME: should we find a way to do the equivalent of automake's:
 # CLEANFILES = gravity-force.dat scalar-field.dat vector-field.dat plot.plt

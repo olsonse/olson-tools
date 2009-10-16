@@ -1,3 +1,3 @@
 echo "Simple example of how to use the templated AddField class."
 
-exe testAddField : testAddField.cpp /olson-tools//olson-tools ;
+exe testAddField : testAddField.cpp /olson-tools//headers ;

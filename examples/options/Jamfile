@@ -8,7 +8,7 @@ echo "" ;
 echo "" ;
 
 
-exe main : main.cpp /olson-tools//olson-tools ;
+exe main : main.cpp /olson-tools//misc ;
 
 #FIXME : figure some way of linking this file to the build directory.
 #$(builddir)/config :

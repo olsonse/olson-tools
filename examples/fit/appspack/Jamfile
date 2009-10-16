@@ -11,7 +11,7 @@ echo If you want to try the PIPE-IO version, you will need to also have
 
 project /olson-tools/examples/appspack :
     : requirements
-        <library>/olson-tools//olson-tools
+        <library>/olson-tools//fit
         <library>/appspack//appspack
         <cflags>-pthread
         <linkflags>-pthread <linkflags>-lcdd

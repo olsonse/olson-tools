@@ -1,1 +1,1 @@
-exe testmemory : testmemory.cpp /olson-tools//olson-tools ;
+exe testmemory : testmemory.cpp /olson-tools//headers ;

@@ -1,6 +1,6 @@
 exe testPThreadCache
     : testPThreadCache.cpp
-      /olson-tools//olson-tools
+      /olson-tools//headers
     : <cflags>-pthread
       <linkflags>-pthread
     ;

@@ -1,4 +1,4 @@
-exe testdist : testdist.cpp /olson-tools//olson-tools ;
+exe testdist : testdist.cpp /olson-tools//random ;
 
 # FIXME: should we find a way to do the equivalent of automake's:
 # CLEANFILES      = disttest.dat disttest150uK.dat

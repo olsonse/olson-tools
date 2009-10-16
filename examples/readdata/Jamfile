@@ -1,3 +1,3 @@
-exe testreadData : testreadData.cpp /olson-tools//olson-tools ;
+exe testreadData : testreadData.cpp /olson-tools//headers ;
 
 # FIXME: find a way to link the readdata.dat file into the build directory

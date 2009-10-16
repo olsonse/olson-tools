@@ -1,1 +1,1 @@
-exe testSimplex : testSimplex.cpp /olson-tools//olson-tools ;
+exe testSimplex : testSimplex.cpp /olson-tools//fit ;

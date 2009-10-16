@@ -1,1 +1,1 @@
-exe testrk : testrk.cpp /olson-tools//olson-tools ;
+exe testrk : testrk.cpp /olson-tools//rk ;

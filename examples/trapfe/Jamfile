@@ -1,5 +1,5 @@
 echo [ SHELL "cat README" ] ;
 echo "Only the debug variant will be able to trap the floating point errors" ;
 
-exe testtrapfe : testtrapfe.cpp /olson-tools//olson-tools /olson-tools//trapfe ;
+exe testtrapfe : testtrapfe.cpp /olson-tools//trapfe ;
 
