@@ -3,8 +3,7 @@
 
 project /olson-tools/unit-tests
     : requirements
-        <library>/olson-tools//olson-tools
-        <library>/olson-tools//boost_unit_test_framework
+        <library>/boost//unit_test_framework
     ;
 
 use-project /olson-tools : ../ ;

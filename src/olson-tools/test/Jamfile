@@ -1,8 +1,8 @@
-unit-test m_eps : m_eps.cpp ;
-unit-test ref_of : ref_of.cpp ;
-unit-test fast_log2 : fast_log2.cpp : <cxxflags>-O3 ;
-#unit-test fast_pow : fast_pow.cpp ;
-unit-test Vector : Vector.cpp ;
+unit-test m_eps : m_eps.cpp /olson-tools//misc ;
+unit-test ref_of : ref_of.cpp /olson-tools//headers ;
+unit-test fast_log2 : fast_log2.cpp /olson-tools//timer : <cxxflags>-O3 ;
+#unit-test fast_pow : fast_pow.cpp /olson-tools//timer ;
+unit-test Vector : Vector.cpp /olson-tools//headers ;
 
 unit-test SyncLock_nothreads : SyncLock_nothreads_obj ;
 unit-test SyncLock_pthreads
@@ -17,10 +17,20 @@ unit-test SyncLock_omp
       <toolset>intel:<linkflags>-openmp
     ;
 
-obj SyncLock_nothreads_obj : SyncLock.cpp ;
-obj SyncLock_pthreads_obj : SyncLock.cpp : <define>USE_PTHREAD <cflags>-pthread  ;
+obj SyncLock_nothreads_obj
+    : SyncLock.cpp
+      /olson-tools//headers
+    ;
+
+obj SyncLock_pthreads_obj
+    : SyncLock.cpp
+      /olson-tools//headers
+    : <define>USE_PTHREAD <cflags>-pthread
+    ;
+
 obj SyncLock_omp_obj
     : SyncLock.cpp
+      /olson-tools//headers
     : <toolset>gcc:<cflags>-fopenmp
       <toolset>intel:<cflags>-openmp
     ;

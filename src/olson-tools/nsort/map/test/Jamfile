@@ -1,3 +1,3 @@
-unit-test _nD : _nD.cpp ;
+unit-test _nD : _nD.cpp /olson-tools//headers ;
 
-unit-test remap : remap.cpp ;
+unit-test remap : remap.cpp /olson-tools//headers ;

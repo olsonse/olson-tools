@@ -13,6 +13,7 @@
 
 namespace {
   using olson_tools::Vector;
+  using olson_tools::V3;
   struct Particle {
     typedef std::vector<Particle> list;
   

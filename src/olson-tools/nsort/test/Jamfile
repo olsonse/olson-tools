@@ -1,1 +1,1 @@
-unit-test NSort : NSort.cpp ;
+unit-test NSort : NSort.cpp /olson-tools//headers ;
