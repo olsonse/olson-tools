@@ -39,10 +39,10 @@ BOOST_AUTO_TEST_CASE( timing ) {
   }
   timer_std_pow.stop();
 
-  std::cout << "timer(fast_pow)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_fast_pow << std::endl;
-  std::cout << "timer(std::pow)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_std_pow << std::endl;
+  //std::cout << "timer(fast_pow)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_fast_pow << std::endl;
+  //std::cout << "timer(std::pow)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_std_pow << std::endl;
 
-  BOOST_CHECK_EQUAL( (timer_std_pow.dt / timer_fast_pow.dt) > 30.0, true );
+  BOOST_CHECK_GT( timer_std_pow.dt, 30.0*timer_fast_pow.dt );
 
   sum = 0;
   timer_fast_pow.start();
@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE( timing ) {
   }
   timer_std_pow.stop();
 
-  std::cout << "timer(fast_pow)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_fast_pow << std::endl;
-  std::cout << "timer(std::pow)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_std_pow << std::endl;
+  //std::cout << "timer(fast_pow)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_fast_pow << std::endl;
+  //std::cout << "timer(std::pow)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_std_pow << std::endl;
 
-  BOOST_CHECK_EQUAL( (timer_std_pow.dt / timer_fast_pow.dt) > 10.0, true );
+  BOOST_CHECK_GT( timer_std_pow.dt, 30.0*timer_fast_pow.dt );
 }
 
 BOOST_AUTO_TEST_CASE( values ) {
@@ -74,8 +74,13 @@ BOOST_AUTO_TEST_CASE( values ) {
     total_err += (1.0 - (fl2/l2));
   }
 
-  std::cout << "total error[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << total_err << std::endl;
-  BOOST_CHECK_EQUAL( (std::abs(total_err) - std::abs(-2.81556e-11)) < 1e-11, true);
+  //std::cout << "total error[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << total_err << std::endl;
+  //#ifdef __CYGWIN__
+  ///* Cygwin has a lame macro definition of log2. */
+  //BOOST_CHECK_LT( std::abs(total_err), 1e-8 );
+  //#else
+  BOOST_CHECK_LT( std::abs(total_err), 3e-11 );
+  //#endif
 
 }
 

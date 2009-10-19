@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( timing ) {
   //std::cout << "timer(fast_log2)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_fast_log2 << std::endl;
   //std::cout << "timer(     log2)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_std_log2 << std::endl;
 
-  BOOST_CHECK_EQUAL( (timer_std_log2.dt / timer_fast_log2.dt) > 30.0, true );
+  BOOST_CHECK_GT( timer_std_log2.dt, 30.0*timer_fast_log2.dt );
 
   sum = 0;
   timer_fast_log2.start();
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( timing ) {
   //std::cout << "timer(fast_log2)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_fast_log2 << std::endl;
   //std::cout << "timer(     log2)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_std_log2 << std::endl;
 
-  BOOST_CHECK_EQUAL( (timer_std_log2.dt / timer_fast_log2.dt) > 10.0, true );
+  BOOST_CHECK_GT( timer_std_log2.dt, 10.0*timer_fast_log2.dt );
 }
 
 BOOST_AUTO_TEST_CASE( values ) {
@@ -75,7 +75,12 @@ BOOST_AUTO_TEST_CASE( values ) {
   }
 
   //std::cout << "total error[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << total_err << std::endl;
-  BOOST_CHECK_EQUAL( (std::abs(total_err) - std::abs(-2.81556e-11)) < 1e-11, true);
+  #ifdef __CYGWIN__
+  /* Cygwin has a lame macro definition of log2. */
+  BOOST_CHECK_LT( std::abs(total_err), 1e-8 );
+  #else
+  BOOST_CHECK_LT( std::abs(total_err), 3e-11 );
+  #endif
 
   int total_invalid_differences = 0;
   for (double i = neg_min; i > neg_max; i += neg_incr) {
