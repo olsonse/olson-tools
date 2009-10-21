@@ -77,6 +77,7 @@ namespace olson_tools {
 
 
     /* MEMBER FUNCTIONS */
+  public:
     /** Default constructor accepts an optional size parameter (defaults: 0). */
     upper_triangle(const int & n = 0) {
       resize(n);
