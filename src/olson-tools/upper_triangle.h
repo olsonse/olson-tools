@@ -26,53 +26,89 @@
  * Questions? Contact Spencer Olson (olsonse@umich.edu) 
  */
 
-#ifndef OLSON_TOOLS_UPPER_TRIANGLE_H
-#define OLSON_TOOLS_UPPER_TRIANGLE_H
+#ifndef olson_tools_upper_triangle_h
+#define olson_tools_upper_triangle_h
 
 #include <vector>
 
 namespace olson_tools {
 
-struct SymmetryFix {
+  /** The symmetric fix for the order of indices for the upper_triangular class.
+   * This class helps guarantee that the indices are in the right order for the
+   * accessor functions of the upper_triangle class.
+   *
+   * @see upper_triangle
+   */
+  struct SymmetryFix {
     void operator()(int & i, int & j) {
-        if (j < i)
-            std::swap(i,j);
+      if (j < i)
+        std::swap(i,j);
     }
-};
+  };
 
-struct NullSymmetryFix {
+  /** The NO-OP fix for the order of indices for the upper_triangular class. */
+  struct NullSymmetryFix {
     void operator()(int & i, int & j) {}
-};
+  };
 
-template <class T, class SymmetricFixer = NullSymmetryFix>
-struct upper_triangle : std::vector<T> {
+
+  /** Upper triangular storage of a n x n square matrix.
+   * @param T
+   *    The type to store in each cell of the matrix.
+   *
+   * @param SymmetricFixer
+   *    The class to fix (or not) the order of the indices in the accessor
+   *    functions.  The NullSymmetryFix will be ever slightly faster as it will
+   *    be optimized away.  [Default:  NullSymmetryFix]
+   *
+   * @see NullSymmetryFix, SymmetryFix.
+   */
+  template < typename T, typename SymmetricFixer = NullSymmetryFix >
+  class upper_triangle : public std::vector<T> {
+    /* TYPEDEFS */
+  private:
     typedef std::vector<T> super;
 
-    upper_triangle(const int & n = 0) {
-        resize(n);
-    }
-
-    void resize(const int & n) {
-        this->n = n;
-        super::resize((n*(n+1))/2);
-    }
-
-    inline int indx(int i, int j) const {
-        SymmetricFixer()(i,j);
-        return i*n - (i*(i+1))/2 + j;
-    }
-
-    T & operator()(const int & i, const int & j) {
-        return this->operator[](indx(i,j));
-    }
-
-    const T & operator()(const int & i, const int & j) const {
-        return this->operator[](indx(i,j));
-    }
+    /* MEMBER STORAGE */
   private:
+    /** The side length of the n x n matrix, of which we store the upper
+     * triangular portion. */
     int n;
-};
+
+
+    /* MEMBER FUNCTIONS */
+    /** Default constructor accepts an optional size parameter (defaults: 0). */
+    upper_triangle(const int & n = 0) {
+      resize(n);
+    }
+
+    /** Resize so that the upper triangular portion of a n x n matrix can be
+     * stored. */
+    void resize(const int & n) {
+      this->n = n;
+      super::resize((n*(n+1))/2);
+    }
+
+    /** Calculate the index into the storage based on the row and column
+     * indices.  If SymmetryFix is used, then the indices are guaranteed to be
+     * in the right order. 
+     */
+    inline int indx(int i, int j) const {
+      SymmetricFixer()(i,j);
+      return i*n - (i*(i+1))/2 + j;
+    }
+
+    /** Non-const accessor function of the ith row and jth column. */
+    T & operator()(const int & i, const int & j) {
+      return this->operator[](indx(i,j));
+    }
+
+    /** Const accessor function of the ith row and jth column. */
+    const T & operator()(const int & i, const int & j) const {
+      return this->operator[](indx(i,j));
+    }
+  };
 
 } /* namespace olson_tools */
 
-#endif // OLSON_TOOLS_UPPER_TRIANGLE_H
+#endif // olson_tools_upper_triangle_h
