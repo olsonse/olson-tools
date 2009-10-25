@@ -38,7 +38,7 @@ void prepareCalculator(const xml::Doc & doc) {
 }
 
 
-void usage( const char * arg0 ) {
+void usage( const char * arg0, const char * xml_filename ) {
   std::cout
     << "testXML program of olson-tools package.\n"
        "$Id$\n\n"
@@ -61,6 +61,7 @@ void usage( const char * arg0 ) {
        "\t--help\tShow this help.\n\n"
        "Influential environment variables:\n"
        "\tXML_FILENAME\tSpecify an alternate xml file to query from\n"
+       "\t\tCurrent XML_FILENAME:  " << xml_filename << "\n"
     << std::endl;
 }/* usage */
 
@@ -112,16 +113,17 @@ void showResults( std::ostream & out, xml::Doc & db,
 }/* showResults() */
 
 int main(int argc, char **argv) {
-  for (int i = 1; i < argc; i++) {
-    if ( help_str == argv[i] ) {
-      usage(argv[0]);
-      return EXIT_SUCCESS;
-    }
-  }
-
   const char * xml_filename = getenv("XML_FILENAME");
   if ( !xml_filename )
     xml_filename = XML_FILENAME;
+
+
+  for (int i = 1; i < argc; i++) {
+    if ( help_str == argv[i] ) {
+      usage(argv[0], xml_filename);
+      return EXIT_SUCCESS;
+    }
+  }
 
   xml::Doc db(xml_filename);
   prepareCalculator(db);

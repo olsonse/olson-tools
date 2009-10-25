@@ -5,10 +5,11 @@ echo "" ;
 echo "" ;
 echo "" ;
 
-path-constant XML_EXAMPLE : . ;
-project
-    : requirements
-        <define>XML_FILENAME=\\\"$(XML_EXAMPLE)/file.xml\\\"
+path-constant XML_EXAMPLE : ./file.xml ;
+
+exe testXML
+    : testXML.cpp
+      /olson-tools//xml
+    : <define>XML_FILENAME=\\\"$(XML_EXAMPLE)\\\"
     ;
 
-exe testXML : testXML.cpp /olson-tools//headers /physical//runtime ;

@@ -53,6 +53,8 @@ project /olson-tools
 
 alias headers : : : : <include>src ;
 
+alias xml : : : : <library>/olson-tools//headers <library>/physical//runtime ;
+
 lib random
     : src/olson-tools/random/random.cpp
     : <link>static
