@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_SUITE( Vector_testsuite );
     BOOST_CHECK_EQUAL( v1*v4/3, 46.66666666666666666666 );
     BOOST_CHECK_EQUAL( v4*v1/3, 46u );
     BOOST_CHECK_EQUAL( v4*v5/3, 46u );
-    BOOST_CHECK_EQUAL( v5*v4/3, 46u );
+    BOOST_CHECK_EQUAL( v5*v4/3, 46  );
     BOOST_CHECK_EQUAL( v4*v6, static_cast<unsigned int>(-140u) );
     BOOST_CHECK_EQUAL( v6*v4, -140 );
   }

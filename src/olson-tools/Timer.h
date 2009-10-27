@@ -38,6 +38,7 @@
 #include <sys/time.h>
 #include <sys/times.h>
 #include <string.h>
+#include <unistd.h>
 
 
 namespace olson_tools {
@@ -56,10 +57,16 @@ namespace olson_tools {
     };
 
 
-    /* STATIC MEMBER STORAGE */
     /** Fraction/Number of seconds per each clock tick as reported by
-     * sysconf(_SC_CLK_TCK). */
-    static const double seconds_per_clock_tick;
+     * sysconf(_SC_CLK_TCK).
+     * This value is stored in a simple templated class so that we don't have to
+     * have a .cpp file to initialize it. */
+    template < unsigned int i = 0 >
+    struct seconds_per_clock_tick {
+      static const double value;
+    };
+
+
 
     /* MEMBER STORAGE */
   private:
@@ -172,7 +179,7 @@ namespace olson_tools {
       double a_dt = dtv.tv_sec + double(dtv.tv_usec)*1e-6L;
       double a_dt_cpu_time = 
            ( ( (tf.tms_utime + tf.tms_stime) - (ti.tms_utime + ti.tms_stime) )
-             * seconds_per_clock_tick
+             * seconds_per_clock_tick<>::value
            );
 
       assert( N_start == N_stop );
@@ -207,6 +214,10 @@ namespace olson_tools {
               <<  t.cpu_time_label;
     return out;
   }
+
+  template < unsigned int i >
+  const double Timer::seconds_per_clock_tick<i>::value
+    = 1.0 / sysconf(_SC_CLK_TCK);
 
 }/* namespace olson_tools */
 

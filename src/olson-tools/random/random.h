@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef MY_RANDOM_H
-#define MY_RANDOM_H
+#ifndef olson_tools_random_h
+#define olson_tools_random_h
 
 /** \file
  * Several random number utilities.
@@ -54,25 +54,31 @@
  * the Distribution inverter).
  */
 
-#  ifdef __cplusplus
+#ifdef __cplusplus
    /* include this here in case some c++ module wants to directly access the
     * RNG class. 
     * */
-#    include "MersenneTwister.h"
-#  endif 
+#  include <olson-tools/random/MersenneTwister.h>
+#endif 
 
 typedef unsigned long uint32;
 
-#  ifdef __cplusplus
+#ifdef __cplusplus
 
 /** pre-allocated MersenneTwister class for use in generating random numbers
  * using the following routines.
  */
 extern MTRand __my_rand;
 
-extern "C" {
-#  else
-#  endif
+#  define EXTERNC extern "C"
+#  define INLINECPP(fun,code) inline fun { code }
+
+namespace olson_tools {
+  namespace random {
+#else
+#  define EXTERNC /* Not needed for C */
+#  define INLINECPP(fun,code) fun /* code not inlined */;
+#endif
     /** Generate a Gaussian deviate.
      * The random gaussian distribution is created using a Box-Muller
      * transformation from a uniform distribution.
@@ -85,160 +91,71 @@ extern "C" {
      *    <i>The Annals of Mathematical Statistics</i>, Institute of Mathematical Statistics, 1958.
      *    (Look at many many web references to this article.)
      * */
-    double gauss_deviate(const double & sigma);
+    EXTERNC double gauss_deviate(const double & sigma);
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrand mtrngrand_
 #  endif // DOXYGEN_SKIP
-
-#  ifdef __cplusplus
-    /** Real number in [0,1].
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::rand().
-     */
-    inline double MTRNGrand() {				/* real number in [0,1] */
-        return __my_rand();
-    }
-#else
     /** Real number in [0,1].
      * @see MTRand::rand().
      */
-    double MTRNGrand();				/* real number in [0,1] */
-#  endif
+    INLINECPP(double MTRNGrand(), return __my_rand();)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandV mtrngrandv_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Real number in [0,n].
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::rand( const double& n ).
-     */
-    inline double MTRNGrandV( const double n[] ) {	/* real number in [0,n] */
-        return __my_rand.rand(*n);
-    }
-#else
     /** Real number in [0,n].
      * @see MTRand::rand( const double& n ).
      */
-    double MTRNGrandV( const double n[] );	/* real number in [0,n] */
-#endif
+    INLINECPP(double MTRNGrandV( const double n[] ), return __my_rand.rand(*n);)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandExc mtrngrandexc_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Real number in [0,1).
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randExc().
-     */
-    inline double MTRNGrandExc() {			/* real number in [0,1) */
-        return __my_rand.randExc();
-    }
-#else
     /** Real number in [0,1).
      * @see MTRand::randExc().
      */
-    double MTRNGrandExc();			/* real number in [0,1) */
-#endif
+    INLINECPP(double MTRNGrandExc(), return __my_rand.randExc();)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandExcV mtrngrandexcv_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Real number in [0,n).
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randExc( const double& n).
-     */
-    inline double MTRNGrandExcV( const double n[] ) {	/* real number in [0,n) */
-        return __my_rand.randExc(*n);
-    }
-#else
     /** Real number in [0,n).
      * @see MTRand::randExc( const double& n).
      */
-    double MTRNGrandExcV( const double n[] );	/* real number in [0,n) */
-#endif
+    INLINECPP(double MTRNGrandExcV( const double n[] ), return __my_rand.randExc(*n);)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandDblExc mtrngranddblexc_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Real number in (0,1).
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randDblExc().
-     */
-    inline double MTRNGrandDblExc() {			/* real number in (0,1) */
-        return __my_rand.randDblExc();
-    }
-#else
     /** Real number in (0,1).
      * @see MTRand::randDblExc().
      */
-    double MTRNGrandDblExc();			/* real number in (0,1) */
-#endif
+    INLINECPP(double MTRNGrandDblExc(), return __my_rand.randDblExc();)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandDblExcV mtrngranddblexcv_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Real number in (0,n).
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randDblExc( const double& n ).
-     */
-    inline double MTRNGrandDblExcV( const double n[] ) {	/* real number in (0,n) */
-        return __my_rand.randDblExc(*n);
-    }
-#else
     /** Real number in (0,n).
      * @see MTRand::randDblExc( const double& n ).
      */
-    double MTRNGrandDblExcV( const double n[] );	/* real number in (0,n) */
-#endif
+    INLINECPP(double MTRNGrandDblExcV( const double n[] ), return __my_rand.randDblExc(*n);)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandInt mtrngrandint_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Integer in [0,\f$ 2^{32} - 1 \f$].
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randInt().
-     */
-    inline uint32 MTRNGrandInt() {			/* integer in [0,2^32-1] */
-        return __my_rand.randInt();
-    }
-#else
     /** Integer in [0,\f$ 2^{32} - 1 \f$].
      * @see MTRand::randInt().
      */
-    uint32 MTRNGrandInt();			/* integer in [0,2^32-1] */
-#endif
+    INLINECPP(uint32 MTRNGrandInt(), return __my_rand.randInt();)
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGrandIntV mtrngrandintv_
 #  endif // DOXYGEN_SKIP
-#  ifdef __cplusplus
-    /** Integer in [0,n] for \f$ n < 2^{32} \f$.
-     * This definition is for the c++ compiler when -O3 is used.  Otherwise,
-     * it appears that the C version is linked to.
-     * @see MTRand::randInt( const uint32& n ).
-     */
-    inline uint32 MTRNGrandIntV( const uint32 n[] ) {	/* integer in [0,n] for n < 2^32 */
-        return __my_rand.randInt(*n);
-    }
-#else
     /** Integer in [0,n] for \f$ n < 2^{32} \f$.
      * @see MTRand::randInt( const uint32& n ).
      */
-    uint32 MTRNGrandIntV( const uint32 n[] );	/* integer in [0,n] for n < 2^32 */
-#endif
+    INLINECPP(uint32 MTRNGrandIntV( const uint32 n[] ), return __my_rand.randInt(*n);)
 	
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGseedV1 mtrngrandv1_
@@ -246,7 +163,7 @@ extern "C" {
     /** Seed the generator with a simple uint32_t.
      * @see MTRand::seed( uint32 oneSeed ).
      */
-    void   MTRNGseedV1( uint32 * oneSeed );
+    EXTERNC void   MTRNGseedV1( uint32 * oneSeed );
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGseedV2 mtrngrandv2_
@@ -261,7 +178,7 @@ extern "C" {
      * Just call seed() if you want to get array from /dev/urandom.
      * @see MTRand::seed( uint32 *const bigSeed ), MTRand::seed().
      */
-    void   MTRNGseedV2( uint32 *const bigSeed );
+    EXTERNC void   MTRNGseedV2( uint32 *const bigSeed );
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGseed mtrngseed_
@@ -270,7 +187,7 @@ extern "C" {
      * Otherwise use a hash of time() and clock() values.
      * @see MTRand::seed().
      */
-    void   MTRNGseed();
+    EXTERNC void   MTRNGseed();
 	
     // Saving and loading generator state
 #  ifndef DOXYGEN_SKIP
@@ -281,7 +198,7 @@ extern "C" {
      *    saved.
      * @see MTRand::save( uint32* saveArray ).
      */
-    void   MTRNGsave( uint32* saveArray );  // to array of size MTRand::SAVE
+    EXTERNC void   MTRNGsave( uint32* saveArray );  // to array of size MTRand::SAVE
 
 #  ifndef DOXYGEN_SKIP
 #   define MTRNGload mtrngload_
@@ -291,12 +208,13 @@ extern "C" {
      *    loaded.
      * @see MTRand::save( uint32* saveArray ).
      */
-    void   MTRNGload( uint32 *const loadArray );  // from such array
+    EXTERNC void   MTRNGload( uint32 *const loadArray );  // from such array
 #ifdef __cplusplus
- }
+  }/* namespace olson_tools::random */
+ }/* namespace olson_tools */
 #endif
 
-#endif // MY_RANDOM_H
+#endif // olson_tools_random_h
 
 /** \file MersenneTwister.h
  * Mersenne Twister random number generator -- a C++ class MTRand.

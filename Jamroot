@@ -70,12 +70,6 @@ lib fit
       <library>/olson-tools//random
     ;
 
-lib timer
-    : src/olson-tools/Timer.cpp
-    : <link>static
-      <library>/olson-tools//headers
-    ;
-
 lib pow
     : src/olson-tools/power.c
     : <link>static

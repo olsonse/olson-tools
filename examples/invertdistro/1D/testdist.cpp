@@ -19,6 +19,8 @@ using olson_tools::MaxwellianDistrib3D;
 using olson_tools::GaussianDistrib;
 using olson_tools::Vector;
 using olson_tools::GenericBin;
+using olson_tools::random::MTRNGrand;
+using olson_tools::random::gauss_deviate;
 
 /* this is how G.A. Bird gets his diffusely reflecting velocities. */
 void nextvel(double p[3]) {

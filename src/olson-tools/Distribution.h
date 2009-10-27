@@ -219,7 +219,7 @@ class Distribution {
      * @see lever(double).
      */
     inline double operator() (void) const {
-        return leverarm(MTRNGrand());
+        return leverarm(random::MTRNGrand());
     }
 
     /** Sample the inverted distribution.
@@ -239,7 +239,7 @@ class Distribution {
      * Calls leverarm(double).
      */
     inline double lever() const {
-        return leverarm(MTRNGrand());
+        return leverarm(random::MTRNGrand());
     }
 
     /** Copy operator. */

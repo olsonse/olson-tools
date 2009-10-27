@@ -1,4 +1,4 @@
-exe testrand : testrand.cpp /olson-tools//random /olson-tools//timer ;
+exe testrand : testrand.cpp /olson-tools//random ;
 
 # FIXME: should we find a way to do the equivalent of automake's:
 # CLEANFILES      = test_gauss_deviate.dat test_mtrn.dat

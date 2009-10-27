@@ -1,1 +1,1 @@
-exe testTimer : testTimer.cpp /olson-tools//timer ;
+exe testTimer : testTimer.cpp /olson-tools//headers ;

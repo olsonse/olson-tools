@@ -82,26 +82,26 @@ bool crossover( Chromosome& c1, Chromosome& c2, const float & crossprob ) {
 #ifndef DO_SINGLE_CROSSOVER
   /* This crossover type allows for multiple random crossovers, up to the number
    * of alleles. */
-  double nf_crossovers = 0.99999999 * nalleles * MTRNGrand();
+  double nf_crossovers = 0.99999999 * nalleles * random::MTRNGrand();
 
   /* first promote/demote the fractional probability */
   {
     double frac = nf_crossovers - static_cast<int>(nf_crossovers);
-    if ( MTRNGrand() <= frac )
+    if ( random::MTRNGrand() <= frac )
       nf_crossovers += 1;
   }
   int n_crossovers = static_cast<int>( nf_crossovers );
 
   bool did_crossover = false;
   for ( int i = 0; i < n_crossovers; ++i ) {
-    if ( MTRNGrand() <= crossprob )
+    if ( random::MTRNGrand() <= crossprob )
       crossover_once( c1, c2 ), did_crossover = true;
   }
 
   return did_crossover;
 
 #else /* defined DO_SINGLE_CROSSOVER */
-  if ( MTRNGrand() <= crossprob )
+  if ( random::MTRNGrand() <= crossprob )
     return crossover_once( c1, c2 ), true;
   else
     return false;
@@ -132,7 +132,7 @@ void crossover_once( Chromosome& c1, Chromosome& c2 ) {
     unsigned short int mask=0;
     // This may need to be changed in the future because we might
     // use doubles in gene
-    int bit = static_cast<int>(15.999999 * MTRNGrand());// there are only eight possible bits
+    int bit = static_cast<int>(15.999999 * random::MTRNGrand());// there are only eight possible bits
     for(int j=bit; j<16; j++)
       mask = mask | (1<<j);
     if (CROSSOVER==CREAL){
@@ -141,7 +141,7 @@ void crossover_once( Chromosome& c1, Chromosome& c2 ) {
     // choice here for the hybrids would be to have different
     // random weights for each child
       // in the following, we should have w compatiblly typed with Alleles
-      Allele_t w= MTRNGrand();//get random # between 0 and 1
+      Allele_t w= random::MTRNGrand();//get random # between 0 and 1
       t1[gloc].val =     w * c1[gloc].val + (1-w) * c2[gloc].val;
       t2[gloc].val = (1-w) * c1[gloc].val +     w * c2[gloc].val;
     }
@@ -181,25 +181,25 @@ int Chromosome::mutate( const float & mutprob ) {
 
 #ifdef DO_SINGLE_MUTATION
 
-  if ( MTRNGrand() <= mutprob )
+  if ( random::MTRNGrand() <= mutprob )
     return mutate_once( randgene() ), 1;
   else
     return 0;
 
 #elif defined(MULTIPLE_MUTATIONS)
   /* This mutation type can do multiple mutations for each allele. */
-  double nf_mutations = 0.99999999 * numAlleles(ALLELE_DYNAMIC) * MTRNGrand();
+  double nf_mutations = 0.99999999 * numAlleles(ALLELE_DYNAMIC) * random::MTRNGrand();
 
   /* first promote/demote the fractional probability */
   {
     double frac = nf_mutations - static_cast<int>(nf_mutations);
-    if ( MTRNGrand() <= frac )
+    if ( random::MTRNGrand() <= frac )
       nf_mutations += 1;
   }
   int n_mutations = static_cast<int>( nf_mutations );
 
   for ( int i = 0; i < n_mutations; ++i ) {
-    if ( MTRNGrand() <= mutprob )
+    if ( random::MTRNGrand() <= mutprob )
       mutate_once( randgene() ), ++did_n_mutations;
   }
 #elif !defined(MUTATE_ALL)
@@ -210,14 +210,14 @@ int Chromosome::mutate( const float & mutprob ) {
     if ( ! TESTALLELETYPE( (*this)[i].allele_type, ALLELE_DYNAMIC ) )
       continue;
 
-    if ( MTRNGrand() <= mutprob )
+    if ( random::MTRNGrand() <= mutprob )
       mutate_once(i), ++did_n_mutations;
   }
 #else /* defined (MUTATE_ALL) */
   /* This mutation type evaluates probability once (for the whole process).  If
    * any mutate, they all mutate. 
    */
-  if ( MTRNGrand() > mutprob )
+  if ( random::MTRNGrand() > mutprob )
     return;
 
   for ( int i = 0; i < numAlleles(); ++i ) {
@@ -244,7 +244,7 @@ void Chromosome::mutate_once( const int & gloc ) {
   int loops=0;
   while(!validv){
     // Now find a random bit in the gene
-    int bit = static_cast<int>(15.999999 * MTRNGrand());// there are only eight possible bits
+    int bit = static_cast<int>(15.999999 * random::MTRNGrand());// there are only eight possible bits
     (*this)[gloc].val ^= 1<<bit;
     validv = isValid();
     if( !validv ) {
@@ -331,7 +331,7 @@ bool Gene::isValid() const {
 
 int Gene::randgene() const {
   // Get a ALLELE_DYNAMIC random gene index.
-  int i = static_cast<int>(numAlleles(ALLELE_DYNAMIC) * .999999 * MTRNGrand());
+  int i = static_cast<int>(numAlleles(ALLELE_DYNAMIC) * .999999 * random::MTRNGrand());
   return realIndex( i, ALLELE_DYNAMIC );
 }//Gene::randgene
 

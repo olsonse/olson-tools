@@ -199,7 +199,7 @@ namespace olson_tools{
           /* first choose which one to fit. */
           int i = 0;
           do {
-            i = static_cast<int>(MTRNGrand() * options.population * .9999999);
+            i = static_cast<int>(random::MTRNGrand() * options.population * .9999999);
           } while ( fitted.find(i) == fitted.end() );
 
           fitted.insert(i);
@@ -397,10 +397,10 @@ namespace olson_tools{
       // now for the new children
       while( ichild < options.population && !stop ) {
         // select parents by tournament
-        int ip1 = static_cast<int>(MTRNGrand() * options.population * .9999999);
+        int ip1 = static_cast<int>(random::MTRNGrand() * options.population * .9999999);
         int ip2=ip1;
         while(ip2 == ip1) {
-          ip2 = static_cast<int>(MTRNGrand() * options.population * .9999999);
+          ip2 = static_cast<int>(random::MTRNGrand() * options.population * .9999999);
         } // while parents are identical
 
         // compare parents and keep the best one
@@ -410,11 +410,11 @@ namespace olson_tools{
         {// Now do it again for another parent
           ip2 = ip1;
           while(ip2==ip1)
-            ip2 = static_cast<int>(MTRNGrand() * options.population * .9999999);
+            ip2 = static_cast<int>(random::MTRNGrand() * options.population * .9999999);
 
           int ip3 = ip2;
           while((ip3 == ip2) || (ip3 == ip1)){
-            ip3 = static_cast<int>(MTRNGrand() * options.population * .9999999);
+            ip3 = static_cast<int>(random::MTRNGrand() * options.population * .9999999);
           } // while parents are identical
 
           // compare parents and keep the best one
@@ -461,7 +461,7 @@ namespace olson_tools{
       // select a parent using tournament selection
       // rtot is the sum of the merit functions
       // if skip>=0, that parent will be skipped in the selection
-      float p = MTRNGrand();
+      float p = random::MTRNGrand();
       merit_t ptot=0;
       int ipar=-1;
       if(skip){

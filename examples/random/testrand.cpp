@@ -12,6 +12,7 @@ using std::cout;
 using std::flush;
 using std::ofstream;
 extern int errno;
+using olson_tools::random::gauss_deviate;
 
 int main() {
     MTRand r;
