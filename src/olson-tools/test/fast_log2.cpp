@@ -8,8 +8,18 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <vector>
+#include <limits>
 #include <cmath>
-//#include <iostream>
+
+#if defined(__INTEL_COMIPILER) && (__INTEL_COMPILER <= 1100)
+/* Intel doesn't yet work with gcc 4.4 where these are in std */
+namespace std {
+  using ::isinf;
+  using ::isnan;
+  using ::isfinite;
+}
+#endif
 
 namespace {
   const double pos_min = 1e-1, pos_max = 1e8, pos_incr = 1.0;
@@ -25,6 +35,7 @@ BOOST_AUTO_TEST_CASE( timing ) {
   timer_fast_log2.wall_time_label = timer_std_log2.wall_time_label = "s";
   timer_fast_log2.cpu_time_label = timer_std_log2.cpu_time_label = "s (cpu)";
 
+  std::vector<double> results;
   double sum = 0;
   timer_fast_log2.start();
   for (double i = pos_min; i < pos_max; i += pos_incr) {
@@ -32,12 +43,18 @@ BOOST_AUTO_TEST_CASE( timing ) {
   }
   timer_fast_log2.stop();
 
+  // save the results and tell the compiler to quit optmizing things away.
+  results.push_back( sum );
+
   sum = 0;
   timer_std_log2.start();
   for (double i = pos_min; i < pos_max; i += pos_incr) {
     sum +=      log2(i);
   }
   timer_std_log2.stop();
+
+  // save the results and tell the compiler to quit optmizing things away.
+  results.push_back( sum );
 
   //std::cout << "timer(fast_log2)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_fast_log2 << std::endl;
   //std::cout << "timer(     log2)[" << pos_min << ":" << pos_incr << ":" << pos_max << "]:  " << timer_std_log2 << std::endl;
@@ -47,19 +64,32 @@ BOOST_AUTO_TEST_CASE( timing ) {
   sum = 0;
   timer_fast_log2.start();
   for (double i = neg_min; i > neg_max; i += neg_incr) {
-    sum += fast_log2(i);
+    sum += std::isnan(fast_log2(i));
   }
   timer_fast_log2.stop();
+
+  // save the results and tell the compiler to quit optmizing things away.
+  results.push_back( sum );
 
   sum = 0;
   timer_std_log2.start();
   for (double i = neg_min; i > neg_max; i += neg_incr) {
-    sum +=      log2(i);
+    sum +=      std::isnan(log2(i));
   }
   timer_std_log2.stop();
 
+  // save the results and tell the compiler to quit optmizing things away.
+  results.push_back( sum );
+
   //std::cout << "timer(fast_log2)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_fast_log2 << std::endl;
   //std::cout << "timer(     log2)[" << neg_min << ":" << neg_incr << ":" << neg_max << "]:  " << timer_std_log2 << std::endl;
+
+  // STOP OPTIMIZING THINGS AWAY!!!
+  BOOST_CHECK_EQUAL( results.size(), 4u );
+  BOOST_CHECK_LT( results[0], std::numeric_limits<double>::max() );
+  BOOST_CHECK_LT( results[1], std::numeric_limits<double>::max() );
+  BOOST_CHECK_LT( results[2], std::numeric_limits<double>::max() );
+  BOOST_CHECK_LT( results[3], std::numeric_limits<double>::max() );
 
   BOOST_CHECK_GT( timer_std_log2.dt, 10.0*timer_fast_log2.dt );
 }

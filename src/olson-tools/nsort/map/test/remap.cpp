@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE( remap_1D ) {
              * what is stored in the m_remap array. */
             BOOST_CHECK_EQUAL( rmap(p), rmap.m_remap[rii] );
             if (rii == ri)
-              BOOST_CHECK_EQUAL( rmap(p), rv );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rv) );
             else
-              BOOST_CHECK_EQUAL( rmap(p), rii );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rii) );
             ++rii;
 //    } }
   } }     }
@@ -113,9 +113,9 @@ BOOST_AUTO_TEST_CASE( remap_2D ) {
              * what is stored in the m_remap array. */
             BOOST_CHECK_EQUAL( rmap(p), rmap.m_remap[rii] );
             if (rii == ri)
-              BOOST_CHECK_EQUAL( rmap(p), rv );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rv) );
             else
-              BOOST_CHECK_EQUAL( rmap(p), rii );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rii) );
             ++rii;
 //    }
   } }   } }
@@ -161,9 +161,9 @@ BOOST_AUTO_TEST_CASE( remap_3D ) {
              * what is stored in the m_remap array. */
             BOOST_CHECK_EQUAL( rmap(p), rmap.m_remap[rii] );
             if (rii == ri)
-              BOOST_CHECK_EQUAL( rmap(p), rv );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rv) );
             else
-              BOOST_CHECK_EQUAL( rmap(p), rii );
+              BOOST_CHECK_EQUAL( rmap(p), static_cast<int>(rii) );
             ++rii;
   } } } } }
 

@@ -34,10 +34,10 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include <time.h>
+#include <cstring>
+#include <ctime>
 #include <sys/time.h>
 #include <sys/times.h>
-#include <string.h>
 #include <unistd.h>
 
 
@@ -106,9 +106,9 @@ namespace olson_tools {
     /** Zero all timing buffers. This is not really necessary to do for SIMPLE
      * timers. */
     void zero() {
-      memset(tv,0,2*sizeof(struct timeval));
-      memset(&ti,0,sizeof(struct tms));
-      memset(&tf,0,sizeof(struct tms));
+      std::memset(tv,0,2*sizeof(struct timeval));
+      std::memset(&ti,0,sizeof(struct tms));
+      std::memset(&tf,0,sizeof(struct tms));
       dt = 0;
       dt_cpu_time = 0;
       N_start = N_stop = 0;

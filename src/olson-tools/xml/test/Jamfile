@@ -6,5 +6,5 @@ unit-test Doc : Doc.cpp /olson-tools//headers ;
 unit-test physical_parse
     : physical_parse.cpp
       /olson-tools//headers
-      /boost//regex
+      /boost//regex/<link>static
     ;

@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_SUITE( XML_tests );//{
       xml::Doc doc(XML_FILENAME);
 
       xml::Context::list xl = doc.eval("/Equationtest/Eq");
-      BOOST_CHECK_EQUAL( xl.size(), 4 );
+      BOOST_CHECK_EQUAL( xl.size(), 4u );
     }
 
     BOOST_AUTO_TEST_CASE( find ) {
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_SUITE( XML_tests );//{
       xml::Context x = doc.find("/Equationtest/Eq[1]");
 
       xml::Context::list xl = x.eval("*/T/P");
-      BOOST_CHECK_EQUAL( xl.size(), 2 );
+      BOOST_CHECK_EQUAL( xl.size(), 2u );
     }
 
     BOOST_AUTO_TEST_CASE( find ) {
