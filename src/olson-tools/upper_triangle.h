@@ -53,10 +53,15 @@ namespace olson_tools {
 
 
   /** Upper triangular storage of a n x n square matrix.
-   * @param T
+   * WARNING:  This class inherits from std::vector, and doesn't currently mask
+   * all of the operations of std::vector that can change the vector size.  The
+   * behavior is therefore undefined if you change the size of the vector
+   * without using upper_triangle::resize.  
+   *
+   * @tparam T
    *    The type to store in each cell of the matrix.
    *
-   * @param SymmetricFixer
+   * @tparam SymmetricFixer
    *    The class to fix (or not) the order of the indices in the accessor
    *    functions.  The NullSymmetryFix will be ever slightly faster as it will
    *    be optimized away.  [Default:  NullSymmetryFix]
@@ -82,6 +87,9 @@ namespace olson_tools {
     upper_triangle(const int & n = 0) {
       resize(n);
     }
+
+    /** Return the edge size of the n x n matrix. */
+    const int & edge_size() const { return n; }
 
     /** Resize so that the upper triangular portion of a n x n matrix can be
      * stored. */
