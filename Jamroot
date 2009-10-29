@@ -104,3 +104,6 @@ obj rk
       <link>static
     ;
 
+
+install stage : random fit pow misc trapfe rk ;
+
