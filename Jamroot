@@ -1,25 +1,70 @@
 # Copyright 2004-2008 Spencer Olson
 
-# alias install : install-headers install-lib ;
-
-# install install-lib : chimplib ;
-# 
-# install install-headers
-#     : [ glob-tree *.h : .svn ]
-#     ;
+# Usage:
 #
-# figure out the way to install this:
-# pkgconfig_DATA = olson-tools.pc
-
+#   bjam [options] [properties] [install|stage]
+#
+#   Builds and installs Boost.
+#
+# Targets and Related Options:
+#
+#   install                 Install headers and compiled library files to the
+#   =======                 configured locations (below).
+#
+#   --prefix=<PREFIX>       Install architecture independent files here.
+#                           Default; C:\Boost on Win32
+#                           Default; /usr/local on Unix. Linux, etc.
+#
+#   --exec-prefix=<EPREFIX> Install architecture dependent files here.
+#                           Default; <PREFIX>
+#
+#   --libdir=<DIR>          Install library files here.
+#                           Default; <EPREFIX>/lib
+#
+#   --includedir=<HDRDIR>   Install header files here.
+#                           Default; <PREFIX>/include
+#
+#   stage                   Build and install only compiled library files
+#   =====                   to the ./stage directory.
+#
+# Other Options:
+#
+#   --build-dir=DIR         Build in this location instead of building
+#                           within the distribution tree. Recommended!
+#
+#   --help                  This message.
+#
+# Properties:
+#
+#   toolset=toolset         Indicates the toolset to build with.
+#
+#   variant=debug|release   Select the build variant
+#
+#   link=static|shared      Whether to build static or shared libraries
+#
+#   threading=single|multi  Whether to build single or multithreaded binaries
 # 
+#   runtime-link=static|shared      
+#                           Whether to link to static or shared C and C++ runtime.
+#   
+
+
+import mpi ; # for converting xml2-config output to features.
+import os ;
+import testing ; # for unit tests
+import path ; # for getting a better glob
+import package ; # used for installing whole package (provides --prefix related
+                 # options )
+
 
 path-constant OLSON_TOOLS_TOP : . ;
 
 constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
 
-import mpi ;
-import os ;
-import testing ; # for unit tests
+
+
+
+
 
 local gcc_fflags = <fflags>-ffree-form ;
 local icc_fflags = <fflags>-free ;
@@ -43,16 +88,19 @@ project /olson-tools
         $(xml2-features)
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
-        <library>/physical//physical
     : usage-requirements
         $(xml2-features)
         <threading>multi:<define>USE_PTHREAD
         [ supports_fast_pow ]
-        <library>/physical//physical
     ;
 
 alias headers : : : : <include>src ;
 
+# the xml piece uses <library>/physical//physical, though it is not necessary if
+# you don't use the 'physical-parse' stuff.  
+# there could be some other pieces that will require this too.
+# Maybe I should isolate the things that require linkage to the physical
+# library a little better.
 alias xml : : : : <library>/olson-tools//headers <library>/physical//runtime ;
 
 lib random
@@ -105,5 +153,44 @@ obj rk
     ;
 
 
-install stage : random fit pow misc trapfe rk ;
+# installation configuration
+
+# options:
+install-properties =
+    <install-source-root>$(OLSON_TOOLS_TOP)/src
+    ;
+
+if [ modules.peek : NT ] {
+    install-properties += <install-default-prefix>C:/Boost ;
+} else if [ modules.peek : UNIX ] {
+    install-properties += <install-default-prefix>/usr/local ;
+}
+
+
+# the list of libraries to build and install
+local libraries = random fit pow misc trapfe rk ;
+# all headers to install
+local all_headers = [ path.glob-tree src : *.h *.cpp : .svn ] ;
+
+
+# Complete install allowing --prefix and related command line options
+package.install install
+    : $(install-properties) <install-no-version-symlinks>on
+    :
+    : $(libraries)
+    : $(all_headers)
+    ;
+explicit install ;
+
+
+# install the libs into a staging dir
+install stage : $(libraries) ;
+explicit stage ;
+
+
+#
+# figure out the way to install this:
+# pkgconfig_DATA = olson-tools.pc
+
+# 
 
