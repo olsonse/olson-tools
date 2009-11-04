@@ -695,7 +695,7 @@ namespace olson_tools {
    */
   template < typename T, unsigned int L >
   struct make_vector {
-    Vector<T,L> operator() ( const T & t0, ...) {
+    Vector<T,L> operator() ( T t0, ...) {
       Vector<T,L> retval;
       retval[0] = t0;
 
