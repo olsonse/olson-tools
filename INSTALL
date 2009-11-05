@@ -1,5 +1,74 @@
 Installation Instructions
 *************************
 
-Because of the change to the Boost.build system, I will still need to
-implement installation.  
+This project uses the Boost.Build system which automatically tracks
+link, include, and other dependencies among any number of libraries and
+projects.  Except for using the (unfinished) CMake build configuration, these
+instructions assume that you have Boost.Build installed on your system.  
+
+General Install:
+  These instructions are for installing this software into a standard layout
+  where libraries are installed to  <prefix>/lib
+  and headers are installed to      <prefix>/include
+  DEFAULT:  <prefix> = /usr/local
+
+  For a simple install, just do:
+  
+      bjam install
+  
+  To change the installation path, use
+  
+      bjam --prefix=/path/to/install/into/ install
+  
+  For help on other options, execute
+  
+      bjam --help
+
+
+Boost.Build:
+  If you use Boost.Build, integrating this library into your own project is
+  the most easy.  You simply, include a line like:
+
+      use-project /olson-tools : path/to/olson-tools ;
+
+  where the path/to/olson-tools path can be either relative or absolute.  
+  This library has several sub-libraries that are useful and which will
+  invoke the proper linking to other libraries such as /physical//* and its
+  dependencies.
+
+      /olson-tools//headers : only provides <include> dependencies
+      /olson-tools//random  : invokes linking to the random library
+      /olson-tools//fit     : invokes linking to the fit library, including
+                              genetic and simplex algorithms as well as add-on
+                              pieces for DoE's APPSPACK.
+      /olson-tools//pow     : invokes linking to the (fast) pow library
+      /olson-tools//misc    : invokes linking to the miscellaneous library
+                              including the logger, options processor, 3j
+                              symbols, text utilities, and machine precision
+                              calculation.  
+      /olson-tools//trapfe  : invokes linking to the floating point exception
+                              catching library.  This is useful for putting your
+                              code into a waiting state whenever a FPE occurs.
+                              Doing so allows you to then attach with a debugger
+                              in order to inspect the reason for the FPE.
+      /olson-tools//rk      : invokes linking to the Runge-Kutta library.  At
+                              some point in the future, I'll finish converting
+                              this to C++ and then this library will no longer
+                              be necessary as the implementation will be header
+                              only.  
+
+CMake:
+  CMake files also accompany the package and make it easier to use in a
+  CMake environment.  To use in a CMake environment, just add appropriate
+  lines to your master CMakeLists.txt file, such as
+
+      add_subdirectory(olson-tools)
+
+  You will also have to include the proper line for the include paths, such
+  as:
+      include_directories(
+        ${CMAKE_SOURCE_DIR}/path/to/your/code
+        ${CMAKE_SOURCE_DIR}/olson-tools/src
+      )
+
+  NOTE:  the CMake files are a work in progress and may not work yet.

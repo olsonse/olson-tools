@@ -1,423 +1,1913 @@
-------------------------------------------------------------------------
-r590 | olsonse | 2008-08-28 15:50:25 -0400 (Thu, 28 Aug 2008) | 6 lines
+commit 6fcf3b4c22de09f86fd0a5168ab780770ac87c33
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Wed Nov 4 14:36:26 2009 -0700
 
-src/config.h.in:?
-src/version.h,configure.ac: versioning
-examples/timer/testTimer.C:  fixed include
-examples/options/Makefile.am:  fixed CLEAN, DIST, ...
+    added installation options
 
+commit 835c722d0b6840cc6d7833dd3865b876a8225ef9
+Author: Spencer Olson <olsonse@asok.hpmi.afrl.af.mil>
+Date:   Wed Nov 4 10:02:27 2009 -0700
 
-------------------------------------------------------------------------
-r588 | olsonse | 2008-08-28 12:36:56 -0400 (Thu, 28 Aug 2008) | 13 lines
+    fixed usage of va_start so that it is in line with the standard:  can't use reference variables
 
-src/Timer.h:
-    Added simple timer class that implements code that has been quite
-    redundant in my programs for a while. 
-src/config.h.in:  I think autoconf changed this.
-src/Makefile.am:  Added src/Timer.h to distributed code.
-configure.ac:  Added examples/timer/Makefile.in to output.
-examples/timer/*, examples/Makefile.am:  Added simple Timer example.
-examples/bin/extended_2d/*/Makefile.in:  Removed these from repository; they
-                                         should not have been there anyway.  
-examples/rk/testrk.C:  Upgraded getderivs to match the current definition of
-derivitivesFunction.
+commit 1dd5df8a1a9260ac4167ad0dc1015b0eb9923215
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Thu Oct 29 12:10:27 2009 -0600
 
+    added first cut of installation of libraries to a local stage directory
 
-------------------------------------------------------------------------
-r582 | olsonse | 2008-07-21 13:04:28 -0400 (Mon, 21 Jul 2008) | 1 line
+commit 65a3f215aaabf7c50dfbfa7bdeb66e9990e679e4
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Wed Oct 28 14:52:50 2009 -0600
 
-updating version.h for posting
-------------------------------------------------------------------------
-r581 | olsonse | 2008-07-21 12:19:43 -0400 (Mon, 21 Jul 2008) | 1 line
+    added some warning documentation to upper_triangular and a function to access edge length of nxn matrix
 
-improving documentation
-------------------------------------------------------------------------
-r578 | olsonse | 2008-07-18 14:01:52 -0400 (Fri, 18 Jul 2008) | 1 line
+commit 927a1dced58d441668d01b4526e3ab9021e06305
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Tue Oct 27 13:58:39 2009 -0600
 
-tweaking distribution
-------------------------------------------------------------------------
-r546 | olsonse | 2008-07-15 23:46:00 -0400 (Tue, 15 Jul 2008) | 7 lines
+    small tweaks to remove compiler warnings....
 
-src/physical.h:  fixed some misspellings 
-src/Timing.h:
-    Added a timing stack feature that allows times to be pushed/popped
-    from the stack.  Popping the stack will reset all the timers in a
-    Timing class to that popped absolute time.  
+commit bff625208e37a2f5228d8c474a41ff5de34d61d9
+Author: U-OW\olsonse <olsonse@ow.(none)>
+Date:   Tue Oct 27 09:26:25 2009 -0800
 
+    Moved random stuff into olson_tools::random namespace when in c++.
+    
+    This fixed some build problems on Cygwin.  Changed other things to fix Cygwin
+    build.
+    
+    Moved Timer.cpp and put its contents in a templated initialization variable in
+    Timer.h.  Removed /olson-tools//timer library as Timer.h is now header only.
 
-------------------------------------------------------------------------
-r539 | olsonse | 2008-06-19 02:23:37 -0400 (Thu, 19 Jun 2008) | 6 lines
+commit e5002d8662b620b529b60e087a7244de770d5e19
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Sat Oct 24 22:21:45 2009 -0600
 
-src/options.h:
-    fixed very small spelling error in comment.
-configure.ac
-    changed version label to r539
+    added /olson-tools//xml lib-alias to make /physical//runtime pulled in.
 
+commit 718562716a67f30cce176c10c34edcf98c8e2ba9
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Tue Oct 20 22:15:16 2009 -0600
 
-------------------------------------------------------------------------
-r497 | olsonse | 2008-05-28 14:40:26 -0400 (Wed, 28 May 2008) | 9 lines
+    added missing public declaration in upper_triangle
 
-src/KeyedBin.h
-src/GenericBinExtender.h
-src/GenericBin.h:
-    Added MPI operations and defined MPI data types on.
+commit 112a8306d906e52522f5cce9d28f0b0020bb81f4
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Tue Oct 20 21:17:03 2009 -0600
 
-src/mpi_init.h,src/Makefile.am:
-    added utility to make it easier to create complex MPI data types.
+    added docs for the upper_triangle class
 
+commit c0800f0bd86e87a2ad085748406629d39d14f77d
+Author: U-OW\olsonse <olsonse@ow.(none)>
+Date:   Mon Oct 19 16:13:43 2009 -0700
 
-------------------------------------------------------------------------
-r490 | olsonse | 2008-05-21 14:32:41 -0400 (Wed, 21 May 2008) | 1 line
+    Fixed fast_log2 unit test for cygwin and updated for boost>1.34.
+    
+    /boost//unit_test_framework is also now linked statically
 
-src/Vector.h:  Added simple function Vector::length() to return length of vector.
-------------------------------------------------------------------------
-r477 | olsonse | 2008-05-06 17:36:22 -0400 (Tue, 06 May 2008) | 1 line
+commit baa063e27fe004a35f61f7274df780eb688fa1f7
+Author: Spencer Olson <olsonse@asok.hpmi.afrl.af.mil>
+Date:   Fri Oct 16 13:41:28 2009 -0600
 
-src/Timing.h:  added timing printer and updated example
-------------------------------------------------------------------------
-r473 | olsonse | 2008-05-06 00:38:39 -0400 (Tue, 06 May 2008) | 10 lines
+    Updated jam files in unit tests.  Fixed use of new olson_tools::V3 in unit tests.
 
-src/rk.F:
-    fixed log_severe calling by passing numbers by value.  This fails
-    with some older versions of gfortran and must be changed to compile
-    with these older versions.
-src/rk.h:
-    Small comment typo.
-src/trapfe.C:
-    Improved fpesig error message and logic.
+commit 5c6385e8521f346d689fe980d318b1cd402fb692
+Author: Spencer Olson <olsonse@asok.hpmi.afrl.af.mil>
+Date:   Fri Oct 16 13:27:18 2009 -0600
 
+    updated jam files to split up olson-tools into sub-libs and use boost correctly
 
-------------------------------------------------------------------------
-r460 | olsonse | 2008-04-24 01:50:45 -0400 (Thu, 24 Apr 2008) | 1 line
+commit f0dab4b2ff4083402ba953eecee409b4142a2e98
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Thu Oct 15 13:09:34 2009 -0600
 
-versioning for package
-------------------------------------------------------------------------
-r459 | olsonse | 2008-04-24 01:49:26 -0400 (Thu, 24 Apr 2008) | 1 line
+    particledb->chimplib
 
-fixing documentation
-------------------------------------------------------------------------
-r458 | olsonse | 2008-04-23 13:34:10 -0400 (Wed, 23 Apr 2008) | 1 line
+commit a3db48ea00148d39cf8712cb5f213658051c8b30
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Thu Oct 15 12:43:02 2009 -0600
 
-updating version info for package.
-------------------------------------------------------------------------
-r456 | olsonse | 2008-04-23 12:59:36 -0400 (Wed, 23 Apr 2008) | 1 line
+    Fixed jamfiles for testTrapfe and testXML
 
-updating version info for package.
-------------------------------------------------------------------------
-r447 | olsonse | 2008-03-27 21:05:07 -0400 (Thu, 27 Mar 2008) | 1 line
+commit d8ac568589c19811ad5f95838b65dca172408d0c
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Sat Oct 3 14:24:55 2009 -0600
 
-src/Vector.h:  typo fixes and mispelling fixes (again)
-------------------------------------------------------------------------
-r446 | olsonse | 2008-03-27 20:54:46 -0400 (Thu, 27 Mar 2008) | 1 line
+    removed old files from cvs that didn't get updated correctly
 
-src/Vector.h:  typo fixes and mispelling fixes
-------------------------------------------------------------------------
-r385 | olsonse | 2008-02-25 13:53:12 -0500 (Mon, 25 Feb 2008) | 1 line
-
-examples/timing:  added timing (ScaledField, ScaledForce) example.
-------------------------------------------------------------------------
-r361 | olsonse | 2008-02-22 15:26:23 -0500 (Fri, 22 Feb 2008) | 1 line
-
-just a version comment
-------------------------------------------------------------------------
-r360 | olsonse | 2008-02-22 15:21:37 -0500 (Fri, 22 Feb 2008) | 11 lines
-
-src/Fields.h:
-    spelling correction
-src/ScaleForce.h:
-    Added to help with timing forces.
-src/ScaleField.h
-    Added to help with timing fields.  Taken from ScaleIntensity originally in
-    laser-cooling package.
-src/Makefile.am:
-    Added references to Scale[Fields,Forces].h.
-
-
-------------------------------------------------------------------------
-r343 | olsonse | 2008-02-13 16:36:19 -0500 (Wed, 13 Feb 2008) | 1 line
-
-src/Timing.h:  changed getValue(...) to non-const.
-------------------------------------------------------------------------
-r341 | olsonse | 2008-02-13 16:29:53 -0500 (Wed, 13 Feb 2008) | 8 lines
-
-src/Timing.h:
-    added some documentation.
-    Fixed a few bugs:
-        exponential change in reverse mode was incorrect.
-        TimedElement->getValue(t) was supposed to be called with t being
-        relative time and not absolute time.   This is fixed now. 
-
-
-------------------------------------------------------------------------
-r332 | olsonse | 2008-02-13 13:20:28 -0500 (Wed, 13 Feb 2008) | 1 line
-
-src/Timing.h:  changed to use polymorphic timing elements for flexibility.
-------------------------------------------------------------------------
-r319 | olsonse | 2008-01-12 00:06:21 -0500 (Sat, 12 Jan 2008) | 1 line
-
-added src/version.h to help keep track of rcs Id tags and get them compiled into binaries.
-------------------------------------------------------------------------
-r294 | olsonse | 2007-12-15 23:20:54 -0500 (Sat, 15 Dec 2007) | 1 line
-
-src/*Bin*.h:  Added getMin() and getMax() to be able to read min/max values. 
-------------------------------------------------------------------------
-r288 | olsonse | 2007-12-12 14:51:18 -0500 (Wed, 12 Dec 2007) | 1 line
-
-minor fixes in bin codes.  Added GenericBinExtender examples for both GenericBin and KeyedBin
-------------------------------------------------------------------------
-r259 | olsonse | 2007-10-11 15:16:21 -0400 (Thu, 11 Oct 2007) | 1 line
-
-src/Vector.h:  operator<= and operator>= implemented.
-------------------------------------------------------------------------
-r256 | olsonse | 2007-10-11 14:09:59 -0400 (Thu, 11 Oct 2007) | 3 lines
-
-Moving Timing.h to olson-tools.  I think this is a generic enough of a tool to
-use in various places.
-
-------------------------------------------------------------------------
-r222 | olsonse | 2007-09-26 21:39:40 -0400 (Wed, 26 Sep 2007) | 1 line
-
-src/logger.[hc]:  added simple routine to help change the log destination.
-------------------------------------------------------------------------
-r218 | olsonse | 2007-09-22 11:03:51 -0400 (Sat, 22 Sep 2007) | 1 line
-
-src/RKIntegrator.h:  small typo.
-------------------------------------------------------------------------
-r217 | olsonse | 2007-09-22 10:59:46 -0400 (Sat, 22 Sep 2007) | 1 line
-
-src/RKIntegrator.h:  More debug info for timestep underruns.
-------------------------------------------------------------------------
-r216 | olsonse | 2007-09-21 13:15:18 -0400 (Fri, 21 Sep 2007) | 1 line
-
-src/RKIntegrator.h:  Trying to fix the random timestep underrun.  I think this is happening when timesteps are truncated.
-------------------------------------------------------------------------
-r214 | olsonse | 2007-09-21 00:44:40 -0400 (Fri, 21 Sep 2007) | 1 line
-
-rk.[Fh], RKIntegrator.h:  still more debug info.
-------------------------------------------------------------------------
-r213 | olsonse | 2007-09-20 19:22:28 -0400 (Thu, 20 Sep 2007) | 1 line
-
-rk.[Fh], RKIntegrator.h:  yet more debug info.
-------------------------------------------------------------------------
-r212 | olsonse | 2007-09-20 12:23:14 -0400 (Thu, 20 Sep 2007) | 1 line
-
-rk.F, RKIntegrator.h:  including more debug info for stepsize underrun.  Maybe I need a better way of recovering from this.
-------------------------------------------------------------------------
-r174 | olsonse | 2007-08-16 14:35:11 -0400 (Thu, 16 Aug 2007) | 1 line
-
-Distribution.h:  can now init via an array of an inverted distro.  Also, access to inverted distro now possible. 
-------------------------------------------------------------------------
-r173 | olsonse | 2007-08-14 07:25:20 -0400 (Tue, 14 Aug 2007) | 1 line
-
-Distribution.h:  \n    found a potential segfault in copy constructor; q was uninitialized before copy command which tests the value of q.\n    Added leverarm(double) function to help sample the inverted distribution externally.
-------------------------------------------------------------------------
-r170 | olsonse | 2007-08-11 21:59:00 -0400 (Sat, 11 Aug 2007) | 6 lines
-
-Forgot to add m_eps to the repository.  Helper to determine the machine
-precision for use in double comparisons.
-
-Added a TODO file for the package.
-
-
-------------------------------------------------------------------------
-r169 | olsonse | 2007-08-11 21:44:09 -0400 (Sat, 11 Aug 2007) | 9 lines
-
-Lots and lots of changes.  The main change that inspired this (uncommitted)
-branch was the genericizing fields so that I could use it all for optical
-fields as well.  Most of the inspiration for changes here were from trying to
-get the laser cooling package to work and simulating the toroidal optical atom
-trap.
-Runge-kutta now allows insertion of an impulse force.  The rk5 driver was
-ported to C++ as a by-product.  
-
-
-------------------------------------------------------------------------
-r168 | olsonse | 2007-08-11 21:05:26 -0400 (Sat, 11 Aug 2007) | 1 line
-
-added fast_pow notes for results with different compilers
-------------------------------------------------------------------------
-r162 | olsonse | 2007-07-27 14:51:07 -0400 (Fri, 27 Jul 2007) | 1 line
-
-RKIntegrator.h:  typos due to changes in function prototypes; testfast_pow:  added better timing tests; testfield.C:  added timing  tests by default.
-------------------------------------------------------------------------
-r134 | olsonse | 2007-05-01 21:47:57 -0400 (Tue, 01 May 2007) | 1 line
-
-forgot to add doxygen.{m4,am}
-------------------------------------------------------------------------
-r133 | olsonse | 2007-05-01 21:16:40 -0400 (Tue, 01 May 2007) | 6 lines
-
-Vector.h: n-dimensional Vector casting.
-tools.doxy:  trying to fix the documentation for distribution.
-readData.h:  small type fix.
-physical.h:  added GHz, THz.
-strutil.h:  added a tolower function.
-
-------------------------------------------------------------------------
-r123 | olsonse | 2007-03-22 15:16:28 -0400 (Thu, 22 Mar 2007) | 1 line
-
-housecleaning:  makefiles and automake...
-------------------------------------------------------------------------
-r122 | olsonse | 2007-03-22 14:36:07 -0400 (Thu, 22 Mar 2007) | 1 line
-
-added property to configure.ac
-------------------------------------------------------------------------
-r121 | olsonse | 2007-03-21 23:46:30 -0400 (Wed, 21 Mar 2007) | 1 line
-
-housecleaning:  COPYING now is LGPL. various other small package changes.
-------------------------------------------------------------------------
-r120 | olsonse | 2007-03-21 23:32:55 -0400 (Wed, 21 Mar 2007) | 1 line
-
-testfield.C:  added code to help test for run-time measurements.
-------------------------------------------------------------------------
-r119 | olsonse | 2007-03-21 23:29:56 -0400 (Wed, 21 Mar 2007) | 1 line
-
-HAVE_PTHREAD changed to USE_PTHREAD.
-------------------------------------------------------------------------
-r118 | olsonse | 2007-03-21 23:28:06 -0400 (Wed, 21 Mar 2007) | 1 line
-
-various changes
-------------------------------------------------------------------------
-r112 | olsonse | 2007-02-27 07:13:22 -0500 (Tue, 27 Feb 2007) | 1 line
-
-options.[hC]:  added string std option; added postProcess routine.
-------------------------------------------------------------------------
-r106 | olsonse | 2007-02-25 01:58:42 -0500 (Sun, 25 Feb 2007) | 1 line
-
-field-lookup.h:  error message added for invalid filename.
-------------------------------------------------------------------------
-r105 | olsonse | 2007-02-25 01:20:13 -0500 (Sun, 25 Feb 2007) | 1 line
-
-examples/bin/generic/testbin.C:  spelling correction.
-------------------------------------------------------------------------
-r104 | olsonse | 2007-02-25 01:17:56 -0500 (Sun, 25 Feb 2007) | 1 line
-
-field-lookup.h:  comments possible in field files now.  \ncreateFieldFile.h:  can now add comments to field file.\n3j.h:  spelling fixed.
-------------------------------------------------------------------------
-r92 | olsonse | 2007-01-22 07:13:09 -0500 (Mon, 22 Jan 2007) | 1 line
-
-memory.h:  had to include olson-tools-config.h; configure.ac:  fixed can_alias probe
-------------------------------------------------------------------------
-r89 | olsonse | 2007-01-20 02:07:21 -0500 (Sat, 20 Jan 2007) | 1 line
-
-Added configure option for enabling pthread use (mainly in memory.h in form of mutexes).
-------------------------------------------------------------------------
-r85 | olsonse | 2007-01-17 00:54:29 -0500 (Wed, 17 Jan 2007) | 1 line
-
-added some documentation to Vector.h
-------------------------------------------------------------------------
-r77 | olsonse | 2007-01-13 12:39:13 -0500 (Sat, 13 Jan 2007) | 1 line
-
-Added pthread mutexes to memory.h for use with pthreads (of course)
-------------------------------------------------------------------------
-r71 | olsonse | 2006-12-06 08:49:14 -0500 (Wed, 06 Dec 2006) | 1 line
-
-This contains work for using OpenMP as well as some small config changes.
-------------------------------------------------------------------------
-r66 | olsonse | 2006-10-26 23:35:29 -0400 (Thu, 26 Oct 2006) | 1 line
-
-Began conditioning for use with OpenMP
-------------------------------------------------------------------------
-r65 | olsonse | 2006-10-26 23:29:43 -0400 (Thu, 26 Oct 2006) | 1 line
-
-Adding exception helper file for OpenMP
-------------------------------------------------------------------------
-r58 | olsonse | 2006-10-17 23:58:26 -0400 (Tue, 17 Oct 2006) | 1 line
-
-Added missing ifdef in config.h.in so that it isn't re-included.
-------------------------------------------------------------------------
-r41 | olsonse | 2006-10-14 02:41:34 -0400 (Sat, 14 Oct 2006) | 1 line
-
-Small multiple bugfixes.
-------------------------------------------------------------------------
-r40 | olsonse | 2006-10-13 23:23:22 -0400 (Fri, 13 Oct 2006) | 1 line
-
-Converted olson-tools package over to automake/autoconf.
-------------------------------------------------------------------------
-r34 | olsonse | 2006-10-13 20:53:53 -0400 (Fri, 13 Oct 2006) | 1 line
-
-Realigning repository to instructions in svn-book.
-------------------------------------------------------------------------
-r32 | olsonse | 2006-10-13 20:52:09 -0400 (Fri, 13 Oct 2006) | 3 lines
-
-Trying to reorganize the repository to be inline with recommendations of the
-svn-book.
-
-------------------------------------------------------------------------
-r28 | olsonse | 2006-10-13 20:28:38 -0400 (Fri, 13 Oct 2006) | 3 lines
-
-Vector initialization for lists fixed up a little to allow promoting byte
-types to integers or the like.
-
-------------------------------------------------------------------------
-r27 | olsonse | 2006-06-02 06:03:36 -0400 (Fri, 02 Jun 2006) | 6 lines
-
-Lots of improvments and bug fixes.  Field lookup source added.  Example
-for using field lookup added. GenericBinExtender to help with
-multidimensional binning added.  TRAPFE stuff moved to c++ to get a
-better success percentage between compilers and languages and consructor
-binding.
-
-------------------------------------------------------------------------
-r21 | olsonse | 2006-03-07 09:32:42 -0500 (Tue, 07 Mar 2006) | 5 lines
-
-Found and eliminated an extra argument to derivs in rk-adaptive code.
-This might have cause problems if derivs used a variable on the stack
-without knowing that the stack had been used a bit more than expected on
-calling derivs (I think at least).
-
-------------------------------------------------------------------------
-r20 | olsonse | 2006-03-06 15:00:13 -0500 (Mon, 06 Mar 2006) | 6 lines
-
-Makeconf change:  -m32 changed to -m64 for gcc_40_x8_64 compile flags.
-InvCylindricalDist.h:  Fixed a mistake with dz_perp that caused FPE
-    (floating-point exceptions) because of a buffer overrun.
-trapfe.c:  trying to enable a clearfpe() function to use in debugger.
-    Doesn't work right yet.
-
-------------------------------------------------------------------------
-r19 | olsonse | 2006-02-08 10:24:06 -0500 (Wed, 08 Feb 2006) | 2 lines
-
-Changed Dr. Turley to Prof. Turley.
-
-------------------------------------------------------------------------
-r18 | olsonse | 2006-02-08 10:18:56 -0500 (Wed, 08 Feb 2006) | 2 lines
-
-Added a tiny more documentation.
-
-------------------------------------------------------------------------
-r17 | olsonse | 2006-02-08 10:06:40 -0500 (Wed, 08 Feb 2006) | 3 lines
-
-Added at least minimal attribution for fit library and other parts prior to
-publishing the whole package.
-
-------------------------------------------------------------------------
-r13 | olsonse | 2005-10-19 22:28:04 -0400 (Wed, 19 Oct 2005) | 3 lines
-
-Moved all B-field calcs to inlines and templates to speed up by allowing
-compile time optimizations.
-
-------------------------------------------------------------------------
-r12 | olsonse | 2005-10-19 22:24:17 -0400 (Wed, 19 Oct 2005) | 4 lines
-
-Fixed intel compiler options (a little) after upgrading to icc9.0.
-Vector class added more functionality (cross product...).
-Bfield calculations more modular and flexible.
-
-------------------------------------------------------------------------
-r10 | olsonse | 2005-09-23 22:53:05 -0400 (Fri, 23 Sep 2005) | 3 lines
-
-Lots of fixes.  Added more examples (binning and generic data reader).
-Some compiler fixes (for gcc 4.0 and Intel 8.0/9.0).
-
-------------------------------------------------------------------------
-r4 | olsonse | 2005-08-06 21:23:23 -0400 (Sat, 06 Aug 2005) | 3 lines
-
-Several organizational changes, bug-fixes, and addition of GenericBin
-histograming tool.
-
-------------------------------------------------------------------------
-r1 | olsonse | 2005-07-08 21:33:56 -0400 (Fri, 08 Jul 2005) | 2 lines
-
-First import into subversion repository.
-
-------------------------------------------------------------------------
+commit 64af3a9260a54bb232fe1415efa9a3946c05f939
+Merge: 03a5c9d 6fb219b
+Author: Spencer E. Olson <olsonse@olsonse-laptop.(none)>
+Date:   Sat Oct 3 14:11:30 2009 -0600
+
+    Merge branch 'master' of ../../git-svn/olson-tools into cvs-svn
+    
+    Conflicts:
+    	examples/fast_pow/c/testfast_pow.c
+    	examples/fast_pow/fortran/testfast_pow.F
+    	examples/options/main.h
+    	examples/trapfe/README
+
+commit 6fb219bd0580e8544ec04a3300bbd999224a1e11
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Oct 2 13:34:11 2009 +0000
+
+    small fixes for ExecMerit and ExecFunc
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@843 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bba3b00749e36b7026dd796b96962fc1527058fe
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Oct 2 04:11:54 2009 +0000
+
+    still modernizing ga internals
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@842 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9370d9c335c5e9e740576def725fa32eea85608c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 1 21:51:02 2009 +0000
+
+    tweaked log2 finding stuff when fast_log2 is not provided
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@841 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 33c2e960fc960b95e25e15b3bb5fcf24994cb709
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Sep 30 07:54:31 2009 +0000
+
+    ExecMerit changed to work in new ga configuration
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@840 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bd0c180d91fa6935ed6f1df441761edb761a60a3
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Sep 30 07:34:33 2009 +0000
+
+    Two types of changes:
+    1.  PThreads stuff was improved in features.  Still need to show efficiency.
+    
+    2.  Genetic algorithm was revamped some more.  The Merit function is now a
+        Functor class.  Updated examples to new usage.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@839 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6c4d2f9b55f5b9acb7bf9656cafd7b0a6c7b8d1c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Sep 29 21:06:20 2009 +0000
+
+    new ifdef guards in logger and PGI fixes for power.h
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@838 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit d1ea0e458bf606989c95fba6205d056116380684
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Sep 29 15:04:42 2009 +0000
+
+    fixed some typos in ExecMerit.h
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@837 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9fd81bd5d8ac874d536dcbccbbf16f5224461359
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 24 19:16:42 2009 +0000
+
+    Forgot to commit deletion of old .hpp files.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@836 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 2b891dcf355476331eee00a61f973eb7b71afcd8
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 24 19:15:15 2009 +0000
+
+    Forgot to commit trivial .hpp -> .h change.
+    Fixed typo in SharedCacheManager.
+    Fixed missing <>'s in testThreadedExecutor.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@835 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9832683d73c2226832ef796ee2600641c03256db
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 24 17:56:11 2009 +0000
+
+    Upgraded Vector class to remove macro use and move operators outside of class.
+    Updated everything in olson-tools to correctly use the new V3 function.
+    
+    Small build tweaks also.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@834 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5255ec2384db8083e1961cd57d5b0a2f15bc5b40
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 07:10:29 2009 +0000
+
+    removed fmacros.h and all references to it
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@833 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ba87fd68ca34ae6fcfd415839503d8954757d9f7
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 06:18:57 2009 +0000
+
+    power.[ch]:  tweaked documentation.  Moved powNImpl into detail namespace.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@832 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5520a0bc04cc436da64e7cab8b8685e9aa4794d1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 06:00:37 2009 +0000
+
+    added copyright/license info to logger.[hc]
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@831 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit a732c766e136778f38b6509a55cf9acfef7cd1b9
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 05:46:53 2009 +0000
+
+    added documentation for SyncLock.  Added WIN32 lock stuff.  Added SyncLock::tryLock() function
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@830 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit af7eab65b004742fad17a188cc7d9dec3a97857d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 04:40:29 2009 +0000
+
+    added an automatic Key for a non static SyncLock
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@829 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5bf6cb70082809d6016c7cc3bf080562f60fdadb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 11 04:18:08 2009 +0000
+
+    Added olson-tools copyright/license header to many files.
+    
+    Split out the synchronization stuff out of the memory.h file.
+    
+    It now resides in SyncLock.h and there are some new
+    Resource Acquisition Is Initialization (RAII) classes and functor-based
+    functions.  The new SyncLock set of functionality now also has a unit test.
+    Under bjam, the unit tests run for nothreads, pthreads, and OpenMP.  These are
+    configured correctly for at least the gcc and Intel compilers.
+    
+    fit/appspack/SharedCacheManager now uses the new RAII Syncronization interface.
+    
+    got rid of a Makefile
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@828 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit c9a7445f0d57eca9fb52f46e4d2a5f65118a24c6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Sep 9 02:45:33 2009 +0000
+
+    examples/fit/appspack/ga-hybrid/testGAHybrid.cpp:  changed local fit fraction to 0.5
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@826 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 17f8123174d2484534d6c5189182d2391b472d5a
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Sep 9 02:26:14 2009 +0000
+
+    Lots of small changes for optimizer stuff and thread stuff.
+    
+    M    src/olson-tools/PThreadCache.h
+        minor fixes
+    A    src/olson-tools/PThreadEval.h
+        Added new Eval class because I keep reimplementing it (octrees,
+        threadedexecutor, etc.)
+    
+    optimizer stuff:
+    M    src/olson-tools/fit/Generation.h
+        all the Merit() evaluations in sort can now be done in threads.  This is
+        particularly important when the merit function calls CAN be done
+        simultaneously (such as on a multiprocessor machine) AND the merit function
+        evaluations are particularly expensive.
+    
+    fit/appspack:
+        Added shared cache implementation
+    
+    otherwise, lots of incremental changes.
+    
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@825 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 1be2d179370804c636acda76e639321d1a7466f5
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 3 21:31:48 2009 +0000
+
+    Lots of changes for the fit sub-packages.
+    
+    The genetic algorithm is now starting to evolve to accept templated option
+    paramters.  This allows us to change out the local optimizer, among other
+    things.
+    I added a ThreadedExecutor that is to be used with APPSPACK.
+    I also added an implementation of a local optimizer for the genetic algorithm
+    that can call APPSPACK.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@813 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 35dfc9de735ec9baed8e797d53ebf218053ffdf6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Aug 26 04:41:17 2009 +0000
+
+    M    src/olson-tools/PThreadCache.h
+        added MUTEX locks around max_threads
+    
+        addTask resorts to serial execution when max_threads <= 1
+    
+    M    examples/threadcache/testPThreadCache.cpp
+        thread cache example now seems to work.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@798 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit aeb41fae83303856a6cafa754657a6f22fab4e60
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Aug 26 03:39:13 2009 +0000
+
+    added PThreadCache example
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@797 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 64c195e2cc4ddf9e0a9a9bae7cd01a9cbbcd1651
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Aug 18 19:45:35 2009 +0000
+
+    reformatted for 2-spaces; Changed Vector::length() to static const unsigned int Vector::length.  Same for SquareMatrix::[side_]length()
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@796 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e4aa898808d8c021c74ab8b9633f7f0db537b1bb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Aug 15 14:04:32 2009 +0000
+
+    M    src/olson-tools/fit/simfit.h
+    M    src/olson-tools/fit/simfit.cpp
+        some formatting changes.
+    
+        moved from <math.h> to <cmath> and likewise moved from fabs to std::abs.
+    
+        defined the bounds_penalty for when something is beyond the specified
+        allowed bounds of a particular allele.  This bounds penalty is now relative
+        to the value of the minfunc(...), e.i. 20*minfun(...), instead of just
+        arbitrarily '20'.
+    
+        This should make the bounds functionality that I added many years ago more
+        general.
+    
+    M    examples/fit/simplex/testSimplex.cpp
+        some reformatting
+        iteractions are now printed correctly.
+        also now printing out the number of minfunc evaluations.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@795 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5fa3fcbb785a22f8e0cadb611207160bbd930239
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Jul 28 22:29:18 2009 +0000
+
+    small changes.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@794 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 21ab411bae7f3309a4bb6d6f2b8eb23a8faadc4e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jul 17 05:49:40 2009 +0000
+
+    many changes revolving around changing xml namespace organization.  some changes to fix previous changes in (now) separate physical library.  Everything builds now--examples and unit tests.  All unit tests pass (except for the fast_pow one still).
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@790 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9ccdd83452a1688133d6f90a69587f319418d6d5
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Jul 16 19:40:16 2009 +0000
+
+    M    src/olson-tools/xml/XMLDoc.h
+        added some operators ( <, == ) for XMLContext class.
+    
+    M    examples/xml/testXML.cpp
+    M    examples/xml/Jamfile
+        environement variable can now be used to specify the XML file.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@788 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit a6595ddb06571350263aa6337b180ffc575965eb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jul 10 22:06:17 2009 +0000
+
+    cleaned up a tiny bit
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@783 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e2beb810e4f5730ffb865b4bf3b7a3c7f6eb226d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Jul 7 23:08:32 2009 +0000
+
+    M    examples/random/testrand.cpp
+        Also timing olson_tools::Distribution class in comparison to other normal
+        distribution functions.  Now using olson_tools::Timer for timing.
+    M    examples/invertdistro/1D/testdist.cpp
+        Changed so as to use new physical library conventions.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@779 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b14f1b56f3a2ffd3df4fa4ad09830739b2be7ac7
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Jul 7 20:20:09 2009 +0000
+
+    tweaked system includes and added using commands for std::exp and std::sqrt
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@777 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e35b3a6e87eb84d0c18d7bd060952e91dbd69bca
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jun 24 03:43:03 2009 +0000
+
+    moved Timing and associated classes into timing sub-namespace
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@775 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit fc1b926a185eca9a03369169afe1ba0eed7a9816
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Jun 18 21:36:43 2009 +0000
+
+    M    src/olson-tools/power.h
+        Added new powN function that can optimally perform x^y where y is an int.
+        Optimum performance has been implemented for -5<=y<=5.  For all other
+        values powN resorts to using fast_pow(x,y).
+    
+    M    src/olson-tools/Vector.h
+        Vector::zero(), Vector::save_fabs(), Vector::save_sqrt() now return a const
+        reference.
+        olson-tools/m_eps* is replaced by <limits> and std::numeric_limits
+    
+    M    src/olson-tools/RKIntegrator.h
+        olson-tools/m_eps* is replaced by <limits> and std::numeric_limits
+    
+    M    src/olson-tools/logger.h
+    A  + src/olson-tools/XSTR.h
+        uses new XSTR.h file to get XSTR macro
+    
+    M    src/olson-tools/data_set.h
+    M    src/olson-tools/xml/XMLDoc.h
+        XMLContext::set use replaced by new XMLContext::list.  Both are still
+        possible, but most functions use XMLContext::list.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@772 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9b6132c4d929edecb6f422737c4d1781a04f6025
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Jun 16 22:32:37 2009 +0000
+
+    XMl changed results from set to list to help maintain original order
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@771 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 0490ae9c05c859e0a0cb80f2353c204e5510a631
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed May 20 17:46:18 2009 +0000
+
+    Added timer::run<Functor>(Functor) to easily time a functor object.  Cleaned up Timer code a little.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@765 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9e7e7a154b51f7d04a144b9ce2c90994418f34b9
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue May 12 15:27:39 2009 +0000
+
+    updated to work with new physical library
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@761 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b6b8dd3685c385160ce82fee14ab4e4ed1dfa048
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Apr 30 17:42:18 2009 +0000
+
+    tweaks of Bjam build sys to make things cleaner.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@750 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 50b6acbce5cf7b387c09b590f36deb8d7ee5f5f1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Apr 17 15:51:34 2009 +0000
+
+    M    logger.h:
+        Fixed for c++.  I had broken it by wrapping the whole thing around in
+        "namesapce olson_tools".  There were some includes (cstdio, windows.h,
+        pthread.h) that needed to be outside of this.
+    M    Timer.h:
+        Added an AVERAGE mode for timing and fixed the CUMMULATIVE mode.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@743 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e2b4cec111da69222ff7f811d304666fcb295f07
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Apr 14 15:34:02 2009 +0000
+
+    some small improvements to testXML
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@742 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6b06bc49051b64832651fe99442bdd84d5116eae
+Merge: 697cd91 8903046
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Apr 2 16:29:47 2009 +0000
+
+    moving bjam + cmake build version to trunk
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@739 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 890304681b70f6cbb5f566b40217fc99e856e6ab
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Apr 2 16:27:34 2009 +0000
+
+    Added cmake build files; currently coexisting with bjam build files.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@737 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 8e7a943a3569112cacf4e4f8a880cce7aebef4fe
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Mar 21 14:00:37 2009 +0000
+
+    M    src/olson-tools/power.c,
+    M    src/olson-tools/power.h:
+        Added new fast_log2 and logn functions.
+        For c++ fast_log2 and fast_pow are now implemented as static inline
+        functions.  They are both also available for c-linking and fortran linking
+        after the library versions in power.c have been compiled.
+    
+    M    src/olson-tools/Vector.h:
+        switched math.h inclusion and functions to cmath and std::* where possible.
+        Added to_string() function for SquareMatrix.
+    
+    M    src/olson-tools/m_eps.h:
+        Got tired of linking issues when just trying to compile something that
+        needed M_EPS.  This has now been changed to a const.
+        getMachineEPS was changed to getMachineEPS_double.
+        Added getMachineEPS_quad, M_EPSl, getMachineEPS_single, M_EPSf for
+        completeness.
+    
+    A    src/olson-tools/nsort/test/Jamfile
+    A    src/olson-tools/nsort/map/test/Jamfile
+    A    src/olson-tools/test/Jamfile
+    A    src/Jamroot
+    M    src/olson-tools/nsort/map/Makefile
+    M    src/olson-tools/nsort/Makefile
+    A    src/olson-tools/Makefile :
+        Added several Jam files to build unit tests.  Makefiles for unit tests
+        have been changed to "cd test && bjam "
+    
+    A    src/olson-tools/ref_of.h:
+        Added new template utility to convert values (pointers and references) into
+        either pointer or reference values.  Also, a template utility was added that
+        allows pointer and reference types to be converted into either pointer or
+        reference types.
+    
+    A    src/olson-tools/nsort/map/get_dims.h:
+        Added simple template utility class to calculate at compile time which of
+        _1D, _2D, or _3D class the user really wants.
+    
+    M    src/olson-tools/nsort/map/position_base.h:
+        pivot_ctrs was changed to pivot_ctor and places of use were updated.
+    
+    Added and tweaked several unit tests.  New fast_pow unit test does not yet work.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@725 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 67d47783e3083b4cb11ae5dd0ee78e0d912579ef
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 19 16:32:56 2009 +0000
+
+    src/olson-tools/Timer.h:  Added a label string for each time to be used in ostream<< if its size is > 0
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@724 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b90435c628f2e29d6c3c7e47e36fcef92ee80c16
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Mar 17 18:22:09 2009 +0000
+
+    Added tags to each of the maps to allow traversal of complete map types by
+    code to this library.
+    
+    Removed ptr.h because the NSort class now automatically converts all types into
+    references before the map() function is called.
+    
+    Cleaned up  some various other stale code in the maps.
+    
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@723 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 3a2b37466e4deeb259d7a21036ce46edd10bb191
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Mar 13 10:26:37 2009 +0000
+
+    mostly small changes and cleanup
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@720 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 29a274678b06ae146dee0aed4fd73e7bae0c6bb8
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 12 05:11:33 2009 +0000
+
+    Added new version of NSort algorithm where everything has been re-org'ed and new
+    maps have been added.
+    
+    Added NSort testAndTimeSort example.
+    Added unit-tests for NSort and nsort::map::*
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@717 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 858c24859b9bf536fc7a31a20cd65a3ab4f27a22
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Feb 28 23:59:03 2009 +0000
+
+    src/olson-tools/Vector.h:  added <sstream> include for Vector::to_string
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@709 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 712f3bd70d42610904e7d10f4a7b47f3615235b2
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Feb 28 22:53:42 2009 +0000
+
+    Added Vector::to_string function with optionally specified delimiter.  Fixed small bug in SquareMatrix::col
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@706 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e499ffda9b7b13c5917f7ac382b9b7d210e888de
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Feb 12 18:09:25 2009 +0000
+
+    added runtime:: prefix when using runtime::physical from quantity.h
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@700 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 7e0b3579f9e349aa5f657def0158004ef5fedb7a
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Feb 12 18:03:45 2009 +0000
+
+    added runtime:: prefix when using runtime::physical from quantity.h
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@699 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5525948a2478b3f38686edc11c9c66604680d99e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 16 23:38:37 2009 +0000
+
+    removed old Makefile.am; tweaked fortran builds to work with fixed gcc/intel+fortran toolsets
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@685 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 7ae77e914f9498422c6cee0f4a212a75b840af16
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 16 22:06:38 2009 +0000
+
+    changed XML_FILENAME to PARTICLEDB_XML
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@682 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 697cd9166a448d37ece515041d7f18362b244576
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 16 21:59:27 2009 +0000
+
+    changed XML_FILENAME macro to PARTICLEDB_XML
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@681 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 309d1fdc38391b46b23adaccd72c91b6f3f566b0
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 16 21:55:45 2009 +0000
+
+    Many changes to get things to compile.
+    Fixed most of Octree examples (except where a dependence on DSMC exists).
+    
+    Added octree::Walker::walk and octree::Walker::recursive_walk functions to
+    aide in optimized octree walking.
+    
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@679 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit c9955a085fca22dc2e02a54db341fc31154727b6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 14 05:54:14 2009 +0000
+
+    finished tweaking 'physical' package. began updating the dsmc package
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@674 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bb437b9be349624276ed58c3542bc2ed7439e2d6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 14 04:48:29 2009 +0000
+
+    consolidating 'physical' library package from olson-tools to its own package
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@670 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b703762578d166b5e127f2f2c070e2d6eae665e4
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 9 05:17:37 2009 +0000
+
+    olson-tools/Jamroot:  small tweak
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@659 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 3e40aa4a9924510588164ecb60f4ee6dae85578b
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jan 9 00:26:54 2009 +0000
+
+    configuring boost.build for olson-tools (almost finished)
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@658 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 821603c6e07d8a1f6953d996180bbe604b6fc99d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 7 21:00:38 2009 +0000
+
+    Creating bjam-conversion branch for olson-tools.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/branches/olson-tools/bjam-conversion@654 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 561ca2c5855a9b60f880610ef4ab841ceb33563f
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 7 20:09:12 2009 +0000
+
+    restructuring repository
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk/olson-tools@651 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 8b31197eaafabb155b90fca044e26af8311b66ef
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 7 19:13:28 2009 +0000
+
+    forgot to add new *.h files to install list
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@640 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e689fe3947506b76acef00ac2fe23b63279d3b63
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 7 06:44:26 2009 +0000
+
+    Added nsort stuff (3 header files: IteratorRange.h, nsort_maps.h, nsort.h)
+    
+    tweaked various other files to work in correct olson_tools namespace
+    
+    Added build files for new xml example.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@638 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6c3e7a1cd7f2404ec0efcadd452adc257bb5d979
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Dec 22 20:32:39 2008 +0000
+
+    added xml parsing helper, upper_triangle (sparse matrix class), and a test case for xml stuff
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@636 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b51bdc431e4b0b72dda1b129439f2110598de867
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Dec 19 19:54:43 2008 +0000
+
+    src/m_eps.[hC]:
+        Changed M_EPS to an "extern double" so that it could be compiled into and
+        initialized in m_eps.C.
+    
+        This ensures that code that does not need to use M_EPS does not have to
+        link to the compiled library (instead of just including library headers).
+    
+    src/physical/*:
+        Added a few elements.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@628 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit d97492d216fdaf99976db104264b76023e46fc70
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Dec 4 22:33:40 2008 +0000
+
+    various fixes to get things to compile
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@622 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 529b22fe53939368a6904220be528047ce1ee181
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Nov 25 22:23:17 2008 +0000
+
+    some small physical::Quantity changes
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@619 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5356ed14e05370ee5057f63f2b568e91c1abae37
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Nov 25 22:21:20 2008 +0000
+
+    Various Vector/SquareMatrix things added.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@618 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 21c6d850b6a17f7da921beb205a9a9118ab0aec2
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Nov 24 20:12:54 2008 +0000
+
+    Most of these changes are due to putting <i>most</i> of the olson-tools
+    library inside of the olson_tools namespace.  The remaining holdouts are the
+    physical library (already in its own physical:: namespace) and the random
+    library.
+    
+    A few other changes:
+    1.  simfit.C broken out again into its own file.
+    2.  log* stuff put into olson_tools::logger:: namespace
+    3.  Distribution.C removed after Distribution::~Distribution moved to .h file.
+    4.  strutil.h:from_string now throws olson_tools::string_error upon bad
+        conversion.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@617 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit f2a0ead42477f1d1e005c18a99a8ea2bc37acd7e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Nov 21 14:39:07 2008 +0000
+
+    M    src/config.h.in:
+        Minor changes
+    
+    M    src/physical/physical.h:
+        Began elements section.
+    
+    M    src/physical/calc/infix.h:
+        Added cascaded assignment operation (eq. 'a = b =c = 1')
+    
+    M    src/physical/calc/BaseCalc.h:
+        Reorged a little and added/fixed parser defs.
+    
+    M    src/physical/calc/units.h:
+        Added new element info.
+    
+    M    src/physical/quantity.h:
+        Added math printer and cleaned up interface to printing quantity<T> types.
+    
+    M    examples/physical/output/testOutput.C:
+        Fixed output for new printing methods.
+    
+    M    examples/physical/calc/interactive/Makefile.am,
+    M    examples/physical/calc/parser/Makefile.am,
+    A    examples/physical/calc/parser/Makefile.extra,
+    A    examples/physical/calc/interactive/Makefile.extra:
+        Added Makefile options for compiling the calculator so that it doesn't
+        have to take so stinking long.
+    
+    M    examples/physical/calc/parser/testParser.C,
+    M    examples/physical/calc/interactive/testInteractive.C:
+        updated for interface changes.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@616 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit f431a82169db1a5974760a200f50a7aba0cbc10e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Nov 14 23:51:32 2008 +0000
+
+    The major change is that I added a runtime units checking library to the
+    physical namespace.
+    
+    All of the physical stuff was moved to olson-tools/physical/.
+    Also included is a calculator grammar parser for this new runtime units type.
+    This allows direct parsing of mathematical formulas that have units in them.
+    
+    I have also added several examples for using the new units/constants library.
+    Foremost are two programs:
+    1.  examples/physical/calc/interactive
+        This is a GNU units type of program, except that it doesn't do automatic
+        multiplication, nor the funky 'everything to the right of / is in
+        denominator.  Otherwise, a pretty handy little program.
+    
+    2.  examples/physical/calc/parser
+        This demonstrates the single line parsing that might be useful in reading
+        in a user's entered physical quantity.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@615 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e2d1f4aaf4364fbab0c8c9614d9bd3429fdb33e6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Nov 7 09:27:23 2008 +0000
+
+    src/physical.h:  fixed small typo
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@614 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9e13a3b5179df9a0d223d1fa0f684649c68530cb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Nov 6 17:20:56 2008 +0000
+
+    Lots of various changes:
+    
+    M    src/options.h:  added <strings.h> include
+    M    src/Vector.h:   made Vector comparators be const functions
+    M    src/Fields.h:   removed old AddVectorField/AddScalarField classes and
+                         fixed AddField so that it can truly be used for all field
+                         types.
+    M    src/PThreadCache.h:  removed octree builder; only need generic code here
+    M    src/physical.h: Added 'milliKelvins' and 'microKelvins'
+    M    src/Distribution.h: upgraded to work with newer gcc compiler (supposedly
+                         the fixes bring the code more towards real compatibility
+                         with the c++ spec)
+    M    src/Timer.h:    Added <string.h> include
+    M    src/bfield.h:   added "base" typedef to ThinWireSrc to satisfy the new
+                         AddField class
+    M    src/nothing.h:  put in olson_tools namespace (still need to push this to
+                         other classes/files)
+    M    src/strutil.h:  Added <algorithm> include
+    M    src/util.C:     Added <stdlib.h> include
+    M    src/config.h.in: ...
+    M    src/Makefile.am:Added PThreadCache.h to header list
+    M    configure.ac:   Added examples/field/addfield/Makefile to output list
+    M    aclocal.m4:     Upgraded to current autoconf on laptop, this will likely
+                         have to be downgraded to work with other versions (and
+                         the two last lines copied over to the downgraded version)
+    M    examples/field/Makefile.am:
+    A    examples/field/addfield:
+    A    examples/field/addfield/Makefile.am:
+    A    examples/field/addfield/testAddField.C:
+                         Added addfield example
+    M    examples/invertdistro/1D/testdist.C: trivial change
+    M    examples/invertdistro/2D/testdist.C:
+                         Fixed order of calls to pos_distrib.[xyz]()
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@613 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 8f39093c2a107091acfd7f5d39be867eb6384632
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 23 21:43:40 2008 +0000
+
+    Moving generic PThread cache and task manager to the more generic olson-tools library.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@610 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 298c6b470ce4f3eba62d56b3bd2cde720556422b
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Sep 23 20:16:23 2008 +0000
+
+    fixed configure.ac so that fast_pow can be enabled after first execution of configure script.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@597 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b25589913b4574e60e43a77db56f0433e9a8d88c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Sep 16 19:35:13 2008 +0000
+
+    save ChangeLog
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@593 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 56bf470c7f59ad09d3826607a36723aefb3e711a
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Aug 28 19:50:25 2008 +0000
+
+    src/config.h.in:?
+    src/version.h,configure.ac: versioning
+    examples/timer/testTimer.C:  fixed include
+    examples/options/Makefile.am:  fixed CLEAN, DIST, ...
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@590 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 50aa287422466ed3a7f0e82a075971786d4c851f
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Aug 28 16:36:56 2008 +0000
+
+    src/Timer.h:
+        Added simple timer class that implements code that has been quite
+        redundant in my programs for a while.
+    src/config.h.in:  I think autoconf changed this.
+    src/Makefile.am:  Added src/Timer.h to distributed code.
+    configure.ac:  Added examples/timer/Makefile.in to output.
+    examples/timer/*, examples/Makefile.am:  Added simple Timer example.
+    examples/bin/extended_2d/*/Makefile.in:  Removed these from repository; they
+                                             should not have been there anyway.
+    examples/rk/testrk.C:  Upgraded getderivs to match the current definition of
+    derivitivesFunction.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@588 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 7358b73a700020a0ef859b6652e828370dde02bb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Jul 21 17:04:28 2008 +0000
+
+    updating version.h for posting
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@582 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5386e35a44af685e10ae2558cfe90a519eb9dde2
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Jul 21 16:19:43 2008 +0000
+
+    improving documentation
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@581 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 0af147575915fcad4d2ece121d6249ba18c190b1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jul 18 18:01:52 2008 +0000
+
+    tweaking distribution
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@578 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bcc378090d847ee2bc62b2dfc6f1e517ac05c597
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jul 16 03:46:00 2008 +0000
+
+    src/physical.h:  fixed some misspellings
+    src/Timing.h:
+        Added a timing stack feature that allows times to be pushed/popped
+        from the stack.  Popping the stack will reset all the timers in a
+        Timing class to that popped absolute time.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@546 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 668a87d8b565d13be4898ef9dffc52091cba9629
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Jun 19 06:23:37 2008 +0000
+
+    src/options.h:
+        fixed very small spelling error in comment.
+    configure.ac
+        changed version label to r539
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@539 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit d64e50796f3dbb6b408f4c6f94f58437cd6cac49
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed May 28 18:40:26 2008 +0000
+
+    src/KeyedBin.h
+    src/GenericBinExtender.h
+    src/GenericBin.h:
+        Added MPI operations and defined MPI data types on.
+    
+    src/mpi_init.h,src/Makefile.am:
+        added utility to make it easier to create complex MPI data types.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@497 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 2e9c74173239151e986d256298ca1aa6e01a8805
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed May 21 18:32:41 2008 +0000
+
+    src/Vector.h:  Added simple function Vector::length() to return length of vector.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@490 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 66eb965e6369f274ce45b59aa730d1d5fbb38cc7
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue May 6 21:36:22 2008 +0000
+
+    src/Timing.h:  added timing printer and updated example
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@477 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit b3297a4e76da6d34ad1da58601b7891256b7fb89
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue May 6 04:38:39 2008 +0000
+
+    src/rk.F:
+        fixed log_severe calling by passing numbers by value.  This fails
+        with some older versions of gfortran and must be changed to compile
+        with these older versions.
+    src/rk.h:
+        Small comment typo.
+    src/trapfe.C:
+        Improved fpesig error message and logic.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@473 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 05cd4310fb0ba7d27112d9d8b3e9c9c1865a1cab
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Apr 24 05:50:45 2008 +0000
+
+    versioning for package
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@460 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5434922e6404a2ab2afdc8575fdef6713206e5ea
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Apr 24 05:49:26 2008 +0000
+
+    fixing documentation
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@459 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ef172c05ff51529e2c07830aabb074e757f8edbc
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Apr 23 17:34:10 2008 +0000
+
+    updating version info for package.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@458 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit a832f9899fc1e65317144ec5709d0727144ceff7
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Apr 23 16:59:36 2008 +0000
+
+    updating version info for package.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@456 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 28033e9cc5f7e3091429c8b58491cca33d70853b
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Mar 28 01:05:07 2008 +0000
+
+    src/Vector.h:  typo fixes and mispelling fixes (again)
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@447 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 570ffba313f4efbba05cd45708be4cb8c34dfab6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Mar 28 00:54:46 2008 +0000
+
+    src/Vector.h:  typo fixes and mispelling fixes
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@446 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 5d8bdf3def5a544a5cb3c97a4814c0f2ac304b50
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Feb 25 18:53:12 2008 +0000
+
+    examples/timing:  added timing (ScaledField, ScaledForce) example.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@385 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9e8b6e9327ac67c820abd774414f3b3d9be446be
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Feb 22 20:26:23 2008 +0000
+
+    just a version comment
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@361 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 03fdb3d0e57af6895de52946b047c74dd6dfe567
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Feb 22 20:21:37 2008 +0000
+
+    src/Fields.h:
+        spelling correction
+    src/ScaleForce.h:
+        Added to help with timing forces.
+    src/ScaleField.h
+        Added to help with timing fields.  Taken from ScaleIntensity originally in
+        laser-cooling package.
+    src/Makefile.am:
+        Added references to Scale[Fields,Forces].h.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@360 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ce511e8b955ea7506f91730bb58141dd06546190
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 13 21:36:19 2008 +0000
+
+    src/Timing.h:  changed getValue(...) to non-const.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@343 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ed7ba7e6407790b264b8b2448632ce4aac55c362
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 13 21:29:53 2008 +0000
+
+    src/Timing.h:
+        added some documentation.
+        Fixed a few bugs:
+            exponential change in reverse mode was incorrect.
+            TimedElement->getValue(t) was supposed to be called with t being
+            relative time and not absolute time.   This is fixed now.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@341 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 97bd6253f560fbb5eeff5295068d8b20e91149c0
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 13 18:20:28 2008 +0000
+
+    src/Timing.h:  changed to use polymorphic timing elements for flexibility.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@332 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 57c9c36083cb0e61713ec489bdd5e55b095ab2b1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Jan 12 05:06:21 2008 +0000
+
+    added src/version.h to help keep track of rcs Id tags and get them compiled into binaries.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@319 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 812352b28dbe64e56517da610570e6ae7f751960
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Dec 16 04:20:54 2007 +0000
+
+    src/*Bin*.h:  Added getMin() and getMax() to be able to read min/max values.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@294 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit c0fd828a618959d8573aad6fa450c1ecdbe6f116
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Dec 12 19:51:18 2007 +0000
+
+    minor fixes in bin codes.  Added GenericBinExtender examples for both GenericBin and KeyedBin
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@288 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 90fc9a44c2615179bfa91a3eeff724dd888bf1d6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 11 19:16:21 2007 +0000
+
+    src/Vector.h:  operator<= and operator>= implemented.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@259 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit c75b24e2a51fa2227a2fc91e6ec984e23b8191a3
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 11 18:09:59 2007 +0000
+
+    Moving Timing.h to olson-tools.  I think this is a generic enough of a tool to
+    use in various places.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@256 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit f9e682f7894a9779674b77cebfc33daa84f47d45
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 27 01:39:40 2007 +0000
+
+    src/logger.[hc]:  added simple routine to help change the log destination.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@222 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6429f98eb28ade6534c17132076495e4132a0790
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Sep 22 15:03:51 2007 +0000
+
+    src/RKIntegrator.h:  small typo.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@218 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 208e3c97aa89bde9e844dee1901563c1c6f2a77f
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Sep 22 14:59:46 2007 +0000
+
+    src/RKIntegrator.h:  More debug info for timestep underruns.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@217 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 2d5cdf2c3f97c75e729b000f9d60a175548a36c0
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 21 17:15:18 2007 +0000
+
+    src/RKIntegrator.h:  Trying to fix the random timestep underrun.  I think this is happening when timesteps are truncated.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@216 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit d0a0bd9a640dc03c421cda38e7fb8f96abfdf2c5
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Sep 21 04:44:40 2007 +0000
+
+    rk.[Fh], RKIntegrator.h:  still more debug info.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@214 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 3641d4c7ea3c19109051cfdc1c0ad7e5fe1164b5
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 20 23:22:28 2007 +0000
+
+    rk.[Fh], RKIntegrator.h:  yet more debug info.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@213 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 1cf0f8f3e86b6987d1d31c6548251ca9fb83713d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Sep 20 16:23:14 2007 +0000
+
+    rk.F, RKIntegrator.h:  including more debug info for stepsize underrun.  Maybe I need a better way of recovering from this.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@212 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit d53f0aa9092bf770915386f226b8736c1f15d7c8
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Aug 16 18:35:11 2007 +0000
+
+    Distribution.h:  can now init via an array of an inverted distro.  Also, access to inverted distro now possible.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@174 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 24db7c0e673feaeb0ef84c8f1efe64cd50a1d25c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Aug 14 11:25:20 2007 +0000
+
+    Distribution.h:  \n    found a potential segfault in copy constructor; q was uninitialized before copy command which tests the value of q.\n    Added leverarm(double) function to help sample the inverted distribution externally.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@173 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6e513b90903f6eb7b53ea828b77539b192380c10
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Aug 12 01:59:00 2007 +0000
+
+    Forgot to add m_eps to the repository.  Helper to determine the machine
+    precision for use in double comparisons.
+    
+    Added a TODO file for the package.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@170 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 2e0c9dad5d5056e0b640b43656e4cd65edb81694
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Aug 12 01:44:09 2007 +0000
+
+    Lots and lots of changes.  The main change that inspired this (uncommitted)
+    branch was the genericizing fields so that I could use it all for optical
+    fields as well.  Most of the inspiration for changes here were from trying to
+    get the laser cooling package to work and simulating the toroidal optical atom
+    trap.
+    Runge-kutta now allows insertion of an impulse force.  The rk5 driver was
+    ported to C++ as a by-product.
+    
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@169 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 00e03428d456b12f4e7e6173c4e876729dabeeef
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Aug 12 01:05:26 2007 +0000
+
+    added fast_pow notes for results with different compilers
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@168 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9c15612904c724fbde8e145e752027196d2dc76e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jul 27 18:51:07 2007 +0000
+
+    RKIntegrator.h:  typos due to changes in function prototypes; testfast_pow:  added better timing tests; testfield.C:  added timing  tests by default.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@162 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit dfe35c8039e4fa5c6a2507be1ef4bc9255a1e689
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed May 2 01:47:57 2007 +0000
+
+    forgot to add doxygen.{m4,am}
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@134 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e34f01e26cf5ad1152f829187624cecb588518c7
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed May 2 01:16:40 2007 +0000
+
+    Vector.h: n-dimensional Vector casting.
+    tools.doxy:  trying to fix the documentation for distribution.
+    readData.h:  small type fix.
+    physical.h:  added GHz, THz.
+    strutil.h:  added a tolower function.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@133 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 546f6b38bef14e5275b028a617e24f62229ba3ac
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 19:16:28 2007 +0000
+
+    housecleaning:  makefiles and automake...
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@123 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit f05ef7e9e4b3725009736f5bc1106eb91708de00
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 18:36:07 2007 +0000
+
+    added property to configure.ac
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@122 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bfcb372dae04dc48b3d40e2e3d6bc399420e9175
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 03:46:30 2007 +0000
+
+    housecleaning:  COPYING now is LGPL. various other small package changes.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@121 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 4d73f58e330f0a1ae0007fe9262c37a5c641f1e6
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 03:32:55 2007 +0000
+
+    testfield.C:  added code to help test for run-time measurements.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@120 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 039728bca4a44b8052a9d99c9bc84a260f1e6659
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 03:29:56 2007 +0000
+
+    HAVE_PTHREAD changed to USE_PTHREAD.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@119 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit f6a9ce8145636cd6ad8101d0c67f619c80073f60
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Mar 22 03:28:06 2007 +0000
+
+    various changes
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@118 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ee39aa555966f9ff04e338fd6fa4986426f4683e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Feb 27 12:13:22 2007 +0000
+
+    options.[hC]:  added string std option; added postProcess routine.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@112 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6989f67877228c3e7ea5b5f874a536252fecf901
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Feb 25 06:58:42 2007 +0000
+
+    field-lookup.h:  error message added for invalid filename.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@106 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 41965cacec6942913fc8a8caec568079339dad02
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Feb 25 06:20:13 2007 +0000
+
+    examples/bin/generic/testbin.C:  spelling correction.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@105 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 40061e5b086bc06bb88042d236474a093e840493
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Feb 25 06:17:56 2007 +0000
+
+    field-lookup.h:  comments possible in field files now.  \ncreateFieldFile.h:  can now add comments to field file.\n3j.h:  spelling fixed.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@104 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 9502182e32b83da144ad0dea24db375130b30fe9
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Jan 22 12:13:09 2007 +0000
+
+    memory.h:  had to include olson-tools-config.h; configure.ac:  fixed can_alias probe
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@92 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 55862bbe72246333dacc3bb20a733be487ba516a
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Jan 20 07:07:21 2007 +0000
+
+    Added configure option for enabling pthread use (mainly in memory.h in form of mutexes).
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@89 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 98360971e643fbca0b6b3cef9561816e62874d4e
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Jan 17 05:54:29 2007 +0000
+
+    added some documentation to Vector.h
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@85 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 39df3f9d7a6b5198865b83fa43627e7bb520fac5
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Jan 13 17:39:13 2007 +0000
+
+    Added pthread mutexes to memory.h for use with pthreads (of course)
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@77 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 8c78398f575cd0414286ee34b86067e6ac331702
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Dec 6 13:49:14 2006 +0000
+
+    This contains work for using OpenMP as well as some small config changes.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@71 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 8bf2ca3a742f38b02b1cd148305a529baa6874d1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Oct 27 03:35:29 2006 +0000
+
+    Began conditioning for use with OpenMP
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@66 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 0ceef28d7acab35c82f6e703588f9e70ef3dc588
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Oct 27 03:29:43 2006 +0000
+
+    Adding exception helper file for OpenMP
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@65 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 0e2003a62c714a3950d27c57b253ca4faf5ce906
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Oct 18 03:58:26 2006 +0000
+
+    Added missing ifdef in config.h.in so that it isn't re-included.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@58 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit a5cb4d3be44aadce1b688f87fe8a3eabf03c0e30
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Oct 14 06:41:34 2006 +0000
+
+    Small multiple bugfixes.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@41 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit ca5008502811b8bfed82478e857f56329cd7196d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Oct 14 03:23:22 2006 +0000
+
+    Converted olson-tools package over to automake/autoconf.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@40 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6939e02cdc61a06b1d5eb424df60ca7d5cfe5a32
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Oct 14 00:53:53 2006 +0000
+
+    Realigning repository to instructions in svn-book.
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools/trunk@34 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e7112979270a89ed7282f35ca3d4f98725dce181
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Oct 14 00:52:09 2006 +0000
+
+    Trying to reorganize the repository to be inline with recommendations of the
+    svn-book.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/trunk@32 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit bdf0f7559b917160c767ea3d371cdb7370dbff4c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Oct 14 00:28:38 2006 +0000
+
+    Vector initialization for lists fixed up a little to allow promoting byte
+    types to integers or the like.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@28 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 628af0542d7758dd5df27be0fc510215433c446f
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Fri Jun 2 10:03:36 2006 +0000
+
+    Lots of improvments and bug fixes.  Field lookup source added.  Example
+    for using field lookup added. GenericBinExtender to help with
+    multidimensional binning added.  TRAPFE stuff moved to c++ to get a
+    better success percentage between compilers and languages and consructor
+    binding.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@27 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 4a4a0391942a374afc87e8f4a38d5f3796a3f65c
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Tue Mar 7 14:32:42 2006 +0000
+
+    Found and eliminated an extra argument to derivs in rk-adaptive code.
+    This might have cause problems if derivs used a variable on the stack
+    without knowing that the stack had been used a bit more than expected on
+    calling derivs (I think at least).
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@21 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 160a705bcbf99d199fc5d796a3640a9512f56ceb
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Mon Mar 6 20:00:13 2006 +0000
+
+    Makeconf change:  -m32 changed to -m64 for gcc_40_x8_64 compile flags.
+    InvCylindricalDist.h:  Fixed a mistake with dz_perp that caused FPE
+        (floating-point exceptions) because of a buffer overrun.
+    trapfe.c:  trying to enable a clearfpe() function to use in debugger.
+        Doesn't work right yet.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@20 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 7f9705a3d7818c796873b01070d3fb053173b901
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 8 15:24:06 2006 +0000
+
+    Changed Dr. Turley to Prof. Turley.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@19 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 31de347146c43f29eee9f05b37f2e7d89e8611c2
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 8 15:18:56 2006 +0000
+
+    Added a tiny more documentation.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@18 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 76cdc64d1c1f1631d4b4fe9311f7bb12644bc76f
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Wed Feb 8 15:06:40 2006 +0000
+
+    Added at least minimal attribution for fit library and other parts prior to
+    publishing the whole package.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@17 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit e143713c19a736bf657ca88fea56aa6867714d2d
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 20 02:28:04 2005 +0000
+
+    Moved all B-field calcs to inlines and templates to speed up by allowing
+    compile time optimizations.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@13 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 91f5713baded33048c43d39e436497bdd8c25351
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Thu Oct 20 02:24:17 2005 +0000
+
+    Fixed intel compiler options (a little) after upgrading to icc9.0.
+    Vector class added more functionality (cross product...).
+    Bfield calculations more modular and flexible.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@12 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit a1e18d62966603c86bf44f8e4bc5070b7c097cb0
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Sep 24 02:53:05 2005 +0000
+
+    Lots of fixes.  Added more examples (binning and generic data reader).
+    Some compiler fixes (for gcc 4.0 and Intel 8.0/9.0).
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@10 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 75714f2f411e8420ea18b8a97ab978299889f7db
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sun Aug 7 01:23:23 2005 +0000
+
+    Several organizational changes, bug-fixes, and addition of GenericBin
+    histograming tool.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@4 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 6c6599ea08aef50fe6d7c4d4ade7ac3628f4eef1
+Author: olsonse <olsonse@e877f351-6dfb-0310-a246-97bd42f90100>
+Date:   Sat Jul 9 01:33:56 2005 +0000
+
+    First import into subversion repository.
+    
+    
+    git-svn-id: svn+ssh://sftp.itd.umich.edu/afs/umich.edu/user/o/l/olsonse/src/svn-repository/olson-tools@1 e877f351-6dfb-0310-a246-97bd42f90100
+
+commit 03a5c9dc841fa4cb2937513a2497824eac9db420
+Author: olsonse <olsonse>
+Date:   Wed Jun 22 09:23:27 2005 +0000
+
+    Added 2D distribution inversion example.
+
+commit 30aa5e90d4f9b43b38c084856143b5caf364f171
+Author: olsonse <olsonse>
+Date:   Wed Jun 22 09:22:58 2005 +0000
+
+    moved to subdirectory for 1D example.
+
+commit 9ec56e920ec3061fc5fe0bb4309cd740e8bbfa09
+Author: olsonse <olsonse>
+Date:   Tue Jun 14 02:29:33 2005 +0000
+
+    Just changing compilers again.
+
+commit a72f5f954aab05029a732c5bebe614d1abed857f
+Author: olsonse <olsonse>
+Date:   Tue Jun 14 02:28:18 2005 +0000
+
+    Split out some files and renamed to be more consistent with olson-tools.
+
+commit cfbf861d593526bf2948af2e7be4d8fc54eb0f26
+Author: olsonse <olsonse>
+Date:   Thu Jun 9 09:12:08 2005 +0000
+
+    Style changes.
+
+commit b3f6ab070d4cd55b8313f8f890192959fe658842
+Author: olsonse <olsonse>
+Date:   Thu Jun 9 08:50:39 2005 +0000
+
+    Style changes mostly.  Bug fixes in use of Histogram to encourage diversity.
+
+commit 00680833b62a0f057a96af8238dbe7bf6dd85efc
+Author: olsonse <olsonse>
+Date:   Thu Jun 9 08:49:43 2005 +0000
+
+    Added lines to compile seperate Histgram files.
+
+commit 4ce4e9c7d89437a3172b185268d5106cc43b437a
+Author: olsonse <olsonse>
+Date:   Thu Jun 9 08:48:57 2005 +0000
+
+    Fixed simplex fit at end of example.  Show more GA options in example.  Fit
+    works better with chosen options.
+
+commit 94cbaca46953c56ba1d652c0b89683840dcb058f
+Author: olsonse <olsonse>
+Date:   Thu Jun 9 08:48:11 2005 +0000
+
+    *** empty log message ***
+
+commit 2a3460863f8836c0f9b68f4ac2ec7b100cb85f28
+Author: olsonse <olsonse>
+Date:   Tue Jun 7 20:38:35 2005 +0000
+
+    Added genetic algorithm test/example code.
+
+commit b930c4f6c37001b8436a8a02b124def6df09b6fe
+Author: olsonse <olsonse>
+Date:   Tue Jun 7 20:38:22 2005 +0000
+
+    *** empty log message ***
+
+commit 067d9f757d2c2576e07678cb612cd6c4062160e3
+Author: olsonse <olsonse>
+Date:   Tue Jun 7 20:38:10 2005 +0000
+
+    Fixed the old genetic algorithm files.  They compile.  Hopefully they work.
+
+commit afbc50438b37274632042de518f48e22e4ceab31
+Author: olsonse <olsonse>
+Date:   Tue Jun 7 09:40:35 2005 +0000
+
+    Documentation changes.
+
+commit 5b8a49e5347643c8525e703a7caeb466ab845c7d
+Author: olsonse <olsonse>
+Date:   Thu May 12 04:27:50 2005 +0000
+
+    Fixed to for Intel 8.1 compilers.
+    
+    Added fmacros.h file to simplify mixing fortran code with others.
+    Added alias function names for Fortran interoperability.
+
+commit 4bae43969199ed224b7930a736d30c0d0dbcee5c
+Author: olsonse <olsonse>
+Date:   Thu May 12 04:27:29 2005 +0000
+
+    Fixed to for Intel 8.1 compilers.
+    Found (using intel compiler) and fixed an array overflow in BField::potential.
+    Didn't find it earlier because the array is on the stack for the function.
+    
+    Added fmacros.h file to simplify mixing fortran code with others.
+    Added alias function names for Fortran interoperability.
+
+commit 5e232799e6a3e1d1f208d9a0201cf2fb6a06c982
+Author: olsonse <olsonse>
+Date:   Thu May 12 04:25:00 2005 +0000
+
+    Fixed to for Intel 8.1 compilers.
+
+commit 1a77bc2a61c8b66c9f21ce6af461d4692fd3d735
+Author: olsonse <olsonse>
+Date:   Thu May 12 04:24:41 2005 +0000
+
+    Added flags for Intel 8.1 compilers.
+
+commit 5fa28fdd08bd770c1a5c8788dd7a7c1bad21d56e
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:23:39 2005 +0000
+
+    Various other fixes for new compilers.
+
+commit 1b70bec046e227bea8ca655310d6d8f9cb1f5c77
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:23:21 2005 +0000
+
+    Added new RKIntegrator wrapper class to allow for generic integration
+    templates.
+    
+    Also added trapfe library to help with trapping floating point exceptions.
+    
+    Fixed Distribution inverter finally (hopefull).  It no longer truncates the
+    distribution or reads from bogus memory.
+    
+    Added rk2 integrator (modified Euler) to rk.F.
+    
+    Various other fixes.
+
+commit 6a063b0e63292e006a0b2856c4dc042ec712a70b
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:21:02 2005 +0000
+
+    Added example for trapfe library to trap floating point exceptions.
+
+commit 2998dfc65df70b7c2ff76c9801963d625af9a672
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:20:42 2005 +0000
+
+    Added example for using distribution inverter.
+
+commit bd9f74f3730c82ccb30c27f5322a0a14248858f8
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:20:24 2005 +0000
+
+    Added more examples.
+
+commit a58e7a1a425c5b96c3c9d5e1232191ab2ecf4ee4
+Author: olsonse <olsonse>
+Date:   Tue Apr 19 17:20:03 2005 +0000
+
+    Added flags for 3.4.3 compiler.  But the compiler apparently has bugs.
+
+commit 1360571823ff9b636439e88c7fb48a17d46767ce
+Author: olsonse <olsonse>
+Date:   Wed Jan 26 01:25:00 2005 +0000
+
+    Fixed possible scope issues with double use of 'i' in freetoheap(...).
+
+commit d6091e5cc29c077a3dc09aa5fde4bcc9135705e4
+Author: olsonse <olsonse>
+Date:   Fri Jan 14 14:10:15 2005 +0000
+
+    Documentation fixes.
+
+commit 98b9d3afc17807f9c00e85c50df19084486c0046
+Author: olsonse <olsonse>
+Date:   Fri Jan 14 14:09:30 2005 +0000
+
+    Fixed documentation on memory.h, msh.h, options.h.
+    Moved new files Distribution.[hC] listutil.h readData.h from dsmc code.
+
+commit b5bd9adfa448cfbabae65377379af8d6f6ddb798
+Author: olsonse <olsonse>
+Date:   Sat Jan 8 04:27:24 2005 +0000
+
+    Initial revision

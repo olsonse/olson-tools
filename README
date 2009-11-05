@@ -1,6 +1,5 @@
-        OlsonTools Package
-    - Copyright 1998-2008 Spencer E. Olson (except as noted by individual
-      files).
+olson-tools:  A slew of useful code created and gathered over the years.
+    - Copyright 1998-2008 Spencer E. Olson (except as noted by individual files).
 
 
 This software is released under the LGPL license except otherwise explicitly
@@ -8,15 +7,14 @@ stated in individual files included in this package.
 
 
 components:
-Makefile        general make file for code
-Makeconf        configuration for the make setup.  This file includes
-                optimization flags for various compilers.
-src             source code
-examples        Examples and test code for each element in the library.
+Jamroot         Overall Boost.Jam build file.
+AUTHORS         A list of those who have contributed with contact info
+ChangeLog       Brief descriptions of changes made between major revisions
+CMakeLists.txt  The main (unfinished) CMake build script.
 licenses        Copies of the licenses used for the pieces of this package.
-
-derived components (after make):
-docs            produced by 'make doc' and contains api documentation.
-lib             produced by 'make' and contains libraries of the package.
-include         produced by 'make' and contains header files for the package.
-
+docs            documentation, including doxygen generated api documentation
+examples        Examples to demonstrate the use and capability of the package
+INSTALL         Description of how one can install this package
+README          Brief description of this package
+src             source code
+TODO            Things that I hope to implement someday

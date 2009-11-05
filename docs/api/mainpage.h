@@ -50,17 +50,23 @@ contributions.  See http://www.umich.edu/~olsonse/ for my best contact info.
   - \subpage fit "Fitting Library"
   - \subpage random "Random Routines"
   - \subpage olson_tools_licence "License/Copying Information"
+  - \subpage readme
+  - \subpage install
+  - \subpage changelog
+  - \subpage authors
 */
 
-//-----------------------------------------------------------
 
+
+//-----------------------------------------------------------
 /** \page olson_tools_intro Introduction
     This page introduces the user to the topic.
 */
     //Now you can proceed to the \ref advanced "advanced section".  
 
-//-----------------------------------------------------------
 
+
+//-----------------------------------------------------------
 /** \page random Random Routines
     There are several routines for generating random numbers of various
     distributions.  The base generator for most of these is the \ref MTRand
@@ -71,6 +77,9 @@ contributions.  See http://www.umich.edu/~olsonse/ for my best contact info.
     Make sure you have first read \ref olson_tools_intro "the introduction".
 */
 
+
+
+//-----------------------------------------------------------
 /** \page olson_tools_licence License/Copying Information
 <p>
 This software is released under the \ref olson_tools_lgpl "LGPL" license except otherwise
@@ -93,3 +102,30 @@ Relevant licenses:
 
 */
 
+
+
+//-----------------------------------------------------------
+/** \page readme README
+    \verbinclude README
+*/
+
+
+
+//-----------------------------------------------------------
+/** \page install INSTALL
+    \verbinclude INSTALL
+*/
+
+
+
+//-----------------------------------------------------------
+/** \page changelog ChangeLog
+    \verbinclude ChangeLog
+*/
+
+
+
+//-----------------------------------------------------------
+/** \page authors AUTHORS
+    \verbinclude AUTHORS
+*/
