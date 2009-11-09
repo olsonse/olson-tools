@@ -1,5 +1,5 @@
 #include <olson-tools/random/random.h>
-#include <olson-tools/Distribution.h>
+#include <olson-tools/distribution/Inverter.h>
 #include <olson-tools/KeyedBin.h>
 #include <olson-tools/GenericBinExtender.h>
 
@@ -12,13 +12,11 @@
 
 using namespace physical::constants;
 
-/** A flat distribution for use.
-*/
+/** A sinc distribution for use.  */
 struct SincDistribution {
-  /** Return 0.5.
-   */
-  inline double distrib (const double & x) const {
-    return x == 0 ? 2.0 : (1.0 + sin(x) / x);
+  /** Return sinc(x).  */
+  inline double operator() (const double & x) const {
+    return x == 0.0 ? 2.0 : (1.0 + sin(x) / x);
   }
 };
 
@@ -36,7 +34,7 @@ int main() {
 
   SincDistribution sinc;
 
-  olson_tools::Distribution distro(sinc, -10.0, 10.0, 1000);
+  olson_tools::distribution::Inverter distro(sinc, -10.0, 10.0, 1000);
   for (int i = 0; i < iter; i++) {
     using olson_tools::Vector;
     using olson_tools::V3;

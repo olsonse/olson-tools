@@ -1,8 +1,3 @@
-#include <vector>
-#include <float.h>
-#include <fstream>
-
-#include <physical/physical.h>
 #include <olson-tools/Vector.h>
 #include <olson-tools/Fields.h>
 #include <olson-tools/Forces.h>
@@ -11,6 +6,14 @@
 #include <olson-tools/timing/Timing.h>
 #include <olson-tools/timing/Printer.h>
 #include <olson-tools/timing/element/Exponential.h>
+
+#include <physical/physical.h>
+
+#include <vector>
+#include <fstream>
+
+//#include <cfloat>
+
 
 using namespace physical::units;
 using olson_tools::BaseField;

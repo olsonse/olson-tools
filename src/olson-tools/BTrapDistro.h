@@ -127,7 +127,7 @@ namespace olson_tools { namespace BField {
          * @param nphi_i
          *     Independent variable.
          */
-        inline double distrib (const double & nphi_i) const {
+        inline double operator() (const double & nphi_i) const {
             Vector<double,3> pos;
             pos[const_indx] = iVal;
 

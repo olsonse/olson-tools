@@ -37,20 +37,21 @@
  *
  * BUGS:  The range[RHO].min doesn't work quite right yet.
  *
- * @see The generic Distribution inverter.
+ * @see The generic distribution::Inverter.
  *
  */
 
-#ifndef INVCYLINDRICALDIST_H
-#define INVCYLINDRICALDIST_H
+#ifndef olson_tools_InvCylindricalDist_h
+#define olson_tools_InvCylindricalDist_h
 
-#include "Distribution.h"
-#include "physical/physical.h"
-#include "logger.h"
-#include "Vector.h"
-#include "power.h"
-#include "nothing.h"
-#include "indices.h"
+#include <olson-tools/distribution/Inverter.h>
+#include <olson-tools/logger.h>
+#include <olson-tools/Vector.h>
+#include <olson-tools/power.h>
+#include <olson-tools/nothing.h>
+#include <olson-tools/indices.h>
+
+#include <physical/physical.h>
 
 namespace olson_tools {
     using namespace indices;
@@ -139,12 +140,12 @@ inline void decoupleRhoPhi(const double & nphi_i,
 */
 class FlatDistribution {
   public:
-    /** A constructor to satisfy tempalte requirements further down. */
+    /** A constructor to satisfy template requirements further down. */
     template <class T>
     FlatDistribution(const T & dontcare, const Vector<double,3> & origin) {}
     /** Return 0.5.
      */
-    inline double distrib (const double & x) const {
+    inline double operator() (const double & x) const {
         return 0.5;
     }
 };
@@ -268,14 +269,14 @@ class InvCylindricalDist {
 
             case 1:
                     distrib_perp[l] =
-                        new Distribution(
+                        new distribution::Inverter(
                                 Distrib2D(init, ith, iVal, range[RHO], range[PHI], dr, ds, origin),
                                 0, nphi_R, nbins[RHO] * nbins[PHI]
                             );
                 }
         }  /* switch */
 
-        distrib_long = new Distribution(Distrib1D(init, origin), range[Z].min, range[Z].max, nbins[Z]);
+        distrib_long = new distribution::Inverter(Distrib1D(init, origin), range[Z].min, range[Z].max, nbins[Z]);
     }/* initialize */
 
     /** Return the next X coordinate from the random distribution.
@@ -352,7 +353,7 @@ class InvCylindricalDist {
 
     double next_vals[3];
 
-    Distribution * distrib_perp[N2D], * distrib_long;
+    distribution::Inverter * distrib_perp[N2D], * distrib_long;
 
     double dz_perp;
     double one_over_dz_perp;
@@ -360,4 +361,4 @@ class InvCylindricalDist {
 
 }/* namespace olson_tools */
 
-#endif // INVCYLINDRICALDIST_H
+#endif // olson_tools_InvCylindricalDist_h

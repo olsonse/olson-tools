@@ -1,5 +1,6 @@
 #include <olson-tools/random/random.h>
-#include <olson-tools/Distribution.h>
+#include <olson-tools/distribution/Inverter.h>
+#include <olson-tools/distribution/Uniform.h>
 #include <olson-tools/KeyedBin.h>
 
 #include <physical/physical.h>
@@ -11,15 +12,6 @@
 
 using namespace physical::constants;
 
-/** A flat distribution for use.
-*/
-struct FlatDistribution {
-  /** Return 0.5.  */
-  inline double distrib (const double & x) const {
-    return 0.5;
-  }
-};
-
 int main() {
   olson_tools::KeyedBin<double,double,3,201> bin(-0.5,0.5);
 
@@ -30,9 +22,9 @@ int main() {
   if (iter == 0) return EXIT_FAILURE;
   std::cout << iter << " samples requested." << std::endl;
 
-  FlatDistribution flat;
+  namespace dist = olson_tools::distribution;
 
-  olson_tools::Distribution distro(flat, -0.5, 0.5, 1000);
+  dist::Inverter distro(dist::Uniform(), -0.5, 0.5, 1000);
   for (int i = 0; i < iter; i++) {
     using olson_tools::Vector;
     using olson_tools::V3;
