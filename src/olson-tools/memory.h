@@ -58,7 +58,7 @@
  * functions.
  * */
 
-/** \example testmemory.C
+/** \example testmemory.cpp
  * An example of how to use the memory cache.
  */
 

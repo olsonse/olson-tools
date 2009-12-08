@@ -58,7 +58,7 @@
  * Copyright 2000-2004 Spencer Olson.
  */
 
-/** \example options/main.C
+/** \example options/main.cpp
  * Demonstrates the use of the option processor class.
  */
 

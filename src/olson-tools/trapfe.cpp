@@ -39,7 +39,7 @@
  *
  */
 
-/** \example trapfe/testtrapfe.C
+/** \example trapfe/testtrapfe.cpp
  * This program shows a calculation that causes a floating point exception. 
  * By linking in the trapfe library and compiling with the -g option, these
  * floating point exceptions can be caught and the program paused.  This

@@ -34,7 +34,7 @@
  * Copyright 2004-2008 Spencer Olson.
  */
 
-/** \example bin/generic/testbin.C
+/** \example bin/generic/testbin.cpp
  * Demonstrates the simple binning utility class. 
  * @see GenericBin
  */

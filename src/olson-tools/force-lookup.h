@@ -34,7 +34,7 @@
  * file.
  */
 
-/** \example field/lookup/testfield.C
+/** \example field/lookup/testfield.cpp
  * \input field/lookup/common.h
  *
  * Demonstrates the field lookup code by using a set of field/force data from
@@ -42,7 +42,7 @@
  * on an atom in the trapping hyperfine ground-state.
  */
 
-/** \example field/lookup/createfieldfile.C
+/** \example field/lookup/createfieldfile.cpp
  * \input field/lookup/common.h
  *
  * Demonstrates the field field writing utility that produces a file that can

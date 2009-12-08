@@ -59,7 +59,7 @@
  * Copyright 2004 Spencer Olson
  */
 
-/** \example readdata/testreadData.C
+/** \example readdata/testreadData.cpp
  * Demonstrates using the templated readData function to read a set of data
  * from file, with allowed comments in the data file.
  */

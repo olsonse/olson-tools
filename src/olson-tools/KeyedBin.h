@@ -38,7 +38,7 @@
  * @see GenericBin.
  */
 
-/** \example bin/keyed/testbin.C
+/** \example bin/keyed/testbin.cpp
  * Demonstrates binning a set of data according to a specific single key value.
  * Instead of just incrementing a counter for each bin() operation as done in
  * GenericBin, the data is accumulated (summed).

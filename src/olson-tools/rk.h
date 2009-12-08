@@ -42,7 +42,7 @@
  *
  */
 
-/** \example rk/testrk.C
+/** \example rk/testrk.cpp
  * Example use of Runge-Kutta routines.
  */
 

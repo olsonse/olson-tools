@@ -37,7 +37,7 @@
  *
  */
 
-/** \example mpi/types/testtypes.C
+/** \example mpi/types/testtypes.cpp
  * Demonstrates using arbitrary data types in MPI.
  *
  */
