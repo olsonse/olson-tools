@@ -47,13 +47,13 @@ contributions.  See http://www.umich.edu/~olsonse/ for my best contact info.
 
   This manual is divided in the following sections:
   - \subpage olson_tools_intro 
-  - \subpage fit "Fitting Library"
-  - \subpage random "Random Routines"
+  - \subpage olson_tools_fit "Fitting Library"
+  - \subpage olson_tools_random "Random Routines"
   - \subpage olson_tools_licence "License/Copying Information"
-  - \subpage readme
-  - \subpage install
-  - \subpage changelog
-  - \subpage authors
+  - \subpage olson_tools_readme
+  - \subpage olson_tools_install
+  - \subpage olson_tools_changelog
+  - \subpage olson_tools_authors
 */
 
 
@@ -67,7 +67,7 @@ contributions.  See http://www.umich.edu/~olsonse/ for my best contact info.
 
 
 //-----------------------------------------------------------
-/** \page random Random Routines
+/** \page olson_tools_random Random Routines
     There are several routines for generating random numbers of various
     distributions.  The base generator for most of these is the \ref MTRand
     MerserneTwister package from Richard Wagner.
@@ -82,7 +82,7 @@ contributions.  See http://www.umich.edu/~olsonse/ for my best contact info.
 //-----------------------------------------------------------
 /** \page olson_tools_licence License/Copying Information
 <p>
-This software is released under the \ref olson_tools_lgpl "LGPL" license except otherwise
+This software is released under the \ref olson_tools_lgpl "LGPL v3" license except otherwise
 explicitly stated in individual files included in this package. 
 </p>
 
@@ -90,42 +90,46 @@ explicitly stated in individual files included in this package.
     - (except as noted by individual files).
 <p>
 Relevant licenses:
-    - \ref olson_tools_lgpl "LGPL"
-    - \ref gpl "GPL v2" 
+    - \ref olson_tools_lgpl "LGPL v3"
+    - \ref gplv3 "GPL v3" 
+    - \ref gplv2 "GPL v2" 
 <p>
 
 \section olson_tools_lgpl ""
 \verbinclude lgpl.txt
 
-\section gpl ""
-\verbinclude gpl.txt
+\section gplv3 ""
+\verbinclude gpl-v3.txt
+
+\section gplv2 ""
+\verbinclude gpl-v2.txt
 
 */
 
 
 
 //-----------------------------------------------------------
-/** \page readme README
+/** \page olson_tools_readme README
     \verbinclude README
 */
 
 
 
 //-----------------------------------------------------------
-/** \page install INSTALL
+/** \page olson_tools_install INSTALL
     \verbinclude INSTALL
 */
 
 
 
 //-----------------------------------------------------------
-/** \page changelog ChangeLog
+/** \page olson_tools_changelog ChangeLog
     \verbinclude ChangeLog
 */
 
 
 
 //-----------------------------------------------------------
-/** \page authors AUTHORS
+/** \page olson_tools_authors AUTHORS
     \verbinclude AUTHORS
 */
