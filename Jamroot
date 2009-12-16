@@ -57,7 +57,7 @@ import package ; # used for installing whole package (provides --prefix related
                  # options )
 
 
-path-constant OLSON_TOOLS_TOP : . ;
+path-constant TOP : . ;
 
 constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
 
@@ -157,7 +157,7 @@ obj rk
 
 # options:
 install-properties =
-    <install-source-root>$(OLSON_TOOLS_TOP)/src
+    <install-no-version-symlinks>on
     ;
 
 if [ modules.peek : NT ] {
@@ -171,16 +171,34 @@ if [ modules.peek : NT ] {
 local libraries = random fit pow misc trapfe rk ;
 # all headers to install
 local all_headers = [ path.glob-tree src : *.h *.cpp : .svn ] ;
+# docs to install
+local docs = [ path.glob-tree docs/api/html docs/api/latex : * : .svn ] ;
 
 
 # Complete install allowing --prefix and related command line options
-package.install install
-    : $(install-properties) <install-no-version-symlinks>on
+alias install : install-code install-docs ;
+explicit install ;
+
+# Complete install allowing --prefix and related command line options
+package.install install-code
+    : $(install-properties)
+      <install-source-root>$(TOP)/src
     :
     : $(libraries)
     : $(all_headers)
     ;
-explicit install ;
+explicit install-code ;
+
+# install data allowing --prefix and related command line options
+package.install install-docs
+    : $(install-properties)
+      <install-source-root>$(TOP)
+      <install-header-subdir>../share/olson-tools
+    :
+    :
+    : $(docs)
+    ;
+explicit install-docs ;
 
 
 # install the libs into a staging dir

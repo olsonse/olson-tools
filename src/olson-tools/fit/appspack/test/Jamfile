@@ -9,7 +9,7 @@ project :
 
 
 
-use-project /appspack : $(OLSON_TOOLS_TOP)/../appspack ;
+use-project /appspack : $(TOP)/../appspack ;
 
 unit-test SharedCacheManager : SharedCacheManager.cpp ;
 
