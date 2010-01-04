@@ -45,9 +45,9 @@ struct partition_position_pred {
 };
 
 /* Only useful for exactly two particle types. */
-struct partition_type_pred {
+struct partition_species_pred {
     inline bool operator() (const Particle & p) {
-        return p.type == 0;
+        return p.species == 0;
     }
 };
 

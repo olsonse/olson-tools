@@ -1,7 +1,6 @@
 #include <olson-tools/nsort/map/remap-_1D.h>
 #include <olson-tools/nsort/map/remap-_2D.h>
 #include <olson-tools/nsort/map/remap-_3D.h>
-#include <olson-tools/nsort/map/w_type.h>
 
 #include <olson-tools/Vector.h>
 
@@ -19,17 +18,15 @@ namespace {
   
     Vector<double, 3> x;
     Vector<double, 3> v;
-    int type;
   
     Particle(const Vector<double,3> & x = 0.0,
-             const Vector<double,3> & v = 0.0,
-             const int & type = 0) : x(x), v(v), type(type) {}
+             const Vector<double,3> & v = 0.0 ) : x(x), v(v) {}
   };
   
   std::ostream & operator<< (std::ostream & out, const Particle & p) {
     return out << "{x: (" << p.x[0] << ", " << p.x[1] << ", " << p.x[2] << "), "
-                   "v: (" << p.v[0] << ", " << p.v[1] << ", " << p.v[2] << "), "
-                   "t: " << p.type   << '}';
+                   "v: (" << p.v[0] << ", " << p.v[1] << ", " << p.v[2] << ") "
+                  "}";
   }
 }
 

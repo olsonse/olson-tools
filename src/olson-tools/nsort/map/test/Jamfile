@@ -1,3 +1,5 @@
 unit-test _nD : _nD.cpp /olson-tools//headers ;
 
 unit-test remap : remap.cpp /olson-tools//headers ;
+
+unit-test w_species : w_species.cpp /olson-tools//headers ;

@@ -9,7 +9,8 @@
 
 #include <olson-tools/nsort/NSort.h>
 #include <olson-tools/nsort/map/_3D.h>
-#include <olson-tools/nsort/map/w_type.h>
+#include <olson-tools/nsort/map/w_species.h>
+#include <olson-tools/nsort/map/species_only.h>
 #include "Particle.h"
 #include "partition.h"
 #include <olson-tools/Timer.h>
@@ -36,17 +37,17 @@ int main() {
     std::vector<Particle*>                         ptrv;
     NSort<pivot_ctor<_1D<0> > >                    ps(2);
     NSort<pivot_ctor<_1D<0> > >                    ptrs(2);
-    NSort<pivot_ctor<w_type<_1D<0> > > >           ps_w_type(2*n_types);
-    NSort<pivot_ctor<w_type<_1D<0> > > >           ptrs_w_type(2*n_types);
+    NSort<pivot_ctor<w_species<_1D<0> > > >        ps_w_species(2*n_types);
+    NSort<pivot_ctor<w_species<_1D<0> > > >        ptrs_w_species(2*n_types);
     NSort<pivot_ctor<_2D<0,1> > >                  ps2D(4);
     NSort<pivot_ctor<_2D<0,1> > >                  ptrs2D(4);
-    NSort<pivot_ctor<w_type<_2D<0,1> > > >         ps2D_w_type(4*n_types);
-    NSort<pivot_ctor<w_type<_2D<0,1> > > >         ptrs2D_w_type(4*n_types);
+    NSort<pivot_ctor<w_species<_2D<0,1> > > >      ps2D_w_species(4*n_types);
+    NSort<pivot_ctor<w_species<_2D<0,1> > > >      ptrs2D_w_species(4*n_types);
     NSort<pivot_ctor<_3D<0,1,2> > >                ps3D(8);
     NSort<pivot_ctor<_3D<0,1,2> > >                ptrs3D(8);
-    NSort<pivot_ctor<w_type<_3D<0,1,2> > > >       ps3D_w_type(8*n_types);
-    NSort<pivot_ctor<w_type<_3D<0,1,2> > > >       ptrs3D_w_type(8*n_types);
-    NSort<map::type>                               pts(n_types);
+    NSort<pivot_ctor<w_species<_3D<0,1,2> > > >    ps3D_w_species(8*n_types);
+    NSort<pivot_ctor<w_species<_3D<0,1,2> > > >    ptrs3D_w_species(8*n_types);
+    NSort<map::species_only>                       pts(n_types);
 
 
 
@@ -104,7 +105,7 @@ int main() {
 
     /* sorting into n-values. */
     initPVector(pv,N_little, n_types);
-    std::sort(pv.begin(), pv.end(), type_comp());
+    std::sort(pv.begin(), pv.end(), species_comp());
     std::cout << "\nsorted by std::sort(type):\n";
     std::copy(pv.begin(), pv.end(), std::ostream_iterator<Particle>(std::cout, "\n"));
     std::cout << std::endl;
@@ -118,7 +119,7 @@ int main() {
 
     if (n_types == 2) {
         initPVector(pv, N_little, n_types);
-        std::partition(pv.begin(), pv.end(), partition_type_pred());
+        std::partition(pv.begin(), pv.end(), partition_species_pred());
         std::cout << "\nsorted by std::partition(type):\n";
         std::copy(pv.begin(), pv.end(), std::ostream_iterator<Particle>(std::cout, "\n"));
         std::cout << std::endl;
@@ -126,11 +127,11 @@ int main() {
 
     /* Testing sorting in 1-dimensions + type. */
     initPVector(pv,N_little, n_types);
-    ps_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_1D<0> > >(n_types));
+    ps_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_1D<0> > >(n_types));
     std::cout << "\nsorted by NSort(w/type):\n";
-    std::cout << "Pivot at " << ps_w_type.end(0) << " :  " << pv[ps_w_type.end(0)] << std::endl;
+    std::cout << "Pivot at " << ps_w_species.end(0) << " :  " << pv[ps_w_species.end(0)] << std::endl;
     {
-        pivot_ctor<w_type<_1D<0> > > map(n_types);
+        pivot_ctor<w_species<_1D<0> > > map(n_types);
         for (unsigned int i = 0; i < pv.size(); i++)
             std::cout << pv[i] << ";    map = " << map.super::operator()(pv[i]) << ", " << map(pv[i]) << '\n';
     }
@@ -163,11 +164,12 @@ int main() {
 
     /* Testing sorting in 2-dimensions + type. */
     initPVector(pv,N_little, n_types);
-    ps2D_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_2D<0,1> > >(n_types));
+    ps2D_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_2D<0,1> > >(n_types));
     std::cout << "\nsorted by NSort(2D w/type):\n";
-    std::cout << "Pivot at " << ps2D_w_type.end(0) << " :  " << pv[ps2D_w_type.end(0)] << std::endl;
+    std::cout << "Pivot at " << ps2D_w_species.end(0) << " :  " <<
+    pv[ps2D_w_species.end(0)] << std::endl;
     {
-        pivot_ctor<w_type<_2D<0,1> > > map(n_types);
+        pivot_ctor<w_species<_2D<0,1> > > map(n_types);
         for (unsigned int i = 0; i < pv.size(); i++)
             std::cout << pv[i] << ";    map = " << map.super::operator()(pv[i]) << ", " << map(pv[i]) << '\n';
     }
@@ -203,11 +205,11 @@ int main() {
 
     /* Testing sorting in 3-dimensions + type. */
     initPVector(pv,N_little, n_types);
-    ps3D_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_3D<0,1,2> > >(n_types));
+    ps3D_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_3D<0,1,2> > >(n_types));
     std::cout << "\nsorted by NSort(3D w/type):\n";
-    std::cout << "Pivot at " << ps3D_w_type.end(0) << " :  " << pv[ps3D_w_type.end(0)] << std::endl;
+    std::cout << "Pivot at " << ps3D_w_species.end(0) << " :  " << pv[ps3D_w_species.end(0)] << std::endl;
     {
-        pivot_ctor<w_type<_3D<2,1,0> > > map(n_types);
+        pivot_ctor<w_species<_3D<2,1,0> > > map(n_types);
         for (unsigned int i = 0; i < pv.size(); i++)
             std::cout << pv[i] << ";    map = " << map.super::operator()(pv[i]) << ", " << map(pv[i]) << '\n';
     }
@@ -215,11 +217,11 @@ int main() {
 
     /* with ptr array */
     initPtrVector(pv,ptrv, N_little, n_types);
-    ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctor<w_type<_3D<0,1,2> > >(n_types));
+    ptrs3D_w_species.sort(ptrv.begin(), ptrv.end(), pivot_ctor<w_species<_3D<0,1,2> > >(n_types));
     std::cout << "\nsorted by NSort(3D w/type) (ptr):\n";
-    std::cout << "Pivot at " << ptrs3D_w_type.end(0) << " :  " << *ptrv[ptrs3D_w_type.end(0)] << std::endl;
+    std::cout << "Pivot at " << ptrs3D_w_species.end(0) << " :  " << *ptrv[ptrs3D_w_species.end(0)] << std::endl;
     {
-        pivot_ctor<w_type<_3D<0,1,2> > > map(n_types);
+        pivot_ctor<w_species<_3D<0,1,2> > > map(n_types);
         for (unsigned int i = 0; i < ptrv.size(); i++)
             std::cout << *ptrv[i] << ";    map = " << map(*ptrv[i]) << '\n';
     }
@@ -271,7 +273,7 @@ int main() {
             /* Timing sorting into n-values. */
             initPVector(pv, N_big_i, n_types);
             timer[4].start();
-            //std::sort(pv.begin(), pv.end(), type_comp());
+            //std::sort(pv.begin(), pv.end(), species_comp());
             timer[4].stop();
 
 
@@ -283,7 +285,7 @@ int main() {
             if (n_types == 2) {
                 initPVector(pv, N_big_i, n_types);
                 timer[6].start();
-                std::partition(pv.begin(), pv.end(), partition_type_pred());
+                std::partition(pv.begin(), pv.end(), partition_species_pred());
                 timer[6].stop();
             }
 
@@ -305,7 +307,7 @@ int main() {
 
             initPVector(pv, N_big_i, n_types);
             timer[2].start();
-            ps_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_1D<0> > >(n_types));
+            ps_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_1D<0> > >(n_types));
             timer[2].stop();
 #endif
 
@@ -323,7 +325,7 @@ int main() {
 
             initPVector(pv, N_big_i, n_types);
             timer[5].start();
-            ps2D_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_2D<0,1> > >(n_types));
+            ps2D_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_2D<0,1> > >(n_types));
             timer[5].stop();
 #endif
 
@@ -341,7 +343,7 @@ int main() {
 
             initPVector(pv, N_big_i, n_types);
             timer[8].start();
-            ps3D_w_type.sort(pv.begin(), pv.end(), pivot_ctor<w_type<_3D<0,1,2> > >(n_types));
+            ps3D_w_species.sort(pv.begin(), pv.end(), pivot_ctor<w_species<_3D<0,1,2> > >(n_types));
             timer[8].stop();
 #endif
 
@@ -359,7 +361,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[11].start();
-            ptrs_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_type<_1D<0> > >(n_types));
+            ptrs_w_species.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_species<_1D<0> > >(n_types));
             timer[11].stop();
 #endif
 
@@ -377,7 +379,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[14].start();
-            ptrs2D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_type<_2D<0,1> > >(n_types));
+            ptrs2D_w_species.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_species<_2D<0,1> > >(n_types));
             timer[14].stop();
 #endif
 
@@ -396,7 +398,7 @@ int main() {
 
             initPtrVector(pv, ptrv, N_big_i, n_types);
             timer[17].start();
-            ptrs3D_w_type.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_type<_3D<0,1,2> > >(n_types));
+            ptrs3D_w_species.sort(ptrv.begin(), ptrv.end(), pivot_ctor< w_species<_3D<0,1,2> > >(n_types));
             timer[17].stop();
 #endif
 

@@ -47,27 +47,27 @@ namespace olson_tools {
        *    \verbatim
               pivot_ctor< ptr<         _3D<0,1,2> > >   ptrmap3D;
             \endverbatim
-       *  - Providing constructors for map::type and map::_1D map of value types:<br>
+       *  - Providing constructors for map::species and map::_1D map of value types:<br>
        *    \verbatim
               pivot_ctor<      w_type< _1D<0    > > >   map1Dtype(10);
             \endverbatim
-       *  - Providing constructors for map::type and map::_2D map of value types:<br>
+       *  - Providing constructors for map::species and map::_2D map of value types:<br>
        *    \verbatim
               pivot_ctor<      w_type< _2D<0,1  > > >   map2Dtype(10);
             \endverbatim
-       *  - Providing constructors for map::type and map::_3D map of value types:<br>
+       *  - Providing constructors for map::species and map::_3D map of value types:<br>
        *    \verbatim
               pivot_ctor<      w_type< _3D<0,1,2> > >   map3Dtype(10);
             \endverbatim
-       *  - Providing constructors for map::type and map::_2D map of pointer types:<br>
+       *  - Providing constructors for map::species and map::_2D map of pointer types:<br>
        *    \verbatim
               pivot_ctor< ptr< w_type< _1D<0    > > > > ptrmap1Dtype(10);
             \endverbatim
-       *  - Providing constructors for map::type and map::_2D map of pointer types:<br>
+       *  - Providing constructors for map::species and map::_2D map of pointer types:<br>
        *    \verbatim
               pivot_ctor< ptr< w_type< _2D<0,1  > > > > ptrmap2Dtype(10);
             \endverbatim
-       *  - Providing constructors for map::type and map::_2D map of pointer types:<br>
+       *  - Providing constructors for map::species and map::_2D map of pointer types:<br>
        *    \verbatim
               pivot_ctor< ptr< w_type< _3D<0,1,2> > > > ptrmap3Dtype(10);
             \endverbatim
