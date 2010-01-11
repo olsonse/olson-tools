@@ -11,4 +11,114 @@
   <Eq><In><T><n>2</n> <P>e^-</P></T> + <T><P>87Rb</P></T></In>  --&gt;  <Out><T><n>2</n> <P>e^-</P></T> + <T><P>87Rb</P></T></Out></Eq>
 
   <some-value>10* m</some-value>
+
+
+  <!-- These vectors are for the basic vector type tests. -->
+  <basic-vectors>
+    <double-vector>
+      <comment>In this example, we must separate the double values into
+      different text nodes.  We do this by having dummy 'endline' nodes in
+      between each of the endline nodes.  Note that any node within
+      double-vector than cannot directly be parsed into a double is ignored.
+      </comment>
+      1.1<endline/>
+      2.2<endline/>
+      3.3<endline/>
+    </double-vector>
+
+    <int-vector>
+      <comment>In this example, we must separate the int values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within int-vector than cannot
+      directly be parsed into a int is ignored. </comment>
+      1<endline/>
+      2<endline/>
+      3<endline/>
+    </int-vector>
+
+    <uint-vector>
+      <comment>In this example, we must separate the uint values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within uint-vector than cannot
+      directly be parsed into a uint is ignored. </comment>
+      1<endline/>
+      2<endline/>
+      3<endline/>
+    </uint-vector>
+
+    <char-vector>
+      <comment>In this example, we must separate the char values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within char-vector than cannot
+      directly be parsed into a char is ignored.
+      Consequently, since this comment has characters. the first element of the
+      parsed char-vector is actuall the first character of this comment--'I'
+      </comment>
+      1<endline/>
+      2<endline/>
+      3<endline/>
+    </char-vector>
+  </basic-vectors>
+
+
+  <!-- These vectors are for the basic-proxy vector type tests. -->
+  <proxy-vectors>
+    <double-vector>
+      <comment>In this example, we must separate the char values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within char-vector than cannot
+      directly be parsed into a char is ignored.
+      Consequently, since this comment has characters. the first element of the
+      parsed char-vector is actuall the first character of this comment--'I'
+      </comment>
+      <val>1.1</val>
+      <val>2.2</val>
+      <val>3.3</val>
+    </double-vector>
+
+    <int-vector>
+      <comment>In this example, we must separate the int values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within int-vector than cannot
+      directly be parsed into a int is ignored. </comment>
+      <val>1</val>
+      <val>2</val>
+      <val>3</val>
+    </int-vector>
+
+    <uint-vector>
+      <comment>In this example, we must separate the uint values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within uint-vector than cannot
+      directly be parsed into a uint is ignored. </comment>
+      <val>1</val>
+      <val>2</val>
+      <val>3</val>
+    </uint-vector>
+
+    <char-vector>
+      <comment>In this example, we must separate the char values into different
+      text nodes.  We do this by having dummy 'endline' nodes in between each of
+      the endline nodes.  Note that any node within char-vector than cannot
+      directly be parsed into a char is ignored.
+      Consequently, since this comment has characters. the first element of the
+      parsed char-vector is actuall the first character of this comment--'I'
+      </comment>
+      <val>1</val>
+      <val>2</val>
+      <val>3</val>
+    </char-vector>
+  </proxy-vectors>
+
+
+  <composite-vectors>
+    <abc-vector>
+      <comment>In this example, we parse a vector of composite objects.
+      </comment>
+      <value> <a>1.1</a> <b>2.1</b> <c>3.1</c> </value>
+      <value> <a>1.2</a> <b>2.2</b> <c>3.2</c> </value>
+      <value> <a>1.3</a> <b>2.3</b> <c>3.3</c> </value>
+    </abc-vector>
+  </composite-vectors>
+
 </Equationtest>

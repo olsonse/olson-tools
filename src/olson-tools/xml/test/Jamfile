@@ -8,3 +8,4 @@ unit-test physical_parse
       /olson-tools//xml
       /boost//regex/<link>static
     ;
+unit-test vector_parse : vector_parse.cpp /olson-tools//headers ;
