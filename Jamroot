@@ -59,7 +59,8 @@ import package ; # used for installing whole package (provides --prefix related
 
 path-constant TOP : . ;
 
-constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
+#constant VERSION : [ MATCH "\\$Revision: *([0-9]*) *\\$" : "$Revision: 636 $" ] ;
+constant VERSION : [ SHELL "printf `cd $(TOP); git describe 2> /dev/null` || printf olson-tools-0.1.0 " ] ;
 
 
 
@@ -87,10 +88,12 @@ project /olson-tools
     : requirements
         $(xml2-features)
         <threading>multi:<define>USE_PTHREAD
+        <define>OLSON_TOOLS_VERSION=\\\"$(VERSION)\\\"
         [ supports_fast_pow ]
     : usage-requirements
         $(xml2-features)
         <threading>multi:<define>USE_PTHREAD
+        <define>OLSON_TOOLS_VERSION=\\\"$(VERSION)\\\"
         [ supports_fast_pow ]
     ;
 
