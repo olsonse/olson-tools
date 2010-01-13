@@ -168,7 +168,7 @@ if [ modules.peek : NT ] {
 
 
 # the list of libraries to build and install
-local libraries = random fit pow misc trapfe rk ;
+local libraries = random fit pow misc trapfe ; #rk ;
 # all headers to install
 local all_headers = [ path.glob-tree src : *.h *.cpp : .svn ] ;
 # docs to install
