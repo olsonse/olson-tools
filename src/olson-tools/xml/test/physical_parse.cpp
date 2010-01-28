@@ -4,8 +4,7 @@
 #include <olson-tools/xml/physical_parse.h>
 #include <olson-tools/strutil.h>
 
-#include <physical/quantity.h>
-#include <physical/calc/infix.h>
+#include <physical/calc/Driver.h>
 
 #include <boost/test/unit_test.hpp>
 
@@ -25,8 +24,8 @@ namespace {
 BOOST_AUTO_TEST_SUITE( XML_physical_parse_tests );//{
 
   BOOST_AUTO_TEST_CASE( parse ) {
-    using runtime::physical::calc::InfixCalc;
-    InfixCalc::base_calc & calc = InfixCalc::instance();
+    using runtime::physical::calc::Driver;
+    Driver & calc = Driver::instance();
     /* clear the old symbols out */
     calc.symbols.clear();
     calc.addMathLib();

@@ -34,19 +34,21 @@
  * Copyright 2004-2005 Spencer Olson.
  */
 
-#ifndef BFIELD_H
-#define BFIELD_H
+#ifndef olson_tools_bfield_h
+#define olson_tools_bfield_h
+
+#include <olson-tools/Vector.h>
+#include <olson-tools/power.h>
+#include <olson-tools/indices.h>
+#include <olson-tools/Fields.h>
+#include <olson-tools/Forces.h>
+
+#include <physical/physical.h>
 
 #include <vector>
 #include <ostream>
-#include <math.h>
+#include <cmath>
 
-#include "physical/physical.h"
-#include "Vector.h"
-#include "power.h"
-#include "indices.h"
-#include "Fields.h"
-#include "Forces.h"
 
 namespace olson_tools {
   namespace BField {
@@ -297,4 +299,4 @@ namespace olson_tools {
   } /* namespace olson_tools::BField */
 }/* namespace olson_tools */
 
-#endif // BFIELD_H
+#endif // olson_tools_bfield_h

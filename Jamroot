@@ -104,7 +104,7 @@ alias headers : : : : <include>src ;
 # there could be some other pieces that will require this too.
 # Maybe I should isolate the things that require linkage to the physical
 # library a little better.
-alias xml : : : : <library>/olson-tools//headers <library>/physical//runtime ;
+alias xml : : : : <library>/olson-tools//headers <library>/physical//calc ;
 
 lib random
     : src/olson-tools/random/random.cpp

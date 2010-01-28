@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE  XML_physical_parse
+#define BOOST_TEST_MODULE  XML_vector_parse
 
 #include <olson-tools/xml/Doc.h>
 #include <olson-tools/xml/vector_parse.h>

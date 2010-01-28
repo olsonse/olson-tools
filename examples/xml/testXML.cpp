@@ -20,9 +20,9 @@ namespace xml = olson_tools::xml;
 
 void prepareCalculator(const xml::Doc & doc) {
   /* prepare infix units calculator. */
-  using physical::calc::InfixCalc;
+  using physical::calc::Driver;
   using physical::calc::symbol;
-  InfixCalc::base_calc & calc = InfixCalc::instance();
+  Driver & calc = Driver::instance();
 
   /* clear the old symbols out */
   calc.symbols.clear();

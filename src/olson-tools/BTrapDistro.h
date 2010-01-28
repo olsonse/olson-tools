@@ -42,11 +42,12 @@
 #ifndef BTRAP_DISTRO_H
 #define BTRAP_DISTRO_H
 
-#include "physical/physical.h"
-#include "bfield.h"
-#include "logger.h"
-#include "Vector.h"
-#include "InvCylindricalDist.h"
+#include <olson-tools/bfield.h>
+#include <olson-tools/logger.h>
+#include <olson-tools/Vector.h>
+#include <olson-tools/InvCylindricalDist.h>
+
+#include <physical/physical.h>
 
 namespace olson_tools { namespace BField {
 
