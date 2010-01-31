@@ -157,6 +157,7 @@ namespace olson_tools {
 
 #   define FAST_POW_CODE(derefd_x, derefd_y)                          \
     register double value;                                            \
+    register double dummy;                                            \
                                                                       \
     /*                                                                \
       here's the pseudo code for the following:                       \
@@ -213,7 +214,8 @@ namespace olson_tools {
       "fstp   %%st(1)          #                                  \n" \
     /*"jmp 3f                  # jmp finished \n" */                  \
 "3:                            # finished                         \n" \
-      : "=t" (value) : "f" ((derefd_x)), "0" ((derefd_y))             \
+      : "=t" (value), "=u" (dummy)                                    \
+      : "1" ((derefd_x)), "0" ((derefd_y))                            \
       : "eax"                                                         \
     );                                                                \
                                                                       \
