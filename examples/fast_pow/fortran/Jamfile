@@ -1,11 +1,17 @@
-lib gfortranbegin : : <name>gfortranbegin ;
-lib gfortran : : <name>gfortran ;
-exe testfast_pow : testfast_pow.o stdpow.c /olson-tools//pow gfortranbegin gfortran ;
+#Jamfile for a mixed fortran-c code.
 
-local gcc_fflags = <fflags>-ffree-form ;
-local icc_fflags = <fflags>-free ;
+exe testfast_pow : testfast_pow.o stdpow.c /olson-tools//pow ;
 
-obj testfast_pow.o : testfast_pow.F
-    : <toolset>gcc:$(gcc_fflags)
-      <toolset>intel:$(icc_fflags)
+obj testfast_pow.o
+    : testfast_pow.F
+    : # properties
+      <toolset>gcc:<fflags>-ffree-form
+      <toolset>intel:<fflags>-free
+      <toolset>pathscale:<fflags>"-freeform -fno-second-underscore"
+    :
+    : # usage requirements
+      <toolset>intel:<linkflags>"-lgfortan -lgfortranbegin"
+      <toolset>gcc:<linkflags>"-lgfortran -lgfortranbegin"
+      <toolset>pathscale:<linkflags>"-lpathfortran -lpathfstart"
     ;
+

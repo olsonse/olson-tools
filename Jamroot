@@ -67,9 +67,6 @@ constant VERSION : [ SHELL "printf `cd $(TOP); git describe 2> /dev/null` || pri
 
 
 
-local gcc_fflags = <fflags>-ffree-form ;
-local icc_fflags = <fflags>-free ;
-
 local xml2-features = [ mpi.cmdline_to_features [ SHELL "printf '%s ' compiler `xml2-config --cflags --libs`" ] ] ;
 rule supports_fast_pow ( )
 {
@@ -148,11 +145,17 @@ obj trapfe
 
 obj rk
     : src/olson-tools/rk.F
-    :
+    : #properties
       <library>/olson-tools//headers
-      <toolset>gcc:$(gcc_fflags)
-      <toolset>intel:$(icc_fflags)
+      <toolset>gcc:<fflags>-ffree-form
+      <toolset>intel:<fflags>-free
+      <toolset>pathscale:<fflags>"-freeform -fno-second-underscore"
       <link>static
+    :
+    : # usage requirements
+      <toolset>pathscale:<linkflags>-lpathfortran
+      <toolset>gcc:<linkflags>-lgfortran
+      <toolset>intel:<linkflags>-lgfortran
     ;
 
 
