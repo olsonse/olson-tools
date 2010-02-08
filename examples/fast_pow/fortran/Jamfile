@@ -1,6 +1,11 @@
 #Jamfile for a mixed fortran-c code.
 
+import regex ;
+
 exe testfast_pow : testfast_pow.o stdpow.c /olson-tools//pow ;
+
+local ifortOpt = [ SHELL "ifort -# A.f 2>&1" ] ;
+local for_main  = [ regex.transform $(ifortOpt) : " +(\/[^ ]*for_main.o)" ] ;
 
 obj testfast_pow.o
     : testfast_pow.F
@@ -10,7 +15,7 @@ obj testfast_pow.o
       <toolset>pathscale:<fflags>"-freeform -fno-second-underscore"
     :
     : # usage requirements
-      <toolset>intel:<linkflags>"-lgfortan -lgfortranbegin"
+      <toolset>intel:<linkflags>"-lifcore $(for_main)"
       <toolset>gcc:<linkflags>"-lgfortran -lgfortranbegin"
       <toolset>pathscale:<linkflags>"-lpathfortran -lpathfstart"
     ;

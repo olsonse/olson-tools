@@ -155,7 +155,7 @@ obj rk
     : # usage requirements
       <toolset>pathscale:<linkflags>-lpathfortran
       <toolset>gcc:<linkflags>-lgfortran
-      <toolset>intel:<linkflags>-lgfortran
+      <toolset>intel:<linkflags>"-lifcore -lifport"
     ;
 
 
