@@ -1,3 +1,9 @@
+
+#ifndef USE_SPENCERS_FAST_POW
+      program prog
+      end
+#else
+
 program bob
      double precision a,b, fast_pow
      double precision val, mi, ma, su
@@ -49,3 +55,5 @@ program bob
      write (*,*) "sum is ", su
      write (*,*) "Elapsed time for ** is ", (finish-start)*rate
 end program
+
+#endif // USE_SPENCERS_FAST_POW

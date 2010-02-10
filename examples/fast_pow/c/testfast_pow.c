@@ -1,3 +1,9 @@
+
+#ifndef USE_SPENCERS_FAST_POW
+int main() { return 0; };
+#else
+
+
 #include <stdio.h>
 #include <sys/times.h>
 #include <unistd.h>
@@ -12,9 +18,7 @@ double difftms(struct tms tf, struct tms ti) {
         * seconds_per_clock_tick ;
 }
 
-int
-main (void)
-{
+int main() {
     double x = 0.0l, y = -100.0l;
 
 #if 0
@@ -80,3 +84,5 @@ main (void)
 
     return 0;
 }
+
+#endif // USE_SPENCERS_FAST_POW

@@ -17,14 +17,6 @@
 namespace olson_tools {
   namespace xml {
 
-    /** C++ ostream insertion operator for xmlChar type. */
-    static inline std::ostream & operator<< (std::ostream & out, const xmlChar * s) {
-      out << (const char*)s;
-      return out;
-    }
-
-
-
     /** A simple class to represent a single (node-specific) XML context.  */
     struct Context {
       /* TYPEDEFS */
@@ -204,7 +196,8 @@ namespace olson_tools {
           free(txt);
         } else {
           std::ostringstream ostr;
-          ostr <<  "node \"" << node->name << "\": type " << node->type;
+          ostr <<  "node \"" << reinterpret_cast<const char*>(node->name)
+               << "\": type " << node->type;
           retval = ostr.str();
         }
       

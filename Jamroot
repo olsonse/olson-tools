@@ -73,7 +73,11 @@ rule supports_fast_pow ( )
     # this will not work for the pgi compiler
     if [ MATCH "([xX]86).*" : [ os.platform ] ]
     {
-        return <define>USE_SPENCERS_FAST_POW ;
+        return
+            <toolset>gcc:<define>USE_SPENCERS_FAST_POW
+            <toolset>pathscale:<define>USE_SPENCERS_FAST_POW
+            <toolset>intel:<define>USE_SPENCERS_FAST_POW
+        ;
     }
 }
 
@@ -150,12 +154,14 @@ obj rk
       <toolset>gcc:<fflags>-ffree-form
       <toolset>intel:<fflags>-free
       <toolset>pathscale:<fflags>"-freeform -fno-second-underscore"
+      <toolset>pgi:<fflags>"-Mfreeform -Mnosecond_underscore"
       <link>static
     :
     : # usage requirements
       <toolset>pathscale:<linkflags>-lpathfortran
       <toolset>gcc:<linkflags>-lgfortran
       <toolset>intel:<linkflags>"-lifcore -lifport"
+      <toolset>pgi:<linkflags>"-lpgf90 -lpgf90rtl -lpghpf2 -lpghpf_rpm1 -lpgftnrtl"
     ;
 
 

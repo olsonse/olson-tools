@@ -1,4 +1,8 @@
-#define BOOST_TEST_MODULE  fast_log2
+#ifndef USE_SPENCERS_FAST_POW
+int main() { return 0; }
+#else
+
+#define BOOST_TEST_MODULE  fast_log2_timing
 
 
 
@@ -25,8 +29,6 @@ namespace {
   const double pos_min = 1e-1, pos_max = 1e8, pos_incr = 1.0;
   const double neg_min = -1e-1, neg_max = -1e8, neg_incr = -1.0;
 }
-
-BOOST_AUTO_TEST_SUITE( fast_log2 );
 
 BOOST_AUTO_TEST_CASE( timing ) {
   using olson_tools::fast_log2;
@@ -132,4 +134,4 @@ BOOST_AUTO_TEST_CASE( values ) {
 
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+#endif // USE_SPENCERS_FAST_POW
